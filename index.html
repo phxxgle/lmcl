@@ -48,7 +48,7 @@
   
   header{
     text-align:center;
-    padding:18px 16px 16px;
+    padding:20px 16px 18px;
     border-bottom:2px solid var(--line);
     position:sticky;
     top:0;
@@ -61,52 +61,55 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 4px;
+    gap: 16px;
+    margin-bottom: 6px;
     position: relative;
   }
 
+  /* TĂNG KÍCH THƯỚC LOGO */
   .site-logo {
-    height: 48px;
+    height: 62px;
     width: auto;
     object-fit: contain;
     flex-shrink: 0;
     animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   }
 
+  /* TĂNG KÍCH THƯỚC DẤU PHÂN CÁCH */
   .brand-divider {
     font-family:'Tomorrow',sans-serif;
     font-weight: 300;
-    font-size: 32px;
+    font-size: 40px;
     color: var(--chalk-dim);
     line-height: 1;
     opacity: 0;
     animation: fadeInContent 0.5s ease forwards 1s;
   }
 
+  /* TĂNG KÍCH THƯỚC CHỮ TIÊU ĐỀ */
   h1 {
     font-family:'Tomorrow',sans-serif;
     font-weight:700;
-    font-size:13px;
+    font-size:16px;
     letter-spacing:1px;
     margin:0;
     color:var(--chalk);
-    line-height:1.2;
+    line-height:1.25;
     text-align: left;
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.2s;
   }
 
-  /* KHUNG MÀU TRẮNG THU NHỎ CHO AUGUST 2026 */
+  /* KHUNG MÀU TRẮNG CHO AUGUST 2026 */
   .badge-date {
     display: inline-block;
     background-color: #ffffff;
     color: var(--navy-900);
-    font-size: 8px;
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 1px 4px;
+    padding: 2px 5px;
     border-radius: 3px;
-    margin-top: 2px;
+    margin-top: 3px;
     letter-spacing: 0.5px;
     line-height: 1;
     vertical-align: middle;
@@ -165,10 +168,11 @@
     box-shadow: 0 0 10px rgba(255, 199, 44, 0.25);
   }
 
+  /* TĂNG KHOẢNG CÁCH VỚI TABS BÊN DƯỚI (MARGIN-TOP 22PX) */
   .tabs{
     display:flex;
     gap:6px;
-    margin:14px 0 0;
+    margin:22px 0 0;
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.4s;
   }
@@ -494,7 +498,7 @@
       </svg>
     </button>
 
-    <!-- CỤM HEADER CHÍNH GIỮA -->
+    <!-- CỤM HEADER CHÍNH GIỮA (ĐÃ TĂNG KÍCH THƯỚC) -->
     <div class="brand-container">
       <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
       <span class="brand-divider">|</span>
