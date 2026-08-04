@@ -40,12 +40,54 @@
   body{
     margin:0;
     font-family:'Inter',sans-serif;
+    /* Bổ sung hiệu ứng gradient nhẹ và họa tiết nền đường line chuyển động */
     background-color: var(--green-bg);
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(0, 0, 0, 0.25) 0%, transparent 50%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+      linear-gradient(225deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%),
+      linear-gradient(315deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%);
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px, 40px 40px, 40px 40px;
+    background-position: 0 0, 0 0, 0 0, 0 20px, 20px -20px, -20px 0px;
     color:var(--chalk);
     min-height:100vh;
     padding:0 0 48px;
+    position: relative;
+    overflow-x: hidden;
   }
-  .wrap{max-width:440px;margin:0 auto;padding:0 12px;}
+
+  /* Thêm lớp hiệu ứng đường line chuyển động chìm mờ ảo ở background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 60px,
+      rgba(255, 255, 255, 0.012) 60px,
+      rgba(255, 255, 255, 0.012) 120px
+    );
+    animation: bgMove 30s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @keyframes bgMove {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(50px, 50px);
+    }
+  }
+
+  .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
   
   header{
     text-align:center;
@@ -183,21 +225,40 @@
     border-radius:999px;
     padding:10px 4px;
     cursor:pointer;
+    transition: all 0.25s ease, transform 0.15s ease;
+  }
+  .tab-btn:hover {
+    color: var(--chalk);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
   }
   .tab-btn.active{
     background:var(--accent);
     color:var(--on-accent);
     border-color:var(--accent);
     font-weight:bold;
+    transform: translateY(0);
   }
-  .group{display:none;}
-  .group.active{display:block;}
+  
+  .group{
+    display:none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .group.active{
+    display:block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .card{
     background:var(--green-surface);
     border:1px solid var(--line);
     border-radius:12px;
     padding:12px;
     margin-top:18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
   .card h2{
     font-family:'Bebas Neue',sans-serif;
@@ -323,7 +384,6 @@
     transition: all 0.25s ease;
   }
   
-  /* Cải tiến: Trạng thái "đã đấu" có viền nổi bật và hiệu ứng Glow nhẹ */
   .fixture-row.played{
     border-color: rgba(74,222,128,0.7);
     box-shadow: 0 0 10px rgba(74,222,128,0.22);
@@ -342,7 +402,6 @@
   }
   .fixture-row .name.right{text-align:center;}
 
-  /* Cải tiến ô tỷ số: Khung nhỏ bo tròn, nền tách biệt để con số bật lên rõ ràng */
   input[type=number]{
     background: rgba(0, 0, 0, 0.45);
     border: 1px solid rgba(255, 255, 255, 0.22);
@@ -1091,7 +1150,7 @@ function updateAuthUI() {
 authToggleBtn.addEventListener('click', () => {
   if (isAdmin) {
     isAdmin = false;
-    updateAuthUI();
+    updateAuthUri();
   } else {
     pinInput.value = '';
     pinError.style.display = 'none';
