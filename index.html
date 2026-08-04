@@ -47,7 +47,7 @@
   .wrap{max-width:440px;margin:0 auto;padding:0 16px;}
   header{
     text-align:center;
-    padding:18px 40px 16px 12px;
+    padding:18px 16px 16px; /* Đã sửa padding cân bằng trái - phải */
     border-bottom:2px solid var(--line);
     position:sticky;
     top:0;
@@ -55,7 +55,6 @@
     z-index:5;
   }
   
-  /* CSS LOGO ĐÃ TĂNG KÍCH THƯỚC LÊN 200PX */
   .site-logo {
     max-height: 100px;
     width: auto;
@@ -426,7 +425,6 @@
 <body data-theme="men">
 <div class="wrap">
   <header>
-    <!-- THẺ LOGO MỚI (KHÔNG CÓ LINK CHUYỂN TRANG) -->
     <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
 
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
