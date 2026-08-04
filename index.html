@@ -48,7 +48,7 @@
   
   header{
     text-align:center;
-    padding:20px 16px 18px;
+    padding:24px 16px 20px;
     border-bottom:2px solid var(--line);
     position:sticky;
     top:0;
@@ -56,45 +56,45 @@
     z-index:5;
   }
 
-  /* KHOANG CHỨA CĂN GIỮA LINH HOẠT FLEXBOX */
+  /* KHUNG CHỨA CĂN GIỮA */
   .brand-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    margin-bottom: 6px;
+    gap: 18px;
+    margin-bottom: 4px;
     position: relative;
   }
 
-  /* TĂNG KÍCH THƯỚC LOGO */
+  /* TĂNG KÍCH THƯỚC LOGO LỚN HƠN (80PX) */
   .site-logo {
-    height: 62px;
+    height: 80px;
     width: auto;
     object-fit: contain;
     flex-shrink: 0;
     animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   }
 
-  /* TĂNG KÍCH THƯỚC DẤU PHÂN CÁCH */
+  /* TĂNG KÍCH THƯỚC DẤU PHÂN CÁCH (52PX) */
   .brand-divider {
     font-family:'Tomorrow',sans-serif;
     font-weight: 300;
-    font-size: 40px;
+    font-size: 52px;
     color: var(--chalk-dim);
     line-height: 1;
     opacity: 0;
     animation: fadeInContent 0.5s ease forwards 1s;
   }
 
-  /* TĂNG KÍCH THƯỚC CHỮ TIÊU ĐỀ */
+  /* TĂNG KÍCH THƯỚC CHỮ TIÊU ĐỀ (20PX) */
   h1 {
     font-family:'Tomorrow',sans-serif;
     font-weight:700;
-    font-size:16px;
+    font-size:20px;
     letter-spacing:1px;
     margin:0;
     color:var(--chalk);
-    line-height:1.25;
+    line-height:1.2;
     text-align: left;
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.2s;
@@ -105,11 +105,11 @@
     display: inline-block;
     background-color: #ffffff;
     color: var(--navy-900);
-    font-size: 9.5px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 2px 5px;
-    border-radius: 3px;
-    margin-top: 3px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    margin-top: 4px;
     letter-spacing: 0.5px;
     line-height: 1;
     vertical-align: middle;
@@ -118,11 +118,11 @@
   /* KEYFRAMES ANIMATION */
   @keyframes logoIntro {
     0% {
-      transform: scale(1.6) translateX(50px);
+      transform: scale(1.5) translateX(50px);
       opacity: 0;
     }
     35% {
-      transform: scale(1.6) translateX(50px);
+      transform: scale(1.5) translateX(50px);
       opacity: 1;
     }
     70%, 100% {
@@ -144,10 +144,10 @@
 
   .admin-icon-btn {
     position: absolute;
-    top: 16px;
+    top: 18px;
     right: 12px;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--line);
@@ -159,7 +159,7 @@
     transition: all 0.2s ease;
     padding: 0;
   }
-  .admin-icon-btn svg { width: 15px; height: 15px; }
+  .admin-icon-btn svg { width: 16px; height: 16px; }
   .admin-icon-btn:hover { color: var(--chalk); border-color: rgba(255,255,255,0.3); }
   .admin-icon-btn.is-admin {
     background: var(--accent);
@@ -168,18 +168,18 @@
     box-shadow: 0 0 10px rgba(255, 199, 44, 0.25);
   }
 
-  /* TĂNG KHOẢNG CÁCH VỚI TABS BÊN DƯỚI (MARGIN-TOP 22PX) */
+  /* TĂNG KHOẢNG CÁCH RỘNG HƠN NỮA VỚI TABS BÊN DƯỚI (MARGIN-TOP 32PX) */
   .tabs{
     display:flex;
     gap:6px;
-    margin:22px 0 0;
+    margin:32px 0 0;
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.4s;
   }
   .tab-btn{
     flex:1;
     font-family:'Bebas Neue',sans-serif;
-    font-size:13.5px;
+    font-size:14px;
     letter-spacing:0.8px;
     background:rgba(255,255,255,0.04);
     color:var(--chalk-dim);
@@ -498,7 +498,7 @@
       </svg>
     </button>
 
-    <!-- CỤM HEADER CHÍNH GIỮA (ĐÃ TĂNG KÍCH THƯỚC) -->
+    <!-- CỤM HEADER LOGO + TIÊU ĐỀ LỚN -->
     <div class="brand-container">
       <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
       <span class="brand-divider">|</span>
