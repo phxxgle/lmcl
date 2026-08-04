@@ -67,7 +67,7 @@
     position: relative;
   }
 
-  /* UPDATE ANIMATION LOGO: Intro trong 1.4s, nghỉ 3s tĩnh, sau đó xoay tròn chậm từ trái sang phải liên tục */
+  /* ELEGANT MOTION LOGO */
   .site-logo {
     height: 80px;
     width: auto;
@@ -75,7 +75,7 @@
     flex-shrink: 0;
     animation: 
       logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards,
-      logoIdleSpin 12s linear infinite 4.4s;
+      logoFancyPulse 4s ease-in-out infinite 4.4s; /* Nghỉ 3s sau khi Intro hoàn tất */
   }
 
   .brand-divider {
@@ -115,17 +115,23 @@
     vertical-align: middle;
   }
 
-  /* KEYFRAMES ANIMATION LOGO */
+  /* KEYFRAMES LOGO ANIMATION */
   @keyframes logoIntro {
     0% { transform: scale(1.5) translateX(50px); opacity: 0; }
     35% { transform: scale(1.5) translateX(50px); opacity: 1; }
     70%, 100% { transform: scale(1) translateX(0); opacity: 1; }
   }
 
-  /* Hiệu ứng xoay tròn chậm từ trái sang phải (theo chiều kim đồng hồ) */
-  @keyframes logoIdleSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  /* Hiệu ứng thở nhẹ + phát sáng hào quang vàng kim */
+  @keyframes logoFancyPulse {
+    0%, 100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 0px rgba(255, 209, 102, 0));
+    }
+    50% {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 14px rgba(255, 209, 102, 0.45));
+    }
   }
 
   @keyframes fadeInContent {
@@ -160,7 +166,7 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
-  /* TABS & HIỆU ỨNG ELEGANT GLOW RUNNING BORDER */
+  /* TABS & RUNNING BORDER */
   .tabs{
     display: flex;
     gap: 8px;
@@ -198,7 +204,6 @@
     background: rgba(255, 255, 255, 0.12);
   }
 
-  /* KHI TAB ĐƯỢC CHỌN (ACTIVE) */
   .tab-btn.active{
     background: var(--accent);
     color: var(--on-accent);
@@ -207,7 +212,6 @@
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
   }
 
-  /* TẠO VIỀN PHÁT SÁNG XOAY NHẸ NHÀNG */
   .tab-btn.active::before {
     content: '';
     position: absolute;
@@ -225,7 +229,6 @@
     z-index: -2;
   }
 
-  /* MẶT NẠ NỀN TRONG ĐỂ CHỈ HIỆN VIỀN PHÁT SÁNG */
   .tab-btn.active::after {
     content: '';
     position: absolute;
@@ -758,10 +761,6 @@ function showConnBanner(msg){
 }
 function hideConnBanner(){
   document.getElementById('conn-banner').style.display = 'none';
-}
-
-if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOUR_PROJECT'){
-  showConnBanner('⚠️ Chưa cấu hình Firebase...');
 }
 
 let scores = {};
