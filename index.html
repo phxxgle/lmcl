@@ -253,7 +253,7 @@
   .search-wrap{
     max-height:0;
     overflow:hidden;
-    transition:max-height 0.22s ease;
+    transition:max-height 0.22s ease, margin-bottom 0.22s ease;
   }
   .search-wrap.open{max-height:52px;margin-bottom:10px;}
   .search-input{
@@ -322,7 +322,7 @@
   .fixture-row.played{border-color:rgba(61,220,132,0.4);}
   .fixture-num{color:var(--chalk-dim);font-family:'Space Mono',monospace;font-size:11px;text-align:center;}
   
-  /* CẤU HÌNH TÊN VẬN ĐỘNG VIÊN: NẰM TRÊN 1 DÒNG VÀ CĂN GIỮA Ô */
+  /* CĂN GIỮA TÊN VẬN ĐỘNG VIÊN TRONG Ô */
   .fixture-row .name{
     font-size:11.5px;
     font-weight:500;
@@ -988,6 +988,84 @@ function renderOverall(){
   }).join('');
 }
 
+/* ========================================================
+   CẤU HÌNH TÌM KIẾM VÀ BỘ LỌC CHO TẤT CẢ NGUỜI DÙNG (CẢ KHÁN GIẢ)
+   ======================================================== */
+['nam', 'nu'].forEach(group => {
+  // 1. Tìm kiếm (Search Toggle & Input)
+  const searchBtn = document.getElementById('search-toggle-' + group);
+  const searchWrap = document.getElementById('search-wrap-' + group);
+  const searchInput = document.getElementById('search-' + group);
+
+  if (searchBtn && searchWrap && searchInput) {
+    searchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = searchWrap.classList.toggle('open');
+      searchBtn.classList.toggle('active', isOpen);
+      if (isOpen) {
+        searchInput.focus();
+      }
+    });
+
+    searchInput.addEventListener('input', () => {
+      renderGroup(group);
+    });
+  }
+
+  // 2. Bộ lọc (Filter Toggle & Menu)
+  const filterBtn = document.getElementById('filter-toggle-' + group);
+  const filterMenu = document.getElementById('filter-menu-' + group);
+
+  if (filterBtn && filterMenu) {
+    filterBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Đóng menu lọc của tab kia nếu đang mở
+      const otherGroup = group === 'nam' ? 'nu' : 'nam';
+      const otherMenu = document.getElementById('filter-menu-' + otherGroup);
+      if (otherMenu) otherMenu.classList.remove('open');
+
+      const isOpen = filterMenu.classList.toggle('open');
+      filterBtn.classList.toggle('active', isOpen);
+    });
+
+    filterMenu.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const val = btn.getAttribute('data-value');
+        uiState[group].status = val;
+
+        filterMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (val !== 'all') {
+          filterBtn.classList.add('has-filter');
+        } else {
+          filterBtn.classList.remove('has-filter');
+        }
+
+        filterMenu.classList.remove('open');
+        filterBtn.classList.remove('active');
+        renderGroup(group);
+      });
+    });
+  }
+});
+
+// Đóng menu bộ lọc khi click ra ngoài màn hình
+document.addEventListener('click', () => {
+  ['nam', 'nu'].forEach(group => {
+    const filterMenu = document.getElementById('filter-menu-' + group);
+    const filterBtn = document.getElementById('filter-toggle-' + group);
+    if (filterMenu && filterMenu.classList.contains('open')) {
+      filterMenu.classList.remove('open');
+      if (filterBtn) filterBtn.classList.remove('active');
+    }
+  });
+});
+
+/* ========================================================
+   QUẢN LÝ QUYỀN TRỌNG TÀI / BTC
+   ======================================================== */
 const authToggleBtn = document.getElementById('auth-toggle-btn');
 const pinModal = document.getElementById('pin-modal');
 const pinInput = document.getElementById('pin-input');
