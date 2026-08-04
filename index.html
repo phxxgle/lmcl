@@ -11,10 +11,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green-bg:#0B3B24;
+    --green-bg:#052416;
     --green-dark:#052416;
     --green-surface:#0E4D2F;
-    --line:rgba(255,255,255,0.16);
+    --line:rgba(255,255,255,0.12);
     --chalk:#F8FAFC;
     --chalk-dim:#A1C1B0;
     --gold:#FFD166;
@@ -37,11 +37,12 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html{-webkit-text-size-adjust:100%;}
+  
   body{
     margin:0;
     font-family:'Inter',sans-serif;
-    background-color: var(--green-dark);
-    background-image: radial-gradient(circle at 50% 50%, rgba(14, 77, 47, 0.4) 0%, rgba(5, 36, 22, 0.95) 100%);
+    background-color: #052416;
+    background-image: radial-gradient(circle at 50% 0%, #0E4D2F 0%, #052416 70%);
     background-attachment: fixed;
     color:var(--chalk);
     min-height:100vh;
@@ -54,7 +55,7 @@
   
   header{
     text-align:center;
-    padding:24px 16px 12px;
+    padding:24px 16px 16px;
     position:relative;
   }
 
@@ -113,29 +114,14 @@
   }
 
   @keyframes logoIntro {
-    0% {
-      transform: scale(1.5) translateX(50px);
-      opacity: 0;
-    }
-    35% {
-      transform: scale(1.5) translateX(50px);
-      opacity: 1;
-    }
-    70%, 100% {
-      transform: scale(1) translateX(0);
-      opacity: 1;
-    }
+    0% { transform: scale(1.5) translateX(50px); opacity: 0; }
+    35% { transform: scale(1.5) translateX(50px); opacity: 1; }
+    70%, 100% { transform: scale(1) translateX(0); opacity: 1; }
   }
 
   @keyframes fadeInContent {
-    from {
-      opacity: 0;
-      transform: translateX(-6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
   }
 
   .admin-icon-btn {
@@ -165,20 +151,19 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
-  /* CHỈNH SỬA TABS: SỬA LỖI HỞ MÉP KHI CUỘN */
+  /* TABS LIỀN MẠCH VỚI HEADER */
   .tabs{
     display: flex;
     gap: 8px;
-    padding: 12px 12px 10px 12px;
+    padding: 8px 12px 12px 12px;
     margin: 0 -12px;
     position: sticky;
     top: 0;
-    background: rgba(5, 36, 22, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    /* Dùng màu khớp chính xác với gradient của body */
+    background: rgba(8, 45, 28, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     z-index: 20;
-    border-bottom: 1px solid var(--line);
-    border-radius: 0 0 16px 16px;
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.4s;
   }
@@ -187,9 +172,9 @@
     font-family:'Bebas Neue',sans-serif;
     font-size:15px;
     letter-spacing:0.8px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--chalk-dim);
-    border: 1px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 999px;
     padding: 10px 4px;
     cursor: pointer;
@@ -220,13 +205,13 @@
   }
 
   .card{
-    background: rgba(14, 77, 47, 0.92);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(14, 77, 47, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border:1px solid var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-top:18px;
+    border-radius:14px;
+    padding:14px;
+    margin-top:14px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   }
   .card h2{
@@ -346,7 +331,7 @@
     grid-template-columns:14px 1fr 32px 4px 32px 1fr;
     align-items:center;
     gap:4px;
-    background:rgba(0,0,0,0.3);
+    background:rgba(0,0,0,0.25);
     border:1px solid var(--line);
     border-radius:8px;
     padding:8px 6px;
