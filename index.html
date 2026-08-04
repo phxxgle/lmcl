@@ -39,23 +39,21 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   
-  html, body {
+  html {
     background-color: #093b23;
-    margin: 0;
-    padding: 0;
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
   }
-
-  html{-webkit-text-size-adjust:100%;}
   
   body{
     font-family:'Inter',sans-serif;
-    background: linear-gradient(180deg, #0d5232 0%, #0b4629 35%, #093b23 100%);
-    background-attachment: fixed;
+    background-color: #093b23;
     color:var(--chalk);
     min-height:100vh;
     padding:0 0 48px;
     position: relative;
     overflow-x: hidden;
+    margin: 0;
   }
 
   .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
@@ -166,7 +164,7 @@
     margin: 0 -12px;
     position: sticky;
     top: 0;
-    background: linear-gradient(180deg, rgba(9, 59, 35, 0.95) 0%, rgba(7, 47, 28, 0.92) 100%);
+    background: rgba(9, 59, 35, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     z-index: 20;
