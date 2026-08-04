@@ -1,1189 +1,201 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>LMCL Rankings – August 2026</title>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --green-bg:#031B10;
-    --green-dark:#031B10;
-    --green-surface:#0E4D2F;
-    --line:rgba(255,255,255,0.12);
-    --chalk:#F8FAFC;
-    --chalk-dim:#A1C1B0;
-    --gold:#FFD166;
-    --pink:#FF6584;
-    --blue:#38BDF8;
-    --accent:var(--gold);
-    --on-accent:#1C1300;
-    --silver:#CBD5E1;
-    --bronze:#E59866;
-    --green-ok:#4ADE80;
-    --red:#F87171;
-  }
-  body[data-theme="women"]{
-    --accent:var(--pink);
-    --on-accent:#2D0310;
-  }
-  body[data-theme="overall"]{
-    --accent:var(--blue);
-    --on-accent:#031B2A;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{-webkit-text-size-adjust:100%;}
-  
-  body{
-    margin:0;
-    font-family:'Inter',sans-serif;
-    background: linear-gradient(180deg, #093C24 0%, #052718 35%, #031B10 100%);
-    background-attachment: fixed;
-    color:var(--chalk);
-    min-height:100vh;
-    padding:0 0 48px;
-    position: relative;
-    overflow-x: hidden;
-  }
+    <meta charset="UTF-8">
+    <!-- Tối ưu hiển thị responsive & thanh trạng thái trên điện thoại -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Đồng bộ màu cột sóng, giờ trên Android (Chrome, Edge...) -->
+    <meta name="theme-color" content="#0f172a">
+    
+    <!-- Đồng bộ thanh trạng thái trên iOS (Safari) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
-  
-  header{
-    text-align:center;
-    padding:28px 16px 12px;
-    position:relative;
-  }
+    <title>LMCL Rankings – August 2026</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 
-  .brand-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    margin-bottom: 4px;
-    position: relative;
-  }
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --error-color: #ef4444;
+            --border-color: #334155;
+        }
 
-  .site-logo {
-    height: 80px;
-    width: auto;
-    object-fit: contain;
-    flex-shrink: 0;
-    animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  .brand-divider {
-    font-family:'Tomorrow',sans-serif;
-    font-weight: 300;
-    font-size: 52px;
-    color: var(--chalk-dim);
-    line-height: 1;
-    opacity: 0;
-    animation: fadeInContent 0.5s ease forwards 1s;
-  }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-  h1 {
-    font-family:'Tomorrow',sans-serif;
-    font-weight:700;
-    font-size:20px;
-    letter-spacing:1px;
-    margin:0;
-    color:var(--chalk);
-    line-height:1.2;
-    text-align: left;
-    opacity: 0;
-    animation: fadeInContent 0.6s ease forwards 1.2s;
-  }
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
 
-  .badge-date {
-    display: inline-block;
-    background-color: var(--chalk);
-    color: var(--green-bg);
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 4px;
-    margin-top: 4px;
-    letter-spacing: 0.5px;
-    line-height: 1;
-    vertical-align: middle;
-  }
+        .container {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
 
-  @keyframes logoIntro {
-    0% { transform: scale(1.5) translateX(50px); opacity: 0; }
-    35% { transform: scale(1.5) translateX(50px); opacity: 1; }
-    70%, 100% { transform: scale(1) translateX(0); opacity: 1; }
-  }
+        .form-group {
+            margin-bottom: 16px;
+        }
 
-  @keyframes fadeInContent {
-    from { opacity: 0; transform: translateX(-6px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
 
-  .admin-icon-btn {
-    position: absolute;
-    top: 18px;
-    right: 12px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--line);
-    color: var(--chalk-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    padding: 0;
-    z-index: 2;
-  }
-  .admin-icon-btn svg { width: 16px; height: 16px; }
-  .admin-icon-btn:hover { color: var(--chalk); border-color: rgba(255,255,255,0.3); }
-  .admin-icon-btn.is-admin {
-    background: var(--accent);
-    color: var(--on-accent);
-    border-color: var(--accent);
-    box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
-  }
+        .score-inputs {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-  /* TABS & HIỆU ỨNG ELEGANT GLOW RUNNING BORDER */
-  .tabs{
-    display: flex;
-    gap: 8px;
-    padding: 12px 12px 14px 12px;
-    margin: 0 -12px;
-    position: sticky;
-    top: 0;
-    background: linear-gradient(180deg, rgba(8, 48, 30, 0.95) 0%, rgba(5, 33, 21, 0.92) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 20;
-    opacity: 0;
-    animation: fadeInContent 0.6s ease forwards 1.4s;
-  }
-  
-  .tab-btn{
-    position: relative;
-    flex:1;
-    font-family:'Bebas Neue',sans-serif;
-    font-size:15px;
-    letter-spacing:0.8px;
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--chalk-dim);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-    padding: 10px 4px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    overflow: hidden;
-    z-index: 1;
-  }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            text-align: center;
+        }
 
-  .tab-btn:hover {
-    color: var(--chalk);
-    background: rgba(255, 255, 255, 0.12);
-  }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
 
-  /* KHI TAB ĐƯỢC CHỌN (ACTIVE) */
-  .tab-btn.active{
-    background: var(--accent);
-    color: var(--on-accent);
-    border-color: transparent;
-    font-weight: bold;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-  }
+        .separator {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
 
-  /* TẠO VIỀN PHÁT SÁNG XOAY NHẸ NHÀNG */
-  .tab-btn.active::before {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.9) 25%,
-      transparent 50%,
-      rgba(255, 255, 255, 0.9) 75%,
-      transparent 100%
-    );
-    border-radius: 999px;
-    animation: elegantGlow 4s linear infinite;
-    z-index: -2;
-  }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
 
-  /* MẶT NẠ NỀN TRONG ĐỂ CHỈ HIỆN VIỀN PHÁT SÁNG */
-  .tab-btn.active::after {
-    content: '';
-    position: absolute;
-    inset: 1.5px;
-    background: var(--accent);
-    border-radius: 999px;
-    z-index: -1;
-    transition: background 0.3s ease;
-  }
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
 
-  @keyframes elegantGlow {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .group{
-    display:none;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .group.active{
-    display:block;
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .card{
-    background: rgba(14, 77, 47, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:14px;
-    margin-top:14px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  }
-  .card h2{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:17px;
-    letter-spacing:1.5px;
-    margin:0 0 4px;
-    color:var(--accent);
-  }
-  .card .sub{
-    font-size:12px;
-    color:var(--chalk-dim);
-    margin:0 0 14px;
-    line-height:1.5;
-  }
-
-  .card-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .card-header h2{margin:0;}
-  .header-icons{
-    display:flex;
-    gap:6px;
-    flex-shrink:0;
-  }
-  .icon-btn{
-    width:30px;
-    height:30px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(255,255,255,0.06);
-    border:1px solid var(--line);
-    border-radius:8px;
-    color:var(--chalk-dim);
-    cursor:pointer;
-    padding:0;
-    position:relative;
-  }
-  .icon-btn svg{width:15px;height:15px;}
-  .icon-btn:hover{color:var(--chalk);border-color:rgba(255,255,255,0.3);}
-  .icon-btn.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent);}
-  .icon-btn.has-filter::after{
-    content:'';
-    position:absolute;
-    top:-2px;right:-2px;
-    width:7px;height:7px;
-    border-radius:50%;
-    background:var(--accent);
-    border:1.5px solid var(--green-bg);
-  }
-
-  .search-wrap{
-    max-height:0;
-    overflow:hidden;
-    transition:max-height 0.22s ease, margin-bottom 0.22s ease;
-  }
-  .search-wrap.open{max-height:52px;margin-bottom:10px;}
-  .search-input{
-    width:100%;
-    background:rgba(0,0,0,0.35);
-    border:1px solid var(--line);
-    border-radius:8px;
-    color:var(--chalk);
-    font-family:'Inter',sans-serif;
-    font-size:13px;
-    padding:9px 10px;
-    margin-top:4px;
-  }
-  .search-input::placeholder{color:var(--chalk-dim);}
-  .search-input:focus{outline:none;border-color:var(--accent);}
-
-  .filter-menu-wrap{position:relative;}
-  .filter-menu{
-    display:none;
-    position:absolute;
-    top:36px;
-    right:0;
-    background:var(--green-surface);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:6px;
-    min-width:118px;
-    z-index:10;
-    box-shadow:0 8px 24px rgba(0,0,0,0.5);
-  }
-  .filter-menu.open{display:block;}
-  .filter-menu button{
-    display:block;
-    width:100%;
-    text-align:left;
-    background:none;
-    border:none;
-    color:var(--chalk-dim);
-    font-family:'Inter',sans-serif;
-    font-size:12.5px;
-    padding:8px 10px;
-    border-radius:6px;
-    cursor:pointer;
-  }
-  .filter-menu button:hover{background:rgba(255,255,255,0.08);color:var(--chalk);}
-  .filter-menu button.active{color:var(--accent);font-weight:600;}
-
-  .no-results{
-    text-align:center;
-    color:var(--chalk-dim);
-    font-size:12.5px;
-    padding:18px 4px;
-  }
-
-  .fixtures{display:flex;flex-direction:column;gap:6px;}
-  .fixture-row{
-    display:grid;
-    grid-template-columns:14px 1fr 32px 4px 32px 1fr;
-    align-items:center;
-    gap:4px;
-    background:rgba(0,0,0,0.25);
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:8px 6px;
-    transition: all 0.25s ease;
-  }
-  
-  .fixture-row.played{
-    border-color: rgba(74,222,128,0.7);
-    box-shadow: 0 0 10px rgba(74,222,128,0.22);
-  }
-
-  .fixture-num{color:var(--chalk-dim);font-family:'Space Mono',monospace;font-size:11px;text-align:center;}
-  
-  .fixture-row .name{
-    font-size:11.5px;
-    font-weight:500;
-    line-height:1.2;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    text-align:center;
-  }
-  .fixture-row .name.right{text-align:center;}
-
-  input[type=number]{
-    background: rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 8px;
-    color: var(--chalk);
-    font-family: 'Space Mono', monospace;
-    font-size: 15px;
-    font-weight: 700;
-    text-align: center;
-    width: 32px;
-    padding: 6px 0;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-    transition: all 0.2s ease;
-  }
-  
-  input[type=number]:disabled {
-    opacity: 0.85;
-    cursor: default;
-    background: rgba(0, 0, 0, 0.35);
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-  }
-  
-  input[type=number]:focus{outline:none;border-color:var(--accent);box-shadow: 0 0 8px rgba(255, 209, 102, 0.35);}
-
-  @keyframes shake-x{
-    10%,90%{transform:translateX(-1px);}
-    20%,80%{transform:translateX(2px);}
-    30%,50%,70%{transform:translateX(-4px);}
-    40%,60%{transform:translateX(4px);}
-  }
-  @keyframes slide-down{
-    from{opacity:0;transform:translateY(-6px);}
-    to{opacity:1;transform:translateY(0);}
-  }
-  .score-input.shake{animation:shake-x 0.4s;}
-  .score-input.invalid{
-    border-color:var(--red) !important;
-    box-shadow:0 0 0 2px rgba(248,113,113,0.3);
-  }
-  .error-msg{
-    grid-column:1/-1;
-    font-size:10.5px;
-    text-align:center;
-    color:var(--red);
-    margin-top:-2px;
-    animation:slide-down 0.25s ease;
-  }
-  .error-msg:empty{display:none;animation:none;}
-
-  .fixture-status{
-    grid-column:1/-1;
-    font-size:10.5px;
-    text-align:right;
-    color:var(--chalk-dim);
-    margin-top:-2px;
-  }
-  .fixture-status.done{color:var(--green-ok);}
-  .fixture-status.warn{color:var(--accent);}
-  .fixture-status.error{color:var(--red);}
-  .fixture-status:empty{display:none;}
-
-  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px;}
-  table.standings{width:100%;min-width:400px;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
-  table.standings thead th{
-    text-align:center;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-    color:var(--chalk-dim);
-    padding:0 4px 8px;
-    border-bottom:1px solid var(--line);
-    font-weight:600;
-    white-space:nowrap;
-  }
-  table.standings thead th:nth-child(2){text-align:center;}
-  table.standings tbody td{
-    text-align:center;
-    padding:9px 4px;
-    border-bottom:1px solid var(--line);
-    font-family:'Space Mono',monospace;
-  }
-  table.standings tbody td:nth-child(2){text-align:center;font-family:'Inter',sans-serif;font-weight:600;white-space:nowrap;}
-  table.standings tbody tr:last-child td{border-bottom:none;}
-  .rank-badge{
-    display:inline-flex;align-items:center;justify-content:center;
-    width:22px;height:22px;border-radius:50%;
-    font-family:'Bebas Neue',sans-serif;font-size:12px;
-    background:rgba(255,255,255,0.12);color:var(--chalk-dim);
-  }
-  table.standings tbody tr:nth-child(1) .rank-badge{background:var(--accent);color:var(--on-accent);}
-  table.standings tbody tr:nth-child(2) .rank-badge{background:var(--silver);color:#1E293B;}
-  table.standings tbody tr:nth-child(3) .rank-badge{background:var(--bronze);color:#2A1400;}
-  .diff-pos{color:var(--green-ok);}
-  .diff-neg{color:var(--red);}
-  .chip{
-    display:inline-block;
-    font-size:10px;
-    font-weight:600;
-    letter-spacing:0.3px;
-    padding:2px 8px;
-    border-radius:999px;
-  }
-  .chip-men{background:rgba(255,209,102,0.18);color:var(--gold);}
-  .chip-women{background:rgba(255,101,132,0.18);color:var(--pink);}
-  .total-pts{color:var(--chalk);font-weight:700;font-size:14px;}
-  .rank-change{font-family:'Space Mono',monospace;font-weight:700;font-size:12.5px;white-space:nowrap;}
-  .rank-up{color:var(--green-ok);}
-  .rank-down{color:var(--red);}
-  .rank-same{color:var(--chalk-dim);}
-  .foot-note{font-size:11px;color:var(--chalk-dim);margin-top:16px;line-height:1.6;padding:0 4px;}
-
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-box {
-    background: var(--green-surface);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 20px;
-    width: 100%;
-    max-width: 320px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    text-align: center;
-  }
-  .modal-box h3 { margin: 0 0 8px; font-size: 16px; }
-  .modal-box p { margin: 0 0 16px; font-size: 12px; color: var(--chalk-dim); }
-  .modal-box input {
-    width: 100%;
-    padding: 10px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    color: var(--chalk);
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-  }
-  .modal-box input:focus { outline: none; border-color: var(--accent); }
-  .modal-actions { display: flex; gap: 8px; }
-  .modal-actions button {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 13px;
-  }
-  .btn-cancel { background: rgba(255,255,255,0.08); color: var(--chalk); }
-  .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-  .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
-</style>
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+        }
+    </style>
 </head>
-<body data-theme="men">
+<body>
 
-<div class="wrap">
-  <header>
-    <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-      </svg>
-    </button>
+    <h1>LMCL Rankings – August 2026</h1>
 
-    <div class="brand-container">
-      <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
-      <span class="brand-divider">|</span>
-      <h1>
-        LMCL<br>
-        ALLSTARS<br>
-        RANKINGS<br>
-        <span class="badge-date">AUGUST 2026</span>
-      </h1>
-    </div>
-  </header>
-
-  <div class="tabs">
-    <button class="tab-btn active" data-group="nam">Men's Singles</button>
-    <button class="tab-btn" data-group="nu">Women's Singles</button>
-    <button class="tab-btn" data-group="overall">Overall</button>
-  </div>
-
-  <div id="conn-banner" style="display:none;background:rgba(248,113,113,0.18);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
-
-  <div id="group-nam" class="group active">
-    <div class="card">
-      <div class="card-header">
-        <h2>Schedule — Men's Singles</h2>
-        <div class="header-icons">
-          <button type="button" class="icon-btn" id="search-toggle-nam" aria-label="Tìm kiếm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          </button>
-          <div class="filter-menu-wrap">
-            <button type="button" class="icon-btn" id="filter-toggle-nam" aria-label="Lọc trạng thái">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
-            </button>
-            <div class="filter-menu" id="filter-menu-nam">
-              <button type="button" data-value="all" class="active">Tất cả</button>
-              <button type="button" data-value="played">Đã đấu</button>
-              <button type="button" data-value="unplayed">Chưa đấu</button>
+    <div class="container">
+        <form id="scoreForm">
+            <div class="form-group">
+                <label>Tỷ số trận đấu</label>
+                <div class="score-inputs">
+                    <input type="number" id="score1" placeholder="Đội A" min="0" required>
+                    <span class="separator">-</span>
+                    <input type="number" id="score2" placeholder="Đội B" min="0" required>
+                </div>
+                <div id="errorMessage" class="error-message">Tỷ số không hợp lệ. Khoảng cách điểm phải từ 2 điểm trở lên.</div>
             </div>
-          </div>
-        </div>
-      </div>
-      <p class="sub" id="progress-nam"></p>
-      <div class="search-wrap" id="search-wrap-nam">
-        <input type="text" class="search-input" id="search-nam" placeholder="Tìm theo tên vận động viên...">
-      </div>
-      <div class="fixtures" id="fixtures-nam"></div>
+
+            <button type="submit" class="btn-submit">Ghi nhận tỷ số</button>
+        </form>
     </div>
-    <div class="card">
-      <h2>Standings — Men's Singles</h2>
-      <div class="table-scroll">
-        <table class="standings">
-          <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
-          <tbody id="standings-nam"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 
-  <div id="group-nu" class="group">
-    <div class="card">
-      <div class="card-header">
-        <h2>Schedule — Women's Singles</h2>
-        <div class="header-icons">
-          <button type="button" class="icon-btn" id="search-toggle-nu" aria-label="Tìm kiếm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          </button>
-          <div class="filter-menu-wrap">
-            <button type="button" class="icon-btn" id="filter-toggle-nu" aria-label="Lọc trạng thái">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
-            </button>
-            <div class="filter-menu" id="filter-menu-nu">
-              <button type="button" data-value="all" class="active">Tất cả</button>
-              <button type="button" data-value="played">Đã đấu</button>
-              <button type="button" data-value="unplayed">Chưa đấu</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <p class="sub" id="progress-nu"></p>
-      <div class="search-wrap" id="search-wrap-nu">
-        <input type="text" class="search-input" id="search-nu" placeholder="Tìm theo tên vận động viên...">
-      </div>
-      <div class="fixtures" id="fixtures-nu"></div>
-    </div>
-    <div class="card">
-      <h2>Standings — Women's Singles</h2>
-      <div class="table-scroll">
-        <table class="standings">
-          <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
-          <tbody id="standings-nu"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+    <script>
+        // Cấu hình Firebase (Thay thế thông tin của bạn vào đây)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-  <div id="group-overall" class="group">
-    <div class="card">
-      <h2>Overall Ranking</h2>
-      <div class="table-scroll">
-        <table class="standings">
-          <thead><tr><th>#</th><th>Player</th><th>Nội dung</th><th>Điểm</th><th>Đổi hạng</th></tr></thead>
-          <tbody id="standings-overall"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <p class="foot-note">Xếp hạng theo thứ tự: số trận thắng nhiều nhất → hiệu số điểm cao nhất → tổng điểm ghi được nhiều nhất.</p>
-</div>
-
-<!-- MODAL XÁC THỰC MÃ PIN -->
-<div class="modal-overlay" id="pin-modal">
-  <div class="modal-box">
-    <h3>Xác nhận quyền BTC</h3>
-    <p>Vui lòng nhập mã PIN để kích hoạt quyền cập nhật điểm số</p>
-    <input type="password" id="pin-input" placeholder="Mã PIN" autocomplete="off">
-    <div class="pin-error" id="pin-error">Mã PIN không chính xác!</div>
-    <div class="modal-actions">
-      <button type="button" class="btn-cancel" id="pin-cancel-btn">Hủy</button>
-      <button type="button" class="btn-submit" id="pin-submit-btn">Xác nhận</button>
-    </div>
-  </div>
-</div>
-
-<script>
-const ROSTERS = {
-  nam: [
-    "Vương Mạnh Chuyền",
-    "Chu Văn Huynh",
-    "Phạm Minh Quân",
-    "Nguyễn Văn Thành",
-    "Nguyễn Đình Đạt",
-    "Trần Trung Hiếu",
-    "Nguyễn Tiến Trung"
-  ],
-  nu: [
-    "Nguyễn Đan Quyên",
-    "Lê Thanh Phương",
-    "Vũ Ngọc Linh",
-    "Bùi Huyền Trang",
-    "Đặng Thị Nhung"
-  ]
-};
-
-const OVERALL_DATA = [
-  { name: "Nguyễn Đan Quyên", points: 12 },
-  { name: "Vương Mạnh Chuyền", points: 11 },
-  { name: "Lê Thanh Phương", points: 11 },
-  { name: "Chu Văn Huynh", points: 10 },
-  { name: "Phạm Minh Quân", points: 9 },
-  { name: "Vũ Ngọc Linh", points: 9 },
-  { name: "Nguyễn Văn Thành", points: 6 },
-  { name: "Nguyễn Đình Đạt", points: 5 },
-  { name: "Bùi Huyền Trang", points: 5 },
-  { name: "Đặng Thị Nhung", points: 5 },
-  { name: "Trần Trung Hiếu", points: 4 },
-  { name: "Nguyễn Tiến Trung", points: 4 }
-];
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAxF7hj25lOR8QGhPMW1ie9_ZU1RsoCVL0",
-  authDomain: "lmcl-rankings.firebaseapp.com",
-  databaseURL: "https://lmcl-rankings-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "lmcl-rankings",
-  storageBucket: "lmcl-rankings.firebasestorage.app",
-  messagingSenderId: "454282404352",
-  appId: "1:454282404352:web:a6ead42afcd9c954c8aee5",
-  measurementId: "G-TFFCH8D97K"
-};
-firebase.initializeApp(firebaseConfig);
-const scoresRef = firebase.database().ref('scores');
-
-function showConnBanner(msg){
-  const el = document.getElementById('conn-banner');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-function hideConnBanner(){
-  document.getElementById('conn-banner').style.display = 'none';
-}
-
-if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOUR_PROJECT'){
-  showConnBanner('⚠️ Chưa cấu hình Firebase...');
-}
-
-let scores = {};
-let isAdmin = false; 
-const SECRET_PIN = "BTC";
-
-const uiState = {
-  nam: { status: 'all' },
-  nu: { status: 'all' }
-};
-
-function buildFixtures(group){
-  const players = ROSTERS[group];
-  const fixtures = [];
-  for(let i = 0; i < players.length; i++){
-    for(let j = i + 1; j < players.length; j++){
-      fixtures.push({ id: group + '-' + i + '-' + j, p1: players[i], p2: players[j] });
-    }
-  }
-  return fixtures;
-}
-
-const FIXTURES = { nam: buildFixtures('nam'), nu: buildFixtures('nu') };
-
-function playerGroup(name){
-  if(ROSTERS.nam.includes(name)) return 'nam';
-  if(ROSTERS.nu.includes(name)) return 'nu';
-  return null;
-}
-
-function isEditingScoreInput(){
-  const active = document.activeElement;
-  return !!(active && active.tagName === 'INPUT' && active.classList.contains('score-input'));
-}
-
-scoresRef.on('value', snapshot => {
-  hideConnBanner();
-  scores = snapshot.val() || {};
-  if(isEditingScoreInput()) return;
-  renderAll();
-  ['nam','nu'].forEach(renderStandings);
-  renderOverall();
-}, error => {
-  showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
-  console.error('Firebase error:', error);
-});
-
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
-
-const WIN_SCORE = 15;
-
-function matchState(v1, v2){
-  if(v1 === null && v2 === null){
-    return { state: 'empty' };
-  }
-  if(v1 === null || v2 === null){
-    return { state: 'invalid' };
-  }
-  if(v1 < 0 || v2 < 0){
-    return { state: 'invalid' };
-  }
-  
-  const hi = Math.max(v1, v2);
-  const diff = Math.abs(v1 - v2);
-  
-  if(diff < 2 || hi < WIN_SCORE){
-    return { state: 'invalid' };
-  }
-  
-  return { state: 'finished' };
-}
-
-function getFilteredFixtures(group){
-  const searchEl = document.getElementById('search-' + group);
-  const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
-  const status = uiState[group].status;
-  return FIXTURES[group].filter(f => {
-    if(search){
-      const hay = (f.p1 + ' ' + f.p2).toLowerCase();
-      if(!hay.includes(search)) return false;
-    }
-    if(status !== 'all'){
-      const sc = scores[f.id];
-      const played = !!(sc && sc.played);
-      if(status === 'played' && !played) return false;
-      if(status === 'unplayed' && played) return false;
-    }
-    return true;
-  });
-}
-
-function renderAll(){
-  ['nam','nu'].forEach(renderGroup);
-}
-
-function renderGroup(group){
-  const container = document.getElementById('fixtures-' + group);
-  const fixtures = FIXTURES[group];
-  const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
-  document.getElementById('progress-' + group).textContent =
-    `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
-
-  const STATUS_LABEL = {
-    finished: { text:'Đã đấu', cls:'done' },
-    invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
-  };
-
-  const visible = getFilteredFixtures(group);
-
-  if(visible.length === 0){
-    container.innerHTML = '<div class="no-results">Không tìm thấy trận đấu phù hợp</div>';
-    return;
-  }
-
-  const disabledAttr = isAdmin ? '' : 'disabled';
-
-  container.innerHTML = visible.map(f => {
-    const idx = fixtures.indexOf(f);
-    const sc = scores[f.id];
-    const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
-    const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
-    const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
-    const isInvalid = sc && sc.note === 'invalid';
-    return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}" data-id="${f.id}">
-      <span class="fixture-num">${idx + 1}</span>
-      <span class="name right" title="${escapeHtml(f.p1)}">${escapeHtml(f.p1)}</span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s1 ${isInvalid ? 'invalid' : ''}" value="${hasVal1 ? sc.s1 : ''}" placeholder="-" ${disabledAttr}>
-      <span></span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s2 ${isInvalid ? 'invalid' : ''}" value="${hasVal2 ? sc.s2 : ''}" placeholder="-" ${disabledAttr}>
-      <span class="name" title="${escapeHtml(f.p2)}">${escapeHtml(f.p2)}</span>
-      <span class="error-msg"></span>
-      <span class="fixture-status ${label ? label.cls : ''}">${label ? label.text : ''}</span>
-    </div>`;
-  }).join('');
-
-  if(!isAdmin) return;
-
-  container.querySelectorAll('.fixture-row').forEach(row => {
-    const id = row.getAttribute('data-id');
-    const s1input = row.querySelector('.s1');
-    const s2input = row.querySelector('.s2');
-    const errEl = row.querySelector('.error-msg');
-
-    function validateLive(){
-      const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
-      const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
-      const result = matchState(v1, v2);
-      
-      if(result.state === 'invalid'){
-        errEl.textContent = 'Tỷ số không hợp lệ';
-        
-        if(v1 !== null && v2 !== null){
-          [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
-        } else {
-          if(v1 === null || isNaN(v1)) s1input.classList.add('invalid');
-          else s1input.classList.remove('invalid');
-
-          if(v2 === null || isNaN(v2)) s2input.classList.add('invalid');
-          else s2input.classList.remove('invalid');
+        // Khởi tạo Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
+        const db = firebase.firestore();
 
-        [s1input, s2input].forEach(inp => {
-          inp.classList.remove('shake');
-          void inp.offsetWidth;
-          inp.classList.add('shake');
+        const form = document.getElementById('scoreForm');
+        const score1Input = document.getElementById('score1');
+        const score2Input = document.getElementById('score2');
+        const errorMessage = document.getElementById('errorMessage');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const score1 = parseInt(score1Input.value, 10);
+            const score2 = parseInt(score2Input.value, 10);
+            const diff = Math.abs(score1 - score2);
+
+            // Kiểm tra quy tắc: Hiệu số điểm phải >= 2
+            if (diff < 2) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Hợp lệ -> Ẩn thông báo lỗi & Xử lý lưu dữ liệu
+            errorMessage.style.display = 'none';
+
+            /*
+            db.collection("matches").add({
+                score1: score1,
+                score2: score2,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert("Đã cập nhật tỷ số thành công!");
+                form.reset();
+            })
+            .catch((error) => {
+                console.error("Lỗi khi lưu dữ liệu: ", error);
+            });
+            */
+            
+            alert("Tỷ số hợp lệ! (Đã sẵn sàng gửi lên Firebase)");
         });
-      } else {
-        errEl.textContent = '';
-        [s1input, s2input].forEach(inp => inp.classList.remove('invalid'));
-      }
-    }
-
-    [s1input, s2input].forEach(inp => {
-      inp.addEventListener('animationend', () => inp.classList.remove('shake'));
-    });
-
-    function commit(){
-      const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
-      const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
-      let writeOp;
-      if(v1 === null && v2 === null){
-        writeOp = scoresRef.child(id).remove();
-      } else {
-        const result = matchState(v1, v2);
-        writeOp = scoresRef.child(id).set({ s1: v1, s2: v2, played: result.state === 'finished', note: result.state });
-      }
-      writeOp.catch(error => {
-        showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + ').');
-        console.error('Firebase write error:', error);
-      });
-    }
-
-    s1input.addEventListener('input', validateLive);
-    s2input.addEventListener('input', validateLive);
-    s1input.addEventListener('change', commit);
-    s2input.addEventListener('change', commit);
-  });
-}
-
-function computeStandings(group){
-  const table = {};
-  ROSTERS[group].forEach(name => {
-    table[name] = { name, played:0, win:0, loss:0, ptsFor:0, ptsAgainst:0 };
-  });
-  FIXTURES[group].forEach(f => {
-    const sc = scores[f.id];
-    if(!sc || !sc.played) return;
-    const a = table[f.p1];
-    const b = table[f.p2];
-    a.played++; b.played++;
-    a.ptsFor += sc.s1; a.ptsAgainst += sc.s2;
-    b.ptsFor += sc.s2; b.ptsAgainst += sc.s1;
-    if(sc.s1 > sc.s2){ a.win++; b.loss++; } else { b.win++; a.loss++; }
-  });
-  const rows = Object.values(table).map(r => ({ ...r, diff: r.ptsFor - r.ptsAgainst }));
-  rows.sort((x, y) => {
-    if(y.win !== x.win) return y.win - x.win;
-    if(y.diff !== x.diff) return y.diff - x.diff;
-    return y.ptsFor - x.ptsFor;
-  });
-  return rows;
-}
-
-function renderStandings(group){
-  const rows = computeStandings(group);
-  const body = document.getElementById('standings-' + group);
-  body.innerHTML = rows.map((r, i) => `<tr>
-    <td><span class="rank-badge">${i+1}</span></td>
-    <td>${escapeHtml(r.name)}</td>
-    <td>${r.played}</td>
-    <td>${r.win}</td>
-    <td>${r.loss}</td>
-    <td>${r.ptsFor}</td>
-    <td>${r.ptsAgainst}</td>
-    <td class="${r.diff > 0 ? 'diff-pos' : (r.diff < 0 ? 'diff-neg' : '')}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
-  </tr>`).join('');
-}
-
-function medalPointsFor(rankIndex){
-  if(rankIndex === 0) return 3;
-  if(rankIndex === 1) return 2;
-  if(rankIndex === 2) return 1;
-  return 0;
-}
-
-function computeOverall(){
-  const medalMap = {};
-  ['nam','nu'].forEach(group => {
-    const fixtures = FIXTURES[group];
-    const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
-    const isComplete = playedCount === fixtures.length;
-    if(isComplete){
-      computeStandings(group).forEach((r, i) => {
-        medalMap[r.name] = medalPointsFor(i);
-      });
-    }
-  });
-
-  const withOldRank = OVERALL_DATA.map((r, i) => ({
-    name: r.name,
-    oldPoints: r.points,
-    oldRank: i + 1
-  }));
-
-  const withNew = withOldRank.map(r => {
-    const medal = medalMap[r.name] || 0;
-    return { ...r, medal, newTotal: r.oldPoints + medal };
-  });
-
-  const ranked = [...withNew].sort((a, b) => b.newTotal - a.newTotal);
-  ranked.forEach((r, i) => {
-    r.newRank = i + 1;
-    r.change = r.oldRank - r.newRank;
-  });
-
-  return ranked;
-}
-
-function renderOverall(){
-  const body = document.getElementById('standings-overall');
-  const rows = computeOverall();
-  body.innerHTML = rows.map(r => {
-    const g = playerGroup(r.name);
-    const chipCls = g === 'nu' ? 'chip-women' : 'chip-men';
-    const chipText = g === 'nu' ? 'Nữ' : 'Nam';
-    let changeCls = 'rank-same';
-    let changeText = '–';
-    if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
-    else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
-    return `<tr>
-      <td><span class="rank-badge">${r.newRank}</span></td>
-      <td>${escapeHtml(r.name)}</td>
-      <td><span class="chip ${chipCls}">${chipText}</span></td>
-      <td class="total-pts">${r.newTotal}</td>
-      <td class="rank-change ${changeCls}">${changeText}</td>
-    </tr>`;
-  }).join('');
-}
-
-['nam', 'nu'].forEach(group => {
-  const searchBtn = document.getElementById('search-toggle-' + group);
-  const searchWrap = document.getElementById('search-wrap-' + group);
-  const searchInput = document.getElementById('search-' + group);
-
-  if (searchBtn && searchWrap && searchInput) {
-    searchBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = searchWrap.classList.toggle('open');
-      searchBtn.classList.toggle('active', isOpen);
-      if (isOpen) {
-        searchInput.focus();
-      }
-    });
-
-    searchInput.addEventListener('input', () => {
-      renderGroup(group);
-    });
-  }
-
-  const filterBtn = document.getElementById('filter-toggle-' + group);
-  const filterMenu = document.getElementById('filter-menu-' + group);
-
-  if (filterBtn && filterMenu) {
-    filterBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const otherGroup = group === 'nam' ? 'nu' : 'nam';
-      const otherMenu = document.getElementById('filter-menu-' + otherGroup);
-      if (otherMenu) otherMenu.classList.remove('open');
-
-      const isOpen = filterMenu.classList.toggle('open');
-      filterBtn.classList.toggle('active', isOpen);
-    });
-
-    filterMenu.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const val = btn.getAttribute('data-value');
-        uiState[group].status = val;
-
-        filterMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (val !== 'all') {
-          filterBtn.classList.add('has-filter');
-        } else {
-          filterBtn.classList.remove('has-filter');
-        }
-
-        filterMenu.classList.remove('open');
-        filterBtn.classList.remove('active');
-        renderGroup(group);
-      });
-    });
-  }
-});
-
-document.addEventListener('click', () => {
-  ['nam', 'nu'].forEach(group => {
-    const filterMenu = document.getElementById('filter-menu-' + group);
-    const filterBtn = document.getElementById('filter-toggle-' + group);
-    if (filterMenu && filterMenu.classList.contains('open')) {
-      filterMenu.classList.remove('open');
-      if (filterBtn) filterBtn.classList.remove('active');
-    }
-  });
-});
-
-const authToggleBtn = document.getElementById('auth-toggle-btn');
-const pinModal = document.getElementById('pin-modal');
-const pinInput = document.getElementById('pin-input');
-const pinError = document.getElementById('pin-error');
-const pinCancelBtn = document.getElementById('pin-cancel-btn');
-const pinSubmitBtn = document.getElementById('pin-submit-btn');
-
-function updateAuthUI() {
-  if (isAdmin) {
-    authToggleBtn.classList.add('is-admin');
-    authToggleBtn.setAttribute('title', 'Đang ở quyền BTC (Bấm để thoát)');
-  } else {
-    authToggleBtn.classList.remove('is-admin');
-    authToggleBtn.setAttribute('title', 'Kích hoạt quyền BTC');
-  }
-  renderAll();
-}
-
-authToggleBtn.addEventListener('click', () => {
-  if (isAdmin) {
-    isAdmin = false;
-    updateAuthUI();
-  } else {
-    pinInput.value = '';
-    pinError.style.display = 'none';
-    pinModal.classList.add('open');
-    pinInput.focus();
-  }
-});
-
-pinCancelBtn.addEventListener('click', () => {
-  pinModal.classList.remove('open');
-});
-
-function verifyPin() {
-  if (pinInput.value === SECRET_PIN) {
-    isAdmin = true;
-    pinModal.classList.remove('open');
-    updateAuthUI();
-  } else {
-    pinError.style.display = 'block';
-    pinInput.value = '';
-    pinInput.focus();
-  }
-}
-
-pinSubmitBtn.addEventListener('click', verifyPin);
-pinInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') verifyPin();
-});
-
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
-    btn.classList.add('active');
-    const grp = btn.getAttribute('data-group');
-    document.getElementById('group-' + grp).classList.add('active');
-    document.body.setAttribute('data-theme', grp === 'nu' ? 'women' : (grp === 'overall' ? 'overall' : 'men'));
-  });
-});
-</script>
+    </script>
 </body>
 </html>
