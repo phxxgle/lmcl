@@ -55,12 +55,12 @@
     z-index:5;
   }
   
-  /* CSS LOGO ĐẦU TRANG */
+  /* CSS LOGO ĐÃ TĂNG KÍCH THƯỚC */
   .site-logo {
-    max-height: 60px;
+    max-height: 110px; /* Tăng chiều cao logo tại đây */
     width: auto;
     display: block;
-    margin: 0 auto 10px;
+    margin: 0 auto 12px;
     object-fit: contain;
   }
 
@@ -80,7 +80,6 @@
     line-height:1.4;
   }
 
-  /* ICON PHÂN QUYỀN BTC GÓC TRÊN CÙNG */
   .admin-icon-btn {
     position: absolute;
     top: 16px;
@@ -371,7 +370,6 @@
   .rank-same{color:var(--chalk-dim);}
   .foot-note{font-size:11px;color:var(--chalk-dim);margin-top:16px;line-height:1.6;padding:0 4px;}
 
-  /* MODAL NHẬP PIN */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -428,10 +426,8 @@
 <body data-theme="men">
 <div class="wrap">
   <header>
-    <!-- THẺ LOGO ĐÃ CẬP NHẬT LINK TRỰC TIẾP -->
-    <a href="https://ibb.co/QjH5xBPY" target="_blank" rel="noopener noreferrer">
-      <img src="https://i.ibb.co/wrQv2HSp/123214124124.png" alt="LMCL Logo" class="site-logo">
-    </a>
+    <!-- THẺ LOGO ĐÃ BỎ LINK LIÊN KẾT -->
+    <img src="https://i.ibb.co/wrQv2HSp/123214124124.png" alt="LMCL Logo" class="site-logo">
 
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -915,7 +911,6 @@ function renderOverall(){
   }).join('');
 }
 
-/* XỬ LÝ QUYỀN TRỌNG TÀI / BTC */
 const authToggleBtn = document.getElementById('auth-toggle-btn');
 const pinModal = document.getElementById('pin-modal');
 const pinInput = document.getElementById('pin-input');
