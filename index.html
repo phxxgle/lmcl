@@ -247,63 +247,16 @@
     transform: translateY(0);
   }
 
-  /* CARD WITH SLOW ROTATING GLOW BORDER */
+  /* CARD CHUẨN */
   .card{
-    position: relative;
     background: rgba(14, 77, 47, 0.92);
+    border: 1px solid var(--line);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 14px;
     padding: 14px;
     margin-top: 14px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    isolation: isolate;
-  }
-
-  /* Viền sắc nét chạy viền bao quanh card */
-  .card::after {
-    content: '';
-    position: absolute;
-    inset: -1.5px;
-    border-radius: 15px;
-    background: conic-gradient(
-      from var(--glow-angle),
-      transparent 0%,
-      var(--accent) 20%,
-      transparent 40%,
-      rgba(255, 255, 255, 0.8) 50%,
-      transparent 60%,
-      var(--accent) 80%,
-      transparent 100%
-    );
-    z-index: -1;
-    animation: rotateGlowBorder 10s linear infinite;
-  }
-
-  /* Quầng sáng mờ (glow effect) tỏa nhẹ ra ngoài */
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 16px;
-    background: conic-gradient(
-      from var(--glow-angle),
-      transparent 0%,
-      var(--accent) 25%,
-      transparent 50%,
-      var(--accent) 75%,
-      transparent 100%
-    );
-    z-index: -2;
-    filter: blur(8px);
-    opacity: 0.6;
-    animation: rotateGlowBorder 10s linear infinite;
-  }
-
-  @keyframes rotateGlowBorder {
-    to {
-      --glow-angle: 360deg;
-    }
   }
 
   .card h2{
@@ -510,8 +463,65 @@
   .fixture-status.error{color:var(--red);}
   .fixture-status:empty{display:none;}
 
-  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px;}
-  table.standings{width:100%;min-width:400px;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  /* 🎯 HIỆU ỨNG VIỀN ÁNH SÁNG CHẠY BẢO VỆ XUNG QUANH BẢNG (TABLE STROKE GLOW) */
+  .table-scroll{
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 6px 0 0 0;
+    padding: 8px;
+    background: rgba(3, 27, 16, 0.6);
+    border-radius: 12px;
+    isolation: isolate;
+  }
+
+  /* Viền nét chính chạy quanh khung bảng */
+  .table-scroll::after {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: 13px;
+    background: conic-gradient(
+      from var(--glow-angle),
+      transparent 0%,
+      var(--accent) 20%,
+      transparent 40%,
+      rgba(255, 255, 255, 0.9) 50%,
+      transparent 60%,
+      var(--accent) 80%,
+      transparent 100%
+    );
+    z-index: -1;
+    animation: rotateTableGlow 8s linear infinite;
+  }
+
+  /* Quầng sáng lan tỏa nhè nhẹ xung quanh viền bảng */
+  .table-scroll::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 14px;
+    background: conic-gradient(
+      from var(--glow-angle),
+      transparent 0%,
+      var(--accent) 25%,
+      transparent 50%,
+      var(--accent) 75%,
+      transparent 100%
+    );
+    z-index: -2;
+    filter: blur(6px);
+    opacity: 0.55;
+    animation: rotateTableGlow 8s linear infinite;
+  }
+
+  @keyframes rotateTableGlow {
+    to {
+      --glow-angle: 360deg;
+    }
+  }
+
+  table.standings{width:100%;min-width:380px;border-collapse:collapse;font-size:12.5px;}
   table.standings thead th{
     text-align:center;
     font-size:10px;
