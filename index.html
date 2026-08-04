@@ -322,7 +322,7 @@
   .fixture-row.played{border-color:rgba(61,220,132,0.4);}
   .fixture-num{color:var(--chalk-dim);font-family:'Space Mono',monospace;font-size:11px;text-align:center;}
   
-  /* SỬA CẤU HÌNH TÊN VẬN ĐỘNG VIÊN CHỈ NẰM TRÊN 1 DÒNG */
+  /* CẤU HÌNH TÊN VẬN ĐỘNG VIÊN: NẰM TRÊN 1 DÒNG VÀ CĂN GIỮA Ô */
   .fixture-row .name{
     font-size:11.5px;
     font-weight:500;
@@ -330,8 +330,9 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+    text-align:center;
   }
-  .fixture-row .name.right{text-align:right;}
+  .fixture-row .name.right{text-align:center;}
 
   input[type=number]{
     background:rgba(0,0,0,0.35);
@@ -403,14 +404,14 @@
     font-weight:600;
     white-space:nowrap;
   }
-  table.standings thead th:nth-child(2){text-align:left;}
+  table.standings thead th:nth-child(2){text-align:center;}
   table.standings tbody td{
     text-align:center;
     padding:9px 4px;
     border-bottom:1px solid var(--line);
     font-family:'Space Mono',monospace;
   }
-  table.standings tbody td:nth-child(2){text-align:left;font-family:'Inter',sans-serif;font-weight:600;white-space:nowrap;}
+  table.standings tbody td:nth-child(2){text-align:center;font-family:'Inter',sans-serif;font-weight:600;white-space:nowrap;}
   table.standings tbody tr:last-child td{border-bottom:none;}
   .rank-badge{
     display:inline-flex;align-items:center;justify-content:center;
