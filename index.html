@@ -40,54 +40,12 @@
   body{
     margin:0;
     font-family:'Inter',sans-serif;
-    /* Bổ sung hiệu ứng gradient nhẹ và họa tiết nền đường line chuyển động */
     background-color: var(--green-bg);
-    background-image: 
-      radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 85% 85%, rgba(0, 0, 0, 0.25) 0%, transparent 50%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
-      linear-gradient(225deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%),
-      linear-gradient(315deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%);
-    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px, 40px 40px, 40px 40px;
-    background-position: 0 0, 0 0, 0 0, 0 20px, 20px -20px, -20px 0px;
     color:var(--chalk);
     min-height:100vh;
     padding:0 0 48px;
-    position: relative;
-    overflow-x: hidden;
   }
-
-  /* Thêm lớp hiệu ứng đường line chuyển động chìm mờ ảo ở background */
-  body::before {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 60px,
-      rgba(255, 255, 255, 0.012) 60px,
-      rgba(255, 255, 255, 0.012) 120px
-    );
-    animation: bgMove 30s linear infinite;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  @keyframes bgMove {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(50px, 50px);
-    }
-  }
-
-  .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
+  .wrap{max-width:440px;margin:0 auto;padding:0 12px;}
   
   header{
     text-align:center;
@@ -240,6 +198,7 @@
     transform: translateY(0);
   }
   
+  /* Hiệu ứng chuyển động (Micro-interactions) mượt mà cho các tab content */
   .group{
     display:none;
     opacity: 0;
@@ -258,7 +217,6 @@
     border-radius:12px;
     padding:12px;
     margin-top:18px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
   .card h2{
     font-family:'Bebas Neue',sans-serif;
@@ -1150,7 +1108,7 @@ function updateAuthUI() {
 authToggleBtn.addEventListener('click', () => {
   if (isAdmin) {
     isAdmin = false;
-    updateAuthUri();
+    updateAuthUI();
   } else {
     pinInput.value = '';
     pinError.style.display = 'none';
