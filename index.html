@@ -114,7 +114,6 @@
     line-height:1.5;
   }
 
-  /* --- Card header row: title left, icon actions right --- */
   .card-header{
     display:flex;
     align-items:center;
@@ -154,7 +153,6 @@
     border:1.5px solid var(--navy-900);
   }
 
-  /* --- Expandable search --- */
   .search-wrap{
     max-height:0;
     overflow:hidden;
@@ -175,7 +173,6 @@
   .search-input::placeholder{color:var(--chalk-dim);}
   .search-input:focus{outline:none;border-color:var(--accent);}
 
-  /* --- Filter dropdown --- */
   .filter-menu-wrap{position:relative;}
   .filter-menu{
     display:none;
@@ -243,7 +240,6 @@
   }
   input[type=number]:focus{outline:none;border-color:var(--accent);}
 
-  /* --- Error shake + slide-down message --- */
   @keyframes shake-x{
     10%,90%{transform:translateX(-1px);}
     20%,80%{transform:translateX(2px);}
@@ -337,7 +333,7 @@
 <div class="wrap">
   <header>
     <h1>LMCL Rankings – August 2026</h1>
-    <p>Đánh đơn — vòng tròn 1 lượt — mỗi trận 1 séc, đấu đến 15 điểm, cách biệt tối thiểu 1 điểm</p>
+    <p>Đánh đơn — vòng tròn 1 lượt — mỗi trận 1 séc, đấu đến 15 điểm, cách biệt tối thiểu 2 điểm</p>
     <div class="tabs">
       <button class="tab-btn active" data-group="nam">Men's Singles</button>
       <button class="tab-btn" data-group="nu">Women's Singles</button>
@@ -547,27 +543,26 @@ function escapeHtml(str){
 
 const WIN_SCORE = 15;
 
-// KIỂM TRA TRẠNG THÁI TỶ SỐ
+// KIỂM TRA TRẠNG THÁI TỶ SỐ: ĐẤU ĐẾN 15 ĐIỂM, CÁCH BIỆT TỐI THIỂU 2 ĐIỂM
 function matchState(v1, v2){
-  // Cả 2 ô trống -> Chưa điền
   if(v1 === null && v2 === null){
     return { state: 'empty' };
   }
-  // Một bên điền, một bên trống -> Tỷ số không hợp lệ
   if(v1 === null || v2 === null){
     return { state: 'invalid' };
   }
-  // Điểm âm -> Không hợp lệ
   if(v1 < 0 || v2 < 0){
     return { state: 'invalid' };
   }
+  
   const hi = Math.max(v1, v2);
   const diff = Math.abs(v1 - v2);
   
-  // Khoảng cách giữa 2 điểm < 1 (hòa điểm) HOẶC chưa bên nào đạt 15 điểm
-  if(diff < 1 || hi < WIN_SCORE){
+  // Yêu cầu: ít nhất 1 bên đạt >= 15 điểm VÀ cách biệt giữa 2 bên >= 2 điểm
+  if(diff < 2 || hi < WIN_SCORE){
     return { state: 'invalid' };
   }
+  
   return { state: 'finished' };
 }
 
@@ -644,24 +639,16 @@ function renderGroup(group){
       const result = matchState(v1, v2);
       
       if(result.state === 'invalid'){
-        errEl.textContent = 'Điểm không hợp lệ';
+        errEl.textContent = 'Tỷ số không hợp lệ (cần thắng cách biệt >= 2 điểm)';
         
-        // Thêm viền đỏ nếu 1 bên chưa điền hoặc khoảng cách điểm < 1
-        if(v1 === null || isNaN(v1)){
-          s1input.classList.add('invalid');
-        } else {
-          s1input.classList.remove('invalid');
-        }
-
-        if(v2 === null || isNaN(v2)){
-          s2input.classList.add('invalid');
-        } else {
-          s2input.classList.remove('invalid');
-        }
-
-        // Nếu cả hai đã điền nhưng không hợp lệ (ví dụ: khoảng cách < 1 hoặc < 15 điểm)
         if(v1 !== null && v2 !== null){
           [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
+        } else {
+          if(v1 === null || isNaN(v1)) s1input.classList.add('invalid');
+          else s1input.classList.remove('invalid');
+
+          if(v2 === null || isNaN(v2)) s2input.classList.add('invalid');
+          else s2input.classList.remove('invalid');
         }
 
         [s1input, s2input].forEach(inp => {
