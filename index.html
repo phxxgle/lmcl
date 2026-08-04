@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>LMCL Rankings – August 2026 (Shared)</title>
+<title>LMCL Rankings – August 2026</title>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -214,6 +216,7 @@
       <button class="tab-btn" data-group="overall">Overall</button>
     </div>
   </header>
+  <div id="conn-banner" style="display:none;background:rgba(239,76,100,0.15);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
 
   <div id="group-nam" class="group active">
     <div class="card">
@@ -261,7 +264,7 @@
     </div>
   </div>
 
-  <p class="foot-note">Xếp hạng theo thứ tự: số trận thắng nhiều nhất → hiệu số điểm cao nhất → tổng điểm ghi được nhiều nhất. Đây là bảng dùng chung — ai mở link này đều thấy và có thể nhập cùng một bảng kết quả, tự đồng bộ mỗi vài giây.</p>
+  <p class="foot-note">Xếp hạng theo thứ tự: số trận thắng nhiều nhất → hiệu số điểm cao nhất → tổng điểm ghi được nhiều nhất. Kết quả chỉ lưu trên máy/trình duyệt bạn đang dùng để bấm link này — không đồng bộ với người khác, không bị người khác nhập đè lên dữ liệu của bạn.</p>
 </div>
 
 <script>
@@ -300,30 +303,34 @@ const OVERALL_DATA = [
   { name: "Nguyễn Tiến Trung", points: 4 }
 ];
 
-const STORAGE_KEY = 'badminton-round-robin-scores';
+// ==== FIREBASE CONFIG ====
+// 1. Vào https://console.firebase.google.com -> tạo project mới (miễn phí)
+// 2. Vào Build > Realtime Database -> Create Database -> chọn chế độ "Test mode"
+// 3. Vào Project settings (biểu tượng bánh răng) > General > mục "Your apps" > bấm biểu tượng </> để tạo Web app
+// 4. Copy đoạn firebaseConfig được cấp và dán đè vào bên dưới
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "YOUR_PROJECT"
+};
+firebase.initializeApp(firebaseConfig);
+const scoresRef = firebase.database().ref('scores');
+
+function showConnBanner(msg){
+  const el = document.getElementById('conn-banner');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideConnBanner(){
+  document.getElementById('conn-banner').style.display = 'none';
+}
+
+if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOUR_PROJECT'){
+  showConnBanner('⚠️ Chưa cấu hình Firebase: đoạn firebaseConfig trong file vẫn còn là mẫu placeholder, kết quả sẽ KHÔNG được lưu. Hãy dán thông tin dự án Firebase thật của bạn vào firebaseConfig.');
+}
+
 let scores = {};
-
-const hasClaudeStorage = typeof window.storage !== 'undefined' && window.storage;
-
-async function storageGet(key, shared){
-  if(hasClaudeStorage){
-    try{ return await window.storage.get(key, shared); }catch(e){ return null; }
-  }
-  try{
-    const v = localStorage.getItem(key);
-    return v !== null ? { key, value: v } : null;
-  }catch(e){ return null; }
-}
-
-async function storageSet(key, value, shared){
-  if(hasClaudeStorage){
-    try{ return await window.storage.set(key, value, shared); }catch(e){ return null; }
-  }
-  try{
-    localStorage.setItem(key, value);
-    return { key, value };
-  }catch(e){ return null; }
-}
 
 function buildFixtures(group){
   const players = ROSTERS[group];
@@ -344,41 +351,23 @@ function playerGroup(name){
   return null;
 }
 
-async function loadScores(){
-  try{
-    const res = await storageGet(STORAGE_KEY, true);
-    scores = res && res.value ? JSON.parse(res.value) : {};
-  }catch(e){
-    scores = {};
-  }
-  renderAll();
-}
-
-async function saveScores(){
-  try{
-    await storageSet(STORAGE_KEY, JSON.stringify(scores), true);
-  }catch(e){
-    console.error('Không thể lưu dữ liệu', e);
-  }
-}
-
 function isEditingScoreInput(){
   const active = document.activeElement;
   return !!(active && active.tagName === 'INPUT' && active.classList.contains('score-input'));
 }
 
-async function syncFromShared(){
-  if(isEditingScoreInput()) return;
-  try{
-    const res = await storageGet(STORAGE_KEY, true);
-    const fresh = res && res.value ? JSON.parse(res.value) : {};
-    if(JSON.stringify(fresh) === JSON.stringify(scores)) return;
-    scores = fresh;
-    renderAll();
-    ['nam','nu'].forEach(renderStandings);
-    renderOverall();
-  }catch(e){}
-}
+// Real-time listener — fires instantly whenever ANYONE updates a result
+scoresRef.on('value', snapshot => {
+  hideConnBanner();
+  scores = snapshot.val() || {};
+  if(isEditingScoreInput()) return; // don't yank focus/value while someone is typing
+  renderAll();
+  ['nam','nu'].forEach(renderStandings);
+  renderOverall();
+}, error => {
+  showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + '). Kiểm tra lại: đã tạo Realtime Database chưa, databaseURL đúng chưa, và Rules có cho phép đọc/ghi không. Kết quả sẽ KHÔNG được lưu cho tới khi khắc phục.');
+  console.error('Firebase error:', error);
+});
 
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, c => ({
@@ -444,20 +433,17 @@ function renderGroup(group){
     function commit(){
       const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
       const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
+      let writeOp;
       if(v1 === null && v2 === null){
-        delete scores[id];
-        saveScores();
-        renderGroup(group);
-        renderStandings(group);
-        renderOverall();
-        return;
+        writeOp = scoresRef.child(id).remove();
+      } else {
+        const result = matchState(v1, v2);
+        writeOp = scoresRef.child(id).set({ s1: v1, s2: v2, played: result.state === 'finished', note: result.state });
       }
-      const result = matchState(v1, v2);
-      scores[id] = { s1: v1, s2: v2, played: result.state === 'finished', note: result.state };
-      saveScores();
-      renderGroup(group);
-      renderStandings(group);
-      renderOverall();
+      writeOp.catch(error => {
+        showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + '). Kiểm tra lại Firebase Rules (phải cho phép ghi) và databaseURL.');
+        console.error('Firebase write error:', error);
+      });
     }
     s1input.addEventListener('change', commit);
     s2input.addEventListener('change', commit);
@@ -578,13 +564,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-loadScores();
+renderAll();
 ['nam','nu'].forEach(renderStandings);
 renderOverall();
-setInterval(syncFromShared, 5000);
-document.addEventListener('visibilitychange', () => {
-  if(!document.hidden) syncFromShared();
-});
 
 </script>
 </body>
