@@ -40,17 +40,7 @@
   body{
     margin:0;
     font-family:'Inter',sans-serif;
-    /* UPDATE: Thay đổi background thành họa tiết đường kẻ sân cầu lông được zoom to và fade */
-    background-color: var(--green-bg);
-    background-image: 
-      /* Lớp màu xanh đậm tạo độ sâu */
-      radial-gradient(circle at 50% 50%, rgba(11, 59, 36, 0.3), rgba(5, 36, 22, 0.7) 100%),
-      /* Lớp đường line sân cầu lông mờ (fade) và zoom to */
-      repeating-linear-gradient(45deg, var(--green-bg) 0px, var(--green-bg) 20px, var(--green-bg) 20px, rgba(255, 255, 255, 0.035) 20.5px, rgba(255, 255, 255, 0.035) 22px, var(--green-bg) 22.5px),
-      repeating-linear-gradient(-45deg, var(--green-bg) 0px, var(--green-bg) 18px, var(--green-bg) 18px, rgba(255, 255, 255, 0.03) 18.5px, rgba(255, 255, 255, 0.03) 20px, var(--green-bg) 20.5px),
-      repeating-linear-gradient(90deg, var(--green-bg) 0px, var(--green-bg) 25px, var(--green-bg) 25px, rgba(255, 255, 255, 0.04) 25.5px, rgba(255, 255, 255, 0.04) 27px, var(--green-bg) 27.5px),
-      repeating-linear-gradient(0deg, var(--green-bg) 0px, var(--green-bg) 22px, var(--green-bg) 22px, rgba(255, 255, 255, 0.035) 22.5px, rgba(255, 255, 255, 0.035) 24px, var(--green-bg) 24.5px);
-    background-size: cover;
+    background-color: var(--green-dark);
     color:var(--chalk);
     min-height:100vh;
     padding:0 0 48px;
@@ -58,10 +48,28 @@
     overflow-x: hidden;
   }
 
-  /* UPDATE: Điều chỉnh hoặc loại bỏ hiệu ứng ::before cũ để tránh rối */
-  /*body::before {
-    display: none;
-  }*/
+  /* KHU VỰC BACKGROUND SÂN CẦU LÔNG ZOOM TO & FADE MỜ */
+  .bg-badminton {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Lớp mờ chuyển sắc tối giúp tạo độ sâu và tôn nội dung chính */
+    background: radial-gradient(circle at 50% 50%, rgba(11, 59, 36, 0.88) 0%, rgba(5, 36, 22, 0.98) 100%);
+  }
+
+  .bg-badminton svg {
+    width: 230vw;
+    height: 230vh;
+    /* Zoom to và xoay góc để tạo góc nhìn hiện đại cho sân cầu lông */
+    transform: rotate(-28deg) scale(1.25);
+    /* Fade mờ để đường line không làm chìm chữ */
+    opacity: 0.13;
+  }
 
   .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
   
@@ -167,7 +175,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     padding: 0;
-    z-index: 2; /* Đảm bảo nút admin luôn nổi */
+    z-index: 2;
   }
   .admin-icon-btn svg { width: 16px; height: 16px; }
   .admin-icon-btn:hover { color: var(--chalk); border-color: rgba(255,255,255,0.3); }
@@ -185,8 +193,9 @@
     margin:12px 0 0;
     position:sticky;
     top:0;
-    background:rgba(11, 59, 36, 0.8); /* Thêm nền mờ cho sticky tabs để content không bị lẫn */
-    backdrop-filter: blur(5px);
+    background:rgba(5, 36, 22, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index:10;
     border-bottom: 1px solid var(--line);
     opacity: 0;
@@ -231,14 +240,14 @@
   }
 
   .card{
-    background:var(--green-surface);
+    background: rgba(14, 77, 47, 0.92);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border:1px solid var(--line);
     border-radius:12px;
     padding:12px;
     margin-top:18px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    /* Fade mờ nhẹ nền card để làm nổi bật content trên background */
-    background: rgba(14, 77, 47, 0.96);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   }
   .card h2{
     font-family:'Bebas Neue',sans-serif;
@@ -357,7 +366,7 @@
     grid-template-columns:14px 1fr 32px 4px 32px 1fr;
     align-items:center;
     gap:4px;
-    background:rgba(0,0,0,0.25);
+    background:rgba(0,0,0,0.3);
     border:1px solid var(--line);
     border-radius:8px;
     padding:8px 6px;
@@ -548,6 +557,47 @@
 </style>
 </head>
 <body data-theme="men">
+
+<!-- BACKGROUND SÂN CẦU LÔNG VECTOR MỜ CHI TIẾT CHUẨN -->
+<div class="bg-badminton" aria-hidden="true">
+  <svg viewBox="0 0 1340 610" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <!-- Biên ngoài (Vạch đánh đôi) -->
+    <rect x="30" y="30" width="1280" height="550" fill="none" stroke="#FFFFFF" stroke-width="10"/>
+    
+    <!-- Biên trong (Vạch đánh đơn) -->
+    <line x1="30" y1="72" x2="1310" y2="72" stroke="#FFFFFF" stroke-width="7"/>
+    <line x1="30" y1="538" x2="1310" y2="538" stroke="#FFFFFF" stroke-width="7"/>
+    
+    <!-- Lưới / Vạch phân chia 2 nửa sân -->
+    <line x1="670" y1="15" x2="670" y2="595" stroke="#FFFFFF" stroke-width="12" stroke-dasharray="16,8"/>
+    
+    <!-- Vạch phát bóng ngắn (Short Service Line) -->
+    <line x1="472" y1="30" x2="472" y2="580" stroke="#FFFFFF" stroke-width="7"/>
+    <line x1="868" y1="30" x2="868" y2="580" stroke="#FFFFFF" stroke-width="7"/>
+    
+    <!-- Vạch phát bóng dài đánh đôi (Long Service Line Doubles) -->
+    <line x1="106" y1="30" x2="106" y2="580" stroke="#FFFFFF" stroke-width="7"/>
+    <line x1="1234" y1="30" x2="1234" y2="580" stroke="#FFFFFF" stroke-width="7"/>
+    
+    <!-- Vạch trung tâm phát bóng (Center Line) -->
+    <line x1="30" y1="305" x2="472" y2="305" stroke="#FFFFFF" stroke-width="7"/>
+    <line x1="868" y1="305" x2="1310" y2="305" stroke="#FFFFFF" stroke-width="7"/>
+    
+    <!-- Hình ảnh quả cầu lông mờ điểm xuyết giữa sân -->
+    <g transform="translate(670, 305) scale(0.85)" opacity="0.35" stroke="#FFFFFF" stroke-width="4" fill="none">
+      <path d="M -15, 20 A 15,15 0 0,0 15,20 Z" fill="#FFFFFF"/>
+      <path d="M -15, 20 L -45, -60 L 45, -60 L 15, 20 Z"/>
+      <line x1="-30" y1="-20" x2="30" y2="-20"/>
+      <line x1="-38" y1="-40" x2="38" y2="-40"/>
+      <line x1="0" y1="20" x2="0" y2="-60"/>
+      <line x1="-15" y1="-60" x2="-7" y2="20"/>
+      <line x1="15" y1="-60" x2="7" y2="20"/>
+      <line x1="-30" y1="-60" x2="-12" y2="20"/>
+      <line x1="30" y1="-60" x2="12" y2="20"/>
+    </g>
+  </svg>
+</div>
+
 <div class="wrap">
   <header>
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
