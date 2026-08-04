@@ -40,12 +40,30 @@
   body{
     margin:0;
     font-family:'Inter',sans-serif;
+    /* UPDATE: Thay đổi background thành họa tiết đường kẻ sân cầu lông được zoom to và fade */
     background-color: var(--green-bg);
+    background-image: 
+      /* Lớp màu xanh đậm tạo độ sâu */
+      radial-gradient(circle at 50% 50%, rgba(11, 59, 36, 0.3), rgba(5, 36, 22, 0.7) 100%),
+      /* Lớp đường line sân cầu lông mờ (fade) và zoom to */
+      repeating-linear-gradient(45deg, var(--green-bg) 0px, var(--green-bg) 20px, var(--green-bg) 20px, rgba(255, 255, 255, 0.035) 20.5px, rgba(255, 255, 255, 0.035) 22px, var(--green-bg) 22.5px),
+      repeating-linear-gradient(-45deg, var(--green-bg) 0px, var(--green-bg) 18px, var(--green-bg) 18px, rgba(255, 255, 255, 0.03) 18.5px, rgba(255, 255, 255, 0.03) 20px, var(--green-bg) 20.5px),
+      repeating-linear-gradient(90deg, var(--green-bg) 0px, var(--green-bg) 25px, var(--green-bg) 25px, rgba(255, 255, 255, 0.04) 25.5px, rgba(255, 255, 255, 0.04) 27px, var(--green-bg) 27.5px),
+      repeating-linear-gradient(0deg, var(--green-bg) 0px, var(--green-bg) 22px, var(--green-bg) 22px, rgba(255, 255, 255, 0.035) 22.5px, rgba(255, 255, 255, 0.035) 24px, var(--green-bg) 24.5px);
+    background-size: cover;
     color:var(--chalk);
     min-height:100vh;
     padding:0 0 48px;
+    position: relative;
+    overflow-x: hidden;
   }
-  .wrap{max-width:440px;margin:0 auto;padding:0 12px;}
+
+  /* UPDATE: Điều chỉnh hoặc loại bỏ hiệu ứng ::before cũ để tránh rối */
+  /*body::before {
+    display: none;
+  }*/
+
+  .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
   
   header{
     text-align:center;
@@ -149,6 +167,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     padding: 0;
+    z-index: 2; /* Đảm bảo nút admin luôn nổi */
   }
   .admin-icon-btn svg { width: 16px; height: 16px; }
   .admin-icon-btn:hover { color: var(--chalk); border-color: rgba(255,255,255,0.3); }
@@ -166,7 +185,8 @@
     margin:12px 0 0;
     position:sticky;
     top:0;
-    background:transparent;
+    background:rgba(11, 59, 36, 0.8); /* Thêm nền mờ cho sticky tabs để content không bị lẫn */
+    backdrop-filter: blur(5px);
     z-index:10;
     border-bottom: 1px solid var(--line);
     opacity: 0;
@@ -198,7 +218,6 @@
     transform: translateY(0);
   }
   
-  /* Hiệu ứng chuyển động (Micro-interactions) mượt mà cho các tab content */
   .group{
     display:none;
     opacity: 0;
@@ -217,6 +236,9 @@
     border-radius:12px;
     padding:12px;
     margin-top:18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    /* Fade mờ nhẹ nền card để làm nổi bật content trên background */
+    background: rgba(14, 77, 47, 0.96);
   }
   .card h2{
     font-family:'Bebas Neue',sans-serif;
