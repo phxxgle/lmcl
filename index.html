@@ -46,17 +46,14 @@
   }
   .wrap{max-width:440px;margin:0 auto;padding:0 16px;}
   
+  /* HEADER KHÔNG CÒN STICKY ĐỂ LOGO TRÔI THEO KHI SCROLL */
   header{
     text-align:center;
-    padding:24px 16px 20px;
-    border-bottom:2px solid var(--line);
-    position:sticky;
-    top:0;
-    background:var(--navy-900);
-    z-index:5;
+    padding:24px 16px 12px;
+    position:relative;
   }
 
-  /* KHUNG CHỨA CĂN GIỮA */
+  /* KHUNG CHỨA CĂN GIỮA LOGO & TITLE */
   .brand-container {
     display: flex;
     align-items: center;
@@ -66,7 +63,7 @@
     position: relative;
   }
 
-  /* TĂNG KÍCH THƯỚC LOGO LỚN HƠN (80PX) */
+  /* LOGO */
   .site-logo {
     height: 80px;
     width: auto;
@@ -75,7 +72,7 @@
     animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   }
 
-  /* TĂNG KÍCH THƯỚC DẤU PHÂN CÁCH (52PX) */
+  /* DẤU PHÂN CÁCH */
   .brand-divider {
     font-family:'Tomorrow',sans-serif;
     font-weight: 300;
@@ -86,7 +83,7 @@
     animation: fadeInContent 0.5s ease forwards 1s;
   }
 
-  /* TĂNG KÍCH THƯỚC CHỮ TIÊU ĐỀ (20PX) */
+  /* CHỮ TIÊU ĐỀ */
   h1 {
     font-family:'Tomorrow',sans-serif;
     font-weight:700;
@@ -168,11 +165,17 @@
     box-shadow: 0 0 10px rgba(255, 199, 44, 0.25);
   }
 
-  /* TĂNG KHOẢNG CÁCH RỘNG HƠN NỮA VỚI TABS BÊN DƯỚI (MARGIN-TOP 32PX) */
+  /* THANH TABS CHỈNH THÀNH STICKY DUY NHẤT */
   .tabs{
     display:flex;
     gap:6px;
-    margin:32px 0 0;
+    padding:12px 0 16px;
+    margin:12px 0 0;
+    position:sticky;
+    top:0;
+    background:var(--navy-900);
+    z-index:10;
+    border-bottom:1px solid var(--line);
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.4s;
   }
@@ -498,7 +501,7 @@
       </svg>
     </button>
 
-    <!-- CỤM HEADER LOGO + TIÊU ĐỀ LỚN -->
+    <!-- CỤM HEADER LOGO + TIÊU ĐỀ LỚN (CUỘN THÔNG THƯỜNG) -->
     <div class="brand-container">
       <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
       <span class="brand-divider">|</span>
@@ -509,13 +512,15 @@
         <span class="badge-date">AUGUST 2026</span>
       </h1>
     </div>
-    
-    <div class="tabs">
-      <button class="tab-btn active" data-group="nam">Men's Singles</button>
-      <button class="tab-btn" data-group="nu">Women's Singles</button>
-      <button class="tab-btn" data-group="overall">Overall</button>
-    </div>
   </header>
+
+  <!-- THANH TABS CỐ ĐỊNH (FROZEN) KHI CUỘN -->
+  <div class="tabs">
+    <button class="tab-btn active" data-group="nam">Men's Singles</button>
+    <button class="tab-btn" data-group="nu">Women's Singles</button>
+    <button class="tab-btn" data-group="overall">Overall</button>
+  </div>
+
   <div id="conn-banner" style="display:none;background:rgba(239,76,100,0.15);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
 
   <div id="group-nam" class="group active">
