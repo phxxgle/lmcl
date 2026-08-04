@@ -41,7 +41,6 @@
   body{
     margin:0;
     font-family:'Inter',sans-serif;
-    /* Nền Gradient mượt liền mạch toàn bộ trang */
     background: linear-gradient(180deg, #093C24 0%, #052718 35%, #031B10 100%);
     background-attachment: fixed;
     color:var(--chalk);
@@ -151,7 +150,7 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
-  /* TABS CHUYỂN MÀU GRADIENT MƯỢT MÀ VỚI HEADER */
+  /* TABS & HIỆU ỨNG ELEGANT GLOW RUNNING BORDER */
   .tabs{
     display: flex;
     gap: 8px;
@@ -159,7 +158,6 @@
     margin: 0 -12px;
     position: sticky;
     top: 0;
-    /* Gradient tan dần từ vùng Header xuống, kết hợp hiệu ứng nhòe kính mượt */
     background: linear-gradient(180deg, rgba(8, 48, 30, 0.95) 0%, rgba(5, 33, 21, 0.92) 100%);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -169,6 +167,7 @@
   }
   
   .tab-btn{
+    position: relative;
     flex:1;
     font-family:'Bebas Neue',sans-serif;
     font-size:15px;
@@ -180,17 +179,56 @@
     padding: 10px 4px;
     cursor: pointer;
     transition: all 0.25s ease;
+    overflow: hidden;
+    z-index: 1;
   }
+
   .tab-btn:hover {
     color: var(--chalk);
     background: rgba(255, 255, 255, 0.12);
   }
+
+  /* KHI TAB ĐƯỢC CHỌN (ACTIVE) */
   .tab-btn.active{
     background: var(--accent);
     color: var(--on-accent);
-    border-color: var(--accent);
+    border-color: transparent;
     font-weight: bold;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  }
+
+  /* TẠO VIỀN PHÁT SÁNG XOAY NHẸ NHÀNG */
+  .tab-btn.active::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.9) 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.9) 75%,
+      transparent 100%
+    );
+    border-radius: 999px;
+    animation: elegantGlow 4s linear infinite;
+    z-index: -2;
+  }
+
+  /* MẶT NẠ NỀN TRONG ĐỂ CHỈ HIỆN VIỀN PHÁT SÁNG */
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    background: var(--accent);
+    border-radius: 999px;
+    z-index: -1;
+    transition: background 0.3s ease;
+  }
+
+  @keyframes elegantGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   
   .group{
