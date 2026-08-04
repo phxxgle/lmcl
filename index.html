@@ -309,10 +309,14 @@ const OVERALL_DATA = [
 // 3. Vào Project settings (biểu tượng bánh răng) > General > mục "Your apps" > bấm biểu tượng </> để tạo Web app
 // 4. Copy đoạn firebaseConfig được cấp và dán đè vào bên dưới
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "YOUR_PROJECT"
+  apiKey: "AIzaSyAxF7hj25lOR8QGhPMW1ie9_ZU1RsoCVL0",
+  authDomain: "lmcl-rankings.firebaseapp.com",
+  databaseURL: "https://lmcl-rankings-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "lmcl-rankings",
+  storageBucket: "lmcl-rankings.firebasestorage.app",
+  messagingSenderId: "454282404352",
+  appId: "1:454282404352:web:a6ead42afcd9c954c8aee5",
+  measurementId: "G-TFFCH8D97K"
 };
 firebase.initializeApp(firebaseConfig);
 const scoresRef = firebase.database().ref('scores');
