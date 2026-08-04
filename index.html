@@ -11,35 +11,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy-900:#081831;
-    --navy-800:#0F2547;
-    --line:rgba(255,255,255,0.14);
-    --chalk:#F5F7FA;
-    --chalk-dim:#8FA3BC;
-    --gold:#FFC72C;
-    --pink:#EC4899;
-    --blue:#4FC3F7;
+    --green-bg:#05542e;
+    --green-dark:#03381e;
+    --green-surface:#034224;
+    --line:rgba(255,255,255,0.16);
+    --chalk:#F8FAFC;
+    --chalk-dim:#A1C1B0;
+    --gold:#FFD166;
+    --pink:#FF6584;
+    --blue:#38BDF8;
     --accent:var(--gold);
-    --on-accent:#3B2A08;
-    --silver:#C7CDD6;
-    --bronze:#C98A4B;
-    --green-ok:#3DDC84;
-    --red:#EF4C64;
+    --on-accent:#1C1300;
+    --silver:#CBD5E1;
+    --bronze:#E59866;
+    --green-ok:#4ADE80;
+    --red:#F87171;
   }
   body[data-theme="women"]{
     --accent:var(--pink);
-    --on-accent:#4A0B2E;
+    --on-accent:#2D0310;
   }
   body[data-theme="overall"]{
     --accent:var(--blue);
-    --on-accent:#062338;
+    --on-accent:#031B2A;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html{-webkit-text-size-adjust:100%;}
   body{
     margin:0;
     font-family:'Inter',sans-serif;
-    background:linear-gradient(180deg, var(--navy-900) 0%, #050F22 100%);
+    background:linear-gradient(180deg, var(--green-bg) 0%, var(--green-dark) 100%);
     color:var(--chalk);
     min-height:100vh;
     padding:0 0 48px;
@@ -94,8 +95,8 @@
 
   .badge-date {
     display: inline-block;
-    background-color: #ffffff;
-    color: var(--navy-900);
+    background-color: var(--chalk);
+    color: var(--green-bg);
     font-size: 11px;
     font-weight: 700;
     padding: 3px 7px;
@@ -139,7 +140,7 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--line);
     color: var(--chalk-dim);
     display: flex;
@@ -155,7 +156,7 @@
     background: var(--accent);
     color: var(--on-accent);
     border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(255, 199, 44, 0.25);
+    box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
   .tabs{
@@ -165,7 +166,7 @@
     margin:12px 0 0;
     position:sticky;
     top:0;
-    background:var(--navy-900);
+    background:var(--green-bg);
     z-index:10;
     border-bottom:1px solid var(--line);
     opacity: 0;
@@ -176,7 +177,7 @@
     font-family:'Bebas Neue',sans-serif;
     font-size:14px;
     letter-spacing:0.8px;
-    background:rgba(255,255,255,0.04);
+    background:rgba(255,255,255,0.06);
     color:var(--chalk-dim);
     border:1px solid var(--line);
     border-radius:999px;
@@ -187,15 +188,17 @@
     background:var(--accent);
     color:var(--on-accent);
     border-color:var(--accent);
+    font-weight:bold;
   }
   .group{display:none;}
   .group.active{display:block;}
   .card{
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.06);
     border:1px solid var(--line);
     border-radius:12px;
     padding:12px;
     margin-top:18px;
+    backdrop-filter: blur(8px);
   }
   .card h2{
     font-family:'Bebas Neue',sans-serif;
@@ -229,7 +232,7 @@
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.06);
     border:1px solid var(--line);
     border-radius:8px;
     color:var(--chalk-dim);
@@ -247,7 +250,7 @@
     width:7px;height:7px;
     border-radius:50%;
     background:var(--accent);
-    border:1.5px solid var(--navy-900);
+    border:1.5px solid var(--green-bg);
   }
 
   .search-wrap{
@@ -258,7 +261,7 @@
   .search-wrap.open{max-height:52px;margin-bottom:10px;}
   .search-input{
     width:100%;
-    background:rgba(0,0,0,0.3);
+    background:rgba(0,0,0,0.25);
     border:1px solid var(--line);
     border-radius:8px;
     color:var(--chalk);
@@ -276,13 +279,13 @@
     position:absolute;
     top:36px;
     right:0;
-    background:var(--navy-800);
+    background:var(--green-surface);
     border:1px solid var(--line);
     border-radius:10px;
     padding:6px;
     min-width:118px;
     z-index:10;
-    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    box-shadow:0 8px 24px rgba(0,0,0,0.5);
   }
   .filter-menu.open{display:block;}
   .filter-menu button{
@@ -298,7 +301,7 @@
     border-radius:6px;
     cursor:pointer;
   }
-  .filter-menu button:hover{background:rgba(255,255,255,0.06);color:var(--chalk);}
+  .filter-menu button:hover{background:rgba(255,255,255,0.08);color:var(--chalk);}
   .filter-menu button.active{color:var(--accent);font-weight:600;}
 
   .no-results{
@@ -314,15 +317,14 @@
     grid-template-columns:14px 1fr 32px 4px 32px 1fr;
     align-items:center;
     gap:4px;
-    background:rgba(0,0,0,0.2);
+    background:rgba(0,0,0,0.18);
     border:1px solid var(--line);
     border-radius:8px;
     padding:8px 6px;
   }
-  .fixture-row.played{border-color:rgba(61,220,132,0.4);}
+  .fixture-row.played{border-color:rgba(74,222,128,0.45);}
   .fixture-num{color:var(--chalk-dim);font-family:'Space Mono',monospace;font-size:11px;text-align:center;}
   
-  /* CĂN GIỮA TÊN VẬN ĐỘNG VIÊN TRONG Ô */
   .fixture-row .name{
     font-size:11.5px;
     font-weight:500;
@@ -335,7 +337,7 @@
   .fixture-row .name.right{text-align:center;}
 
   input[type=number]{
-    background:rgba(0,0,0,0.35);
+    background:rgba(0,0,0,0.3);
     border:1px solid var(--line);
     border-radius:6px;
     color:var(--chalk);
@@ -367,7 +369,7 @@
   .score-input.shake{animation:shake-x 0.4s;}
   .score-input.invalid{
     border-color:var(--red) !important;
-    box-shadow:0 0 0 2px rgba(239,76,100,0.25);
+    box-shadow:0 0 0 2px rgba(248,113,113,0.3);
   }
   .error-msg{
     grid-column:1/-1;
@@ -417,11 +419,11 @@
     display:inline-flex;align-items:center;justify-content:center;
     width:22px;height:22px;border-radius:50%;
     font-family:'Bebas Neue',sans-serif;font-size:12px;
-    background:rgba(255,255,255,0.08);color:var(--chalk-dim);
+    background:rgba(255,255,255,0.12);color:var(--chalk-dim);
   }
   table.standings tbody tr:nth-child(1) .rank-badge{background:var(--accent);color:var(--on-accent);}
-  table.standings tbody tr:nth-child(2) .rank-badge{background:var(--silver);color:#2A2E33;}
-  table.standings tbody tr:nth-child(3) .rank-badge{background:var(--bronze);color:#3B2408;}
+  table.standings tbody tr:nth-child(2) .rank-badge{background:var(--silver);color:#1E293B;}
+  table.standings tbody tr:nth-child(3) .rank-badge{background:var(--bronze);color:#2A1400;}
   .diff-pos{color:var(--green-ok);}
   .diff-neg{color:var(--red);}
   .chip{
@@ -432,8 +434,8 @@
     padding:2px 8px;
     border-radius:999px;
   }
-  .chip-men{background:rgba(255,199,44,0.16);color:var(--gold);}
-  .chip-women{background:rgba(236,72,153,0.16);color:var(--pink);}
+  .chip-men{background:rgba(255,209,102,0.18);color:var(--gold);}
+  .chip-women{background:rgba(255,101,132,0.18);color:var(--pink);}
   .total-pts{color:var(--chalk);font-weight:700;font-size:14px;}
   .rank-change{font-family:'Space Mono',monospace;font-weight:700;font-size:12.5px;white-space:nowrap;}
   .rank-up{color:var(--green-ok);}
@@ -454,13 +456,13 @@
   }
   .modal-overlay.open { display: flex; }
   .modal-box {
-    background: var(--navy-800);
+    background: var(--green-surface);
     border: 1px solid var(--line);
     border-radius: 12px;
     padding: 20px;
     width: 100%;
     max-width: 320px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     text-align: center;
   }
   .modal-box h3 { margin: 0 0 8px; font-size: 16px; }
@@ -489,7 +491,7 @@
     cursor: pointer;
     font-size: 13px;
   }
-  .btn-cancel { background: rgba(255,255,255,0.05); color: var(--chalk); }
+  .btn-cancel { background: rgba(255,255,255,0.08); color: var(--chalk); }
   .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
 </style>
@@ -521,7 +523,7 @@
     <button class="tab-btn" data-group="overall">Overall</button>
   </div>
 
-  <div id="conn-banner" style="display:none;background:rgba(239,76,100,0.15);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
+  <div id="conn-banner" style="display:none;background:rgba(248,113,113,0.18);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
 
   <div id="group-nam" class="group active">
     <div class="card">
@@ -988,11 +990,7 @@ function renderOverall(){
   }).join('');
 }
 
-/* ========================================================
-   CẤU HÌNH TÌM KIẾM VÀ BỘ LỌC CHO TẤT CẢ NGUỜI DÙNG (CẢ KHÁN GIẢ)
-   ======================================================== */
 ['nam', 'nu'].forEach(group => {
-  // 1. Tìm kiếm (Search Toggle & Input)
   const searchBtn = document.getElementById('search-toggle-' + group);
   const searchWrap = document.getElementById('search-wrap-' + group);
   const searchInput = document.getElementById('search-' + group);
@@ -1012,14 +1010,12 @@ function renderOverall(){
     });
   }
 
-  // 2. Bộ lọc (Filter Toggle & Menu)
   const filterBtn = document.getElementById('filter-toggle-' + group);
   const filterMenu = document.getElementById('filter-menu-' + group);
 
   if (filterBtn && filterMenu) {
     filterBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      // Đóng menu lọc của tab kia nếu đang mở
       const otherGroup = group === 'nam' ? 'nu' : 'nam';
       const otherMenu = document.getElementById('filter-menu-' + otherGroup);
       if (otherMenu) otherMenu.classList.remove('open');
@@ -1051,7 +1047,6 @@ function renderOverall(){
   }
 });
 
-// Đóng menu bộ lọc khi click ra ngoài màn hình
 document.addEventListener('click', () => {
   ['nam', 'nu'].forEach(group => {
     const filterMenu = document.getElementById('filter-menu-' + group);
@@ -1063,9 +1058,6 @@ document.addEventListener('click', () => {
   });
 });
 
-/* ========================================================
-   QUẢN LÝ QUYỀN TRỌNG TÀI / BTC
-   ======================================================== */
 const authToggleBtn = document.getElementById('auth-toggle-btn');
 const pinModal = document.getElementById('pin-modal');
 const pinInput = document.getElementById('pin-input');
