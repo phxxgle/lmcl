@@ -240,6 +240,43 @@
   }
   input[type=number]:focus{outline:none;border-color:var(--accent);}
 
+  @keyframes shake-x{
+    10%,90%{transform:translateX(-1px);}
+    20%,80%{transform:translateX(2px);}
+    30%,50%,70%{transform:translateX(-4px);}
+    40%,60%{transform:translateX(4px);}
+  }
+  @keyframes slide-down{
+    from{opacity:0;transform:translateY(-6px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .score-input.shake{animation:shake-x 0.4s;}
+  .score-input.invalid{
+    border-color:var(--red) !important;
+    box-shadow:0 0 0 2px rgba(239,76,100,0.25);
+  }
+  .error-msg{
+    grid-column:1/-1;
+    font-size:10.5px;
+    text-align:center;
+    color:var(--red);
+    margin-top:-2px;
+    animation:slide-down 0.25s ease;
+  }
+  .error-msg:empty{display:none;animation:none;}
+
+  .fixture-status{
+    grid-column:1/-1;
+    font-size:10.5px;
+    text-align:right;
+    color:var(--chalk-dim);
+    margin-top:-2px;
+  }
+  .fixture-status.done{color:var(--green-ok);}
+  .fixture-status.warn{color:var(--accent);}
+  .fixture-status.error{color:var(--red);}
+  .fixture-status:empty{display:none;}
+
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px;}
   table.standings{width:100%;min-width:400px;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
   table.standings thead th{
@@ -521,6 +558,7 @@ function matchState(v1, v2){
   const hi = Math.max(v1, v2);
   const diff = Math.abs(v1 - v2);
   
+  // Yêu cầu: ít nhất 1 bên đạt >= 15 điểm VÀ cách biệt giữa 2 bên >= 2 điểm
   if(diff < 2 || hi < WIN_SCORE){
     return { state: 'invalid' };
   }
@@ -558,6 +596,11 @@ function renderGroup(group){
   document.getElementById('progress-' + group).textContent =
     `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
 
+  const STATUS_LABEL = {
+    finished: { text:'Đã đấu', cls:'done' },
+    invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
+  };
+
   const visible = getFilteredFixtures(group);
 
   if(visible.length === 0){
@@ -570,13 +613,17 @@ function renderGroup(group){
     const sc = scores[f.id];
     const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
     const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
+    const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
+    const isInvalid = sc && sc.note === 'invalid';
     return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}" data-id="${f.id}">
       <span class="fixture-num">${idx + 1}</span>
       <span class="name right">${escapeHtml(f.p1)}</span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s1" value="${hasVal1 ? sc.s1 : ''}" placeholder="-">
+      <input type="number" inputmode="numeric" min="0" class="score-input s1 ${isInvalid ? 'invalid' : ''}" value="${hasVal1 ? sc.s1 : ''}" placeholder="-">
       <span></span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s2" value="${hasVal2 ? sc.s2 : ''}" placeholder="-">
+      <input type="number" inputmode="numeric" min="0" class="score-input s2 ${isInvalid ? 'invalid' : ''}" value="${hasVal2 ? sc.s2 : ''}" placeholder="-">
       <span class="name">${escapeHtml(f.p2)}</span>
+      <span class="error-msg"></span>
+      <span class="fixture-status ${label ? label.cls : ''}">${label ? label.text : ''}</span>
     </div>`;
   }).join('');
 
@@ -584,6 +631,40 @@ function renderGroup(group){
     const id = row.getAttribute('data-id');
     const s1input = row.querySelector('.s1');
     const s2input = row.querySelector('.s2');
+    const errEl = row.querySelector('.error-msg');
+
+    function validateLive(){
+      const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
+      const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
+      const result = matchState(v1, v2);
+      
+      if(result.state === 'invalid'){
+        errEl.textContent = 'Tỷ số không hợp lệ (cần thắng cách biệt >= 2 điểm)';
+        
+        if(v1 !== null && v2 !== null){
+          [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
+        } else {
+          if(v1 === null || isNaN(v1)) s1input.classList.add('invalid');
+          else s1input.classList.remove('invalid');
+
+          if(v2 === null || isNaN(v2)) s2input.classList.add('invalid');
+          else s2input.classList.remove('invalid');
+        }
+
+        [s1input, s2input].forEach(inp => {
+          inp.classList.remove('shake');
+          void inp.offsetWidth;
+          inp.classList.add('shake');
+        });
+      } else {
+        errEl.textContent = '';
+        [s1input, s2input].forEach(inp => inp.classList.remove('invalid'));
+      }
+    }
+
+    [s1input, s2input].forEach(inp => {
+      inp.addEventListener('animationend', () => inp.classList.remove('shake'));
+    });
 
     function commit(){
       const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
@@ -601,6 +682,8 @@ function renderGroup(group){
       });
     }
 
+    s1input.addEventListener('input', validateLive);
+    s2input.addEventListener('input', validateLive);
     s1input.addEventListener('change', commit);
     s2input.addEventListener('change', commit);
   });
