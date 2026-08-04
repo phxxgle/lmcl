@@ -45,38 +45,106 @@
     padding:0 0 48px;
   }
   .wrap{max-width:440px;margin:0 auto;padding:0 16px;}
+  
   header{
     text-align:center;
-    padding:18px 16px 16px; /* Đã sửa padding cân bằng trái - phải */
+    padding:18px 16px 16px;
     border-bottom:2px solid var(--line);
     position:sticky;
     top:0;
     background:var(--navy-900);
     z-index:5;
   }
-  
-  .site-logo {
-    max-height: 100px;
-    width: auto;
-    display: block;
-    margin: 0 auto 12px;
-    object-fit: contain;
+
+  /* KHUNG ANIMATION HEADER */
+  .brand-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 48px;
+    margin-bottom: 8px;
   }
 
-  h1{
+  .site-logo {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+    position: absolute;
+    animation: logoIntro 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+
+  .brand-text-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeInGroup 0.8s ease forwards 1s;
+  }
+
+  .brand-divider {
+    font-family:'Tomorrow',sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    color: var(--chalk-dim);
+    opacity: 0;
+    animation: fadeInDivider 0.4s ease forwards 1.1s;
+  }
+
+  h1 {
     font-family:'Tomorrow',sans-serif;
     font-weight:700;
-    font-size:20px;
+    font-size:16px;
     letter-spacing:0.5px;
     margin:0;
     color:var(--chalk);
-    line-height:1.25;
+    line-height:1.2;
+    text-align: left;
+    opacity: 0;
+    animation: fadeInText 0.6s ease forwards 1.3s;
   }
+
+  /* KEYFRAMES MOTION */
+  @keyframes logoIntro {
+    0% {
+      transform: scale(1.6) translateY(12px);
+      opacity: 0;
+    }
+    35% {
+      transform: scale(1.6) translateY(0);
+      opacity: 1;
+    }
+    60% {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) translateX(-54px) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInGroup {
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeInDivider {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes fadeInText {
+    from { opacity: 0; transform: translateX(6px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
   header p{
     color:var(--chalk-dim);
     font-size:11.5px;
     margin:6px 0 0;
     line-height:1.4;
+    opacity: 0;
+    animation: fadeInText 0.6s ease forwards 1.5s;
   }
 
   .admin-icon-btn {
@@ -109,6 +177,8 @@
     display:flex;
     gap:6px;
     margin:12px 0 0;
+    opacity: 0;
+    animation: fadeInText 0.6s ease forwards 1.7s;
   }
   .tab-btn{
     flex:1;
@@ -425,8 +495,6 @@
 <body data-theme="men">
 <div class="wrap">
   <header>
-    <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
-
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -434,8 +502,16 @@
       </svg>
     </button>
 
-    <h1>LMCL Rankings – August 2026</h1>
+    <div class="brand-container">
+      <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
+      <div class="brand-text-group">
+        <span class="brand-divider">|</span>
+        <h1>LMCL ALLSTARS RANKINGS AUGUST 2026</h1>
+      </div>
+    </div>
+
     <p>Đánh đơn — vòng tròn 1 lượt — mỗi trận 1 séc, đấu đến 15 điểm, cách biệt tối thiểu 2 điểm</p>
+    
     <div class="tabs">
       <button class="tab-btn active" data-group="nam">Men's Singles</button>
       <button class="tab-btn" data-group="nu">Women's Singles</button>
