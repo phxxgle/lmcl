@@ -275,7 +275,7 @@
 <div class="wrap">
   <header>
     <h1>LMCL Rankings – August 2026</h1>
-    <p>Đánh đơn — vòng tròn 1 lượt — mỗi trận 1 séc, đấu đến 15 điểm, cách biệt tối thiểu 2 điểm</p>
+    <p>Đánh đơn — vòng tròn 1 lượt — mỗi trận 1 séc, đấu đến 15 điểm, cách biệt tối thiểu 1 điểm</p>
     <div class="tabs">
       <button class="tab-btn active" data-group="nam">Men's Singles</button>
       <button class="tab-btn" data-group="nu">Women's Singles</button>
@@ -462,21 +462,22 @@ function escapeHtml(str){
 }
 
 const WIN_SCORE = 15;
-const WIN_MARGIN = 2;
+const WIN_MARGIN = 1;
 
 function matchState(v1, v2){
   if(v1 === null || v2 === null || isNaN(v1) || isNaN(v2)){
     return { state:'empty' };
   }
-  if(v1 < 0 || v2 < 0 || v1 === v2){
+  if(v1 < 0 || v2 < 0){
     return { state:'invalid' };
   }
   const hi = Math.max(v1, v2);
   const diff = Math.abs(v1 - v2);
-  if(hi >= WIN_SCORE && diff >= WIN_MARGIN){
-    return { state:'finished' };
+  // Invalid nếu 1 bên chưa chạm 15 điểm, hoặc cách biệt điểm số của 2 đội nhỏ hơn 1
+  if(hi < WIN_SCORE || diff < WIN_MARGIN){
+    return { state:'invalid' };
   }
-  return { state:'ongoing' };
+  return { state:'finished' };
 }
 
 // --- Search & status filter ---
@@ -513,7 +514,6 @@ function renderGroup(group){
 
   const STATUS_LABEL = {
     finished: { text:'Đã đấu', cls:'done' },
-    ongoing: { text:'Chưa đủ cách biệt', cls:'warn' },
     invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
   };
 
