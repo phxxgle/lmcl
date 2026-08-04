@@ -639,7 +639,7 @@ function renderGroup(group){
       const result = matchState(v1, v2);
       
       if(result.state === 'invalid'){
-        errEl.textContent = 'Tỷ số không hợp lệ (cần thắng cách biệt >= 2 điểm)';
+        errEl.textContent = 'Tỷ số không hợp lệ';
         
         if(v1 !== null && v2 !== null){
           [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
