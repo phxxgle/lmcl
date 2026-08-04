@@ -11,8 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green-bg:#052416;
-    --green-dark:#052416;
+    --green-bg:#031B10;
+    --green-dark:#031B10;
     --green-surface:#0E4D2F;
     --line:rgba(255,255,255,0.12);
     --chalk:#F8FAFC;
@@ -41,8 +41,8 @@
   body{
     margin:0;
     font-family:'Inter',sans-serif;
-    background-color: #052416;
-    background-image: radial-gradient(circle at 50% 0%, #0E4D2F 0%, #052416 70%);
+    /* Nền Gradient mượt liền mạch toàn bộ trang */
+    background: linear-gradient(180deg, #093C24 0%, #052718 35%, #031B10 100%);
     background-attachment: fixed;
     color:var(--chalk);
     min-height:100vh;
@@ -55,7 +55,7 @@
   
   header{
     text-align:center;
-    padding:24px 16px 16px;
+    padding:28px 16px 12px;
     position:relative;
   }
 
@@ -151,28 +151,29 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
-  /* TABS LIỀN MẠCH VỚI HEADER */
+  /* TABS CHUYỂN MÀU GRADIENT MƯỢT MÀ VỚI HEADER */
   .tabs{
     display: flex;
     gap: 8px;
-    padding: 8px 12px 12px 12px;
+    padding: 12px 12px 14px 12px;
     margin: 0 -12px;
     position: sticky;
     top: 0;
-    /* Dùng màu khớp chính xác với gradient của body */
-    background: rgba(8, 45, 28, 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    /* Gradient tan dần từ vùng Header xuống, kết hợp hiệu ứng nhòe kính mượt */
+    background: linear-gradient(180deg, rgba(8, 48, 30, 0.95) 0%, rgba(5, 33, 21, 0.92) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 20;
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.4s;
   }
+  
   .tab-btn{
     flex:1;
     font-family:'Bebas Neue',sans-serif;
     font-size:15px;
     letter-spacing:0.8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.06);
     color: var(--chalk-dim);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 999px;
@@ -189,7 +190,7 @@
     color: var(--on-accent);
     border-color: var(--accent);
     font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   }
   
   .group{
