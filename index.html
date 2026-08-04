@@ -114,15 +114,55 @@
     line-height:1.5;
   }
 
-  /* --- Search & Filter bar --- */
-  .filter-bar{
+  /* --- Card header row: title left, icon actions right --- */
+  .card-header{
     display:flex;
-    gap:8px;
-    margin-bottom:14px;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
   }
+  .card-header h2{margin:0;}
+  .header-icons{
+    display:flex;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .icon-btn{
+    width:30px;
+    height:30px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--chalk-dim);
+    cursor:pointer;
+    padding:0;
+    position:relative;
+  }
+  .icon-btn svg{width:15px;height:15px;}
+  .icon-btn:hover{color:var(--chalk);border-color:rgba(255,255,255,0.3);}
+  .icon-btn.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent);}
+  .icon-btn.has-filter::after{
+    content:'';
+    position:absolute;
+    top:-2px;right:-2px;
+    width:7px;height:7px;
+    border-radius:50%;
+    background:var(--accent);
+    border:1.5px solid var(--navy-900);
+  }
+
+  /* --- Expandable search --- */
+  .search-wrap{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.22s ease;
+  }
+  .search-wrap.open{max-height:52px;margin-bottom:10px;}
   .search-input{
-    flex:1 1 auto;
-    min-width:0;
+    width:100%;
     background:rgba(0,0,0,0.3);
     border:1px solid var(--line);
     border-radius:8px;
@@ -130,21 +170,43 @@
     font-family:'Inter',sans-serif;
     font-size:13px;
     padding:9px 10px;
+    margin-top:4px;
   }
   .search-input::placeholder{color:var(--chalk-dim);}
   .search-input:focus{outline:none;border-color:var(--accent);}
-  .status-select{
-    flex:0 0 auto;
-    background:rgba(0,0,0,0.3);
+
+  /* --- Filter dropdown --- */
+  .filter-menu-wrap{position:relative;}
+  .filter-menu{
+    display:none;
+    position:absolute;
+    top:36px;
+    right:0;
+    background:var(--navy-800);
     border:1px solid var(--line);
-    border-radius:8px;
-    color:var(--chalk);
+    border-radius:10px;
+    padding:6px;
+    min-width:118px;
+    z-index:10;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  }
+  .filter-menu.open{display:block;}
+  .filter-menu button{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    color:var(--chalk-dim);
     font-family:'Inter',sans-serif;
     font-size:12.5px;
-    padding:9px 8px;
-    max-width:120px;
+    padding:8px 10px;
+    border-radius:6px;
+    cursor:pointer;
   }
-  .status-select:focus{outline:none;border-color:var(--accent);}
+  .filter-menu button:hover{background:rgba(255,255,255,0.06);color:var(--chalk);}
+  .filter-menu button.active{color:var(--accent);font-weight:600;}
+
   .no-results{
     text-align:center;
     color:var(--chalk-dim);
@@ -286,15 +348,27 @@
 
   <div id="group-nam" class="group active">
     <div class="card">
-      <h2>Schedule — Men's Singles</h2>
+      <div class="card-header">
+        <h2>Schedule — Men's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-nam" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-nam" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-nam">
+              <button type="button" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-value="played">Đã đấu</button>
+              <button type="button" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <p class="sub" id="progress-nam"></p>
-      <div class="filter-bar">
+      <div class="search-wrap" id="search-wrap-nam">
         <input type="text" class="search-input" id="search-nam" placeholder="Tìm theo tên vận động viên...">
-        <select class="status-select" id="status-nam">
-          <option value="all">Tất cả</option>
-          <option value="played">Đã đấu</option>
-          <option value="unplayed">Chưa đấu</option>
-        </select>
       </div>
       <div class="fixtures" id="fixtures-nam"></div>
     </div>
@@ -311,15 +385,27 @@
 
   <div id="group-nu" class="group">
     <div class="card">
-      <h2>Schedule — Women's Singles</h2>
+      <div class="card-header">
+        <h2>Schedule — Women's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-nu" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-nu" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-nu">
+              <button type="button" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-value="played">Đã đấu</button>
+              <button type="button" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <p class="sub" id="progress-nu"></p>
-      <div class="filter-bar">
+      <div class="search-wrap" id="search-wrap-nu">
         <input type="text" class="search-input" id="search-nu" placeholder="Tìm theo tên vận động viên...">
-        <select class="status-select" id="status-nu">
-          <option value="all">Tất cả</option>
-          <option value="played">Đã đấu</option>
-          <option value="unplayed">Chưa đấu</option>
-        </select>
       </div>
       <div class="fixtures" id="fixtures-nu"></div>
     </div>
@@ -418,6 +504,12 @@ if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOU
 
 let scores = {};
 
+// UI state for the search/filter icons per group (replaces the old always-visible search-bar)
+const uiState = {
+  nam: { status: 'all' },
+  nu: { status: 'all' }
+};
+
 function buildFixtures(group){
   const players = ROSTERS[group];
   const fixtures = [];
@@ -464,6 +556,9 @@ function escapeHtml(str){
 const WIN_SCORE = 15;
 const WIN_MARGIN = 1;
 
+// Hợp lệ / "Đã đấu" chỉ khi: điểm cao nhất >= 15 VÀ cách biệt >= 1 (không hòa điểm).
+// Ngược lại (chưa chạm 15, hoặc bằng điểm nhau, hoặc điểm âm) => "Tỷ số không hợp lệ".
+// Chỉ còn 2 trạng thái sau khi nhập đủ 2 điểm: finished | invalid (không còn trạng thái trung gian "ongoing").
 function matchState(v1, v2){
   if(v1 === null || v2 === null || isNaN(v1) || isNaN(v2)){
     return { state:'empty' };
@@ -473,7 +568,6 @@ function matchState(v1, v2){
   }
   const hi = Math.max(v1, v2);
   const diff = Math.abs(v1 - v2);
-  // Invalid nếu 1 bên chưa chạm 15 điểm, hoặc cách biệt điểm số của 2 đội nhỏ hơn 1
   if(hi < WIN_SCORE || diff < WIN_MARGIN){
     return { state:'invalid' };
   }
@@ -483,9 +577,8 @@ function matchState(v1, v2){
 // --- Search & status filter ---
 function getFilteredFixtures(group){
   const searchEl = document.getElementById('search-' + group);
-  const statusEl = document.getElementById('status-' + group);
   const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
-  const status = statusEl ? statusEl.value : 'all';
+  const status = uiState[group].status;
   return FIXTURES[group].filter(f => {
     if(search){
       const hay = (f.p1 + ' ' + f.p2).toLowerCase();
@@ -708,12 +801,66 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Search + status filter listeners (per group, static controls — never re-rendered)
+// --- Header icon interactions: search toggle + filter dropdown, per group ---
+function closeAllFilterMenus(){
+  ['nam','nu'].forEach(group => {
+    document.getElementById('filter-menu-' + group).classList.remove('open');
+    document.getElementById('filter-toggle-' + group).classList.remove('active');
+  });
+}
+
 ['nam','nu'].forEach(group => {
-  const searchEl = document.getElementById('search-' + group);
-  const statusEl = document.getElementById('status-' + group);
-  searchEl.addEventListener('input', () => renderGroup(group));
-  statusEl.addEventListener('change', () => renderGroup(group));
+  const searchToggle = document.getElementById('search-toggle-' + group);
+  const searchWrap = document.getElementById('search-wrap-' + group);
+  const searchInput = document.getElementById('search-' + group);
+  const filterToggle = document.getElementById('filter-toggle-' + group);
+  const filterMenu = document.getElementById('filter-menu-' + group);
+
+  searchToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    filterMenu.classList.remove('open');
+    filterToggle.classList.remove('active');
+    const isOpen = searchWrap.classList.toggle('open');
+    searchToggle.classList.toggle('active', isOpen);
+    if(isOpen){
+      searchInput.focus();
+    } else if(searchInput.value){
+      searchInput.value = '';
+      renderGroup(group);
+    }
+  });
+
+  filterToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchWrap.classList.remove('open');
+    searchToggle.classList.remove('active');
+    const willOpen = !filterMenu.classList.contains('open');
+    closeAllFilterMenus();
+    if(willOpen){
+      filterMenu.classList.add('open');
+      filterToggle.classList.add('active');
+    }
+  });
+
+  filterMenu.querySelectorAll('button').forEach(optBtn => {
+    optBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const value = optBtn.getAttribute('data-value');
+      uiState[group].status = value;
+      filterMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      optBtn.classList.add('active');
+      filterToggle.classList.toggle('has-filter', value !== 'all');
+      filterMenu.classList.remove('open');
+      filterToggle.classList.remove('active');
+      renderGroup(group);
+    });
+  });
+
+  searchInput.addEventListener('input', () => renderGroup(group));
+});
+
+document.addEventListener('click', () => {
+  closeAllFilterMenus();
 });
 
 renderAll();
