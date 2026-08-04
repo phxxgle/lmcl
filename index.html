@@ -113,6 +113,45 @@
     margin:0 0 14px;
     line-height:1.5;
   }
+
+  /* --- Search & Filter bar --- */
+  .filter-bar{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .search-input{
+    flex:1 1 auto;
+    min-width:0;
+    background:rgba(0,0,0,0.3);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    padding:9px 10px;
+  }
+  .search-input::placeholder{color:var(--chalk-dim);}
+  .search-input:focus{outline:none;border-color:var(--accent);}
+  .status-select{
+    flex:0 0 auto;
+    background:rgba(0,0,0,0.3);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    padding:9px 8px;
+    max-width:120px;
+  }
+  .status-select:focus{outline:none;border-color:var(--accent);}
+  .no-results{
+    text-align:center;
+    color:var(--chalk-dim);
+    font-size:12.5px;
+    padding:18px 4px;
+  }
+
   .fixtures{display:flex;flex-direction:column;gap:6px;}
   .fixture-row{
     display:grid;
@@ -141,6 +180,33 @@
     padding:7px 0;
   }
   input[type=number]:focus{outline:none;border-color:var(--accent);}
+
+  /* --- Error shake + slide-down message --- */
+  @keyframes shake-x{
+    10%,90%{transform:translateX(-1px);}
+    20%,80%{transform:translateX(2px);}
+    30%,50%,70%{transform:translateX(-4px);}
+    40%,60%{transform:translateX(4px);}
+  }
+  @keyframes slide-down{
+    from{opacity:0;transform:translateY(-6px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .score-input.shake{animation:shake-x 0.4s;}
+  .score-input.invalid{
+    border-color:var(--red) !important;
+    box-shadow:0 0 0 2px rgba(239,76,100,0.25);
+  }
+  .error-msg{
+    grid-column:1/-1;
+    font-size:10.5px;
+    text-align:center;
+    color:var(--red);
+    margin-top:-2px;
+    animation:slide-down 0.25s ease;
+  }
+  .error-msg:empty{display:none;animation:none;}
+
   .fixture-status{
     grid-column:1/-1;
     font-size:10.5px;
@@ -222,6 +288,14 @@
     <div class="card">
       <h2>Schedule — Men's Singles</h2>
       <p class="sub" id="progress-nam"></p>
+      <div class="filter-bar">
+        <input type="text" class="search-input" id="search-nam" placeholder="Tìm theo tên vận động viên...">
+        <select class="status-select" id="status-nam">
+          <option value="all">Tất cả</option>
+          <option value="played">Đã đấu</option>
+          <option value="unplayed">Chưa đấu</option>
+        </select>
+      </div>
       <div class="fixtures" id="fixtures-nam"></div>
     </div>
     <div class="card">
@@ -239,6 +313,14 @@
     <div class="card">
       <h2>Schedule — Women's Singles</h2>
       <p class="sub" id="progress-nu"></p>
+      <div class="filter-bar">
+        <input type="text" class="search-input" id="search-nu" placeholder="Tìm theo tên vận động viên...">
+        <select class="status-select" id="status-nu">
+          <option value="all">Tất cả</option>
+          <option value="played">Đã đấu</option>
+          <option value="unplayed">Chưa đấu</option>
+        </select>
+      </div>
       <div class="fixtures" id="fixtures-nu"></div>
     </div>
     <div class="card">
@@ -397,6 +479,27 @@ function matchState(v1, v2){
   return { state:'ongoing' };
 }
 
+// --- Search & status filter ---
+function getFilteredFixtures(group){
+  const searchEl = document.getElementById('search-' + group);
+  const statusEl = document.getElementById('status-' + group);
+  const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
+  const status = statusEl ? statusEl.value : 'all';
+  return FIXTURES[group].filter(f => {
+    if(search){
+      const hay = (f.p1 + ' ' + f.p2).toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    if(status !== 'all'){
+      const sc = scores[f.id];
+      const played = !!(sc && sc.played);
+      if(status === 'played' && !played) return false;
+      if(status === 'unplayed' && played) return false;
+    }
+    return true;
+  });
+}
+
 function renderAll(){
   ['nam','nu'].forEach(renderGroup);
 }
@@ -414,18 +517,28 @@ function renderGroup(group){
     invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
   };
 
-  container.innerHTML = fixtures.map((f, idx) => {
+  const visible = getFilteredFixtures(group);
+
+  if(visible.length === 0){
+    container.innerHTML = '<div class="no-results">Không tìm thấy trận đấu phù hợp</div>';
+    return;
+  }
+
+  container.innerHTML = visible.map(f => {
+    const idx = fixtures.indexOf(f);
     const sc = scores[f.id];
     const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
     const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
     const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
+    const isInvalid = sc && sc.note === 'invalid';
     return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}" data-id="${f.id}">
       <span class="fixture-num">${idx + 1}</span>
       <span class="name right">${escapeHtml(f.p1)}</span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s1" value="${hasVal1 ? sc.s1 : ''}" placeholder="-">
+      <input type="number" inputmode="numeric" min="0" class="score-input s1 ${isInvalid ? 'invalid' : ''}" value="${hasVal1 ? sc.s1 : ''}" placeholder="-">
       <span></span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s2" value="${hasVal2 ? sc.s2 : ''}" placeholder="-">
+      <input type="number" inputmode="numeric" min="0" class="score-input s2 ${isInvalid ? 'invalid' : ''}" value="${hasVal2 ? sc.s2 : ''}" placeholder="-">
       <span class="name">${escapeHtml(f.p2)}</span>
+      <span class="error-msg"></span>
       <span class="fixture-status ${label ? label.cls : ''}">${label ? label.text : ''}</span>
     </div>`;
   }).join('');
@@ -434,6 +547,30 @@ function renderGroup(group){
     const id = row.getAttribute('data-id');
     const s1input = row.querySelector('.s1');
     const s2input = row.querySelector('.s2');
+    const errEl = row.querySelector('.error-msg');
+
+    function validateLive(){
+      const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
+      const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
+      const result = matchState(v1, v2);
+      if(result.state === 'invalid'){
+        errEl.textContent = 'Điểm không hợp lệ';
+        [s1input, s2input].forEach(inp => {
+          inp.classList.add('invalid');
+          inp.classList.remove('shake');
+          void inp.offsetWidth; // restart animation on repeated invalid keystrokes
+          inp.classList.add('shake');
+        });
+      } else {
+        errEl.textContent = '';
+        [s1input, s2input].forEach(inp => inp.classList.remove('invalid'));
+      }
+    }
+
+    [s1input, s2input].forEach(inp => {
+      inp.addEventListener('animationend', () => inp.classList.remove('shake'));
+    });
+
     function commit(){
       const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
       const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
@@ -449,6 +586,9 @@ function renderGroup(group){
         console.error('Firebase write error:', error);
       });
     }
+
+    s1input.addEventListener('input', validateLive);
+    s2input.addEventListener('input', validateLive);
     s1input.addEventListener('change', commit);
     s2input.addEventListener('change', commit);
   });
@@ -566,6 +706,14 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.getElementById('group-' + grp).classList.add('active');
     document.body.setAttribute('data-theme', grp === 'nu' ? 'women' : (grp === 'overall' ? 'overall' : 'men'));
   });
+});
+
+// Search + status filter listeners (per group, static controls — never re-rendered)
+['nam','nu'].forEach(group => {
+  const searchEl = document.getElementById('search-' + group);
+  const statusEl = document.getElementById('status-' + group);
+  searchEl.addEventListener('input', () => renderGroup(group));
+  statusEl.addEventListener('change', () => renderGroup(group));
 });
 
 renderAll();
