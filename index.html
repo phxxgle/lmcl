@@ -67,12 +67,15 @@
     position: relative;
   }
 
+  /* UPDATE ANIMATION LOGO: Intro trong 1.4s, nghỉ 3s tĩnh, sau đó xoay tròn chậm từ trái sang phải liên tục */
   .site-logo {
     height: 80px;
     width: auto;
     object-fit: contain;
     flex-shrink: 0;
-    animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: 
+      logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+      logoIdleSpin 12s linear infinite 4.4s;
   }
 
   .brand-divider {
@@ -112,10 +115,17 @@
     vertical-align: middle;
   }
 
+  /* KEYFRAMES ANIMATION LOGO */
   @keyframes logoIntro {
     0% { transform: scale(1.5) translateX(50px); opacity: 0; }
     35% { transform: scale(1.5) translateX(50px); opacity: 1; }
     70%, 100% { transform: scale(1) translateX(0); opacity: 1; }
+  }
+
+  /* Hiệu ứng xoay tròn chậm từ trái sang phải (theo chiều kim đồng hồ) */
+  @keyframes logoIdleSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
   @keyframes fadeInContent {
