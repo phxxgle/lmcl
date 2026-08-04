@@ -41,7 +41,6 @@
     margin:0;
     font-family:'Inter',sans-serif;
     background-color: var(--green-dark);
-    /* Giữ nguyên màu nền chuyển sắc (radial gradient) */
     background-image: radial-gradient(circle at 50% 50%, rgba(14, 77, 47, 0.4) 0%, rgba(5, 36, 22, 0.95) 100%);
     background-attachment: fixed;
     color:var(--chalk);
@@ -166,20 +165,20 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
-  /* CHỈNH SỬA PHẦN TABS VÀ TAB-BTN */
+  /* CHỈNH SỬA TABS: SỬA LỖI HỞ MÉP KHI CUỘN */
   .tabs{
-    display:flex;
-    gap:8px;
-    padding:10px;
-    margin:12px 0 0;
-    position:sticky;
-    top:0;
-    background:rgba(5, 36, 22, 0.75);
+    display: flex;
+    gap: 8px;
+    padding: 12px 12px 10px 12px;
+    margin: 0 -12px;
+    position: sticky;
+    top: 0;
+    background: rgba(5, 36, 22, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    z-index:10;
+    z-index: 20;
     border-bottom: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: 0 0 16px 16px;
     opacity: 0;
     animation: fadeInContent 0.6s ease forwards 1.4s;
   }
@@ -190,7 +189,7 @@
     letter-spacing:0.8px;
     background: rgba(255, 255, 255, 0.06);
     color: var(--chalk-dim);
-    border: 1px solid transparent; /* Loại bỏ viền xanh, để trong suốt */
+    border: 1px solid transparent;
     border-radius: 999px;
     padding: 10px 4px;
     cursor: pointer;
