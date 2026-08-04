@@ -432,7 +432,7 @@
     </div>
   </div>
 
-  <p class="foot-note">Xếp hạng theo thứ tự: số trận thắng nhiều nhất → hiệu số điểm cao nhất → tổng điểm ghi được nhiều nhất. Kết quả chỉ lưu trên máy/trình duyệt bạn đang dùng để bấm link này — không đồng bộ với người khác, không bị người khác nhập đè lên dữ liệu của bạn.</p>
+  <p class="foot-note">Xếp hạng theo thứ tự: số trận thắng nhiều nhất → hiệu số điểm cao nhất → tổng điểm ghi được nhiều nhất.</p>
 </div>
 
 <script>
@@ -455,7 +455,6 @@ const ROSTERS = {
   ]
 };
 
-// Overall combined ranking across all LMCL events (medal points: HCV=3, HCB=2, HCĐ=1, khác=0)
 const OVERALL_DATA = [
   { name: "Nguyễn Đan Quyên", points: 12 },
   { name: "Vương Mạnh Chuyền", points: 11 },
@@ -471,11 +470,6 @@ const OVERALL_DATA = [
   { name: "Nguyễn Tiến Trung", points: 4 }
 ];
 
-// ==== FIREBASE CONFIG ====
-// 1. Vào https://console.firebase.google.com -> tạo project mới (miễn phí)
-// 2. Vào Build > Realtime Database -> Create Database -> chọn chế độ "Test mode"
-// 3. Vào Project settings (biểu tượng bánh răng) > General > mục "Your apps" > bấm biểu tượng </> để tạo Web app
-// 4. Copy đoạn firebaseConfig được cấp và dán đè vào bên dưới
 const firebaseConfig = {
   apiKey: "AIzaSyAxF7hj25lOR8QGhPMW1ie9_ZU1RsoCVL0",
   authDomain: "lmcl-rankings.firebaseapp.com",
@@ -499,12 +493,11 @@ function hideConnBanner(){
 }
 
 if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOUR_PROJECT'){
-  showConnBanner('⚠️ Chưa cấu hình Firebase: đoạn firebaseConfig trong file vẫn còn là mẫu placeholder, kết quả sẽ KHÔNG được lưu. Hãy dán thông tin dự án Firebase thật của bạn vào firebaseConfig.');
+  showConnBanner('⚠️ Chưa cấu hình Firebase...');
 }
 
 let scores = {};
 
-// UI state for the search/filter icons per group (replaces the old always-visible search-bar)
 const uiState = {
   nam: { status: 'all' },
   nu: { status: 'all' }
@@ -534,16 +527,15 @@ function isEditingScoreInput(){
   return !!(active && active.tagName === 'INPUT' && active.classList.contains('score-input'));
 }
 
-// Real-time listener — fires instantly whenever ANYONE updates a result
 scoresRef.on('value', snapshot => {
   hideConnBanner();
   scores = snapshot.val() || {};
-  if(isEditingScoreInput()) return; // don't yank focus/value while someone is typing
+  if(isEditingScoreInput()) return;
   renderAll();
   ['nam','nu'].forEach(renderStandings);
   renderOverall();
 }, error => {
-  showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + '). Kiểm tra lại: đã tạo Realtime Database chưa, databaseURL đúng chưa, và Rules có cho phép đọc/ghi không. Kết quả sẽ KHÔNG được lưu cho tới khi khắc phục.');
+  showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
   console.error('Firebase error:', error);
 });
 
@@ -554,27 +546,31 @@ function escapeHtml(str){
 }
 
 const WIN_SCORE = 15;
-const WIN_MARGIN = 1;
 
-// Hợp lệ / "Đã đấu" chỉ khi: điểm cao nhất >= 15 VÀ cách biệt >= 1 (không hòa điểm).
-// Ngược lại (chưa chạm 15, hoặc bằng điểm nhau, hoặc điểm âm) => "Tỷ số không hợp lệ".
-// Chỉ còn 2 trạng thái sau khi nhập đủ 2 điểm: finished | invalid (không còn trạng thái trung gian "ongoing").
+// KIỂM TRA TRẠNG THÁI TỶ SỐ
 function matchState(v1, v2){
-  if(v1 === null || v2 === null || isNaN(v1) || isNaN(v2)){
-    return { state:'empty' };
+  // Cả 2 ô trống -> Chưa điền
+  if(v1 === null && v2 === null){
+    return { state: 'empty' };
   }
+  // Một bên điền, một bên trống -> Tỷ số không hợp lệ
+  if(v1 === null || v2 === null){
+    return { state: 'invalid' };
+  }
+  // Điểm âm -> Không hợp lệ
   if(v1 < 0 || v2 < 0){
-    return { state:'invalid' };
+    return { state: 'invalid' };
   }
   const hi = Math.max(v1, v2);
   const diff = Math.abs(v1 - v2);
-  if(hi < WIN_SCORE || diff < WIN_MARGIN){
-    return { state:'invalid' };
+  
+  // Khoảng cách giữa 2 điểm < 1 (hòa điểm) HOẶC chưa bên nào đạt 15 điểm
+  if(diff < 1 || hi < WIN_SCORE){
+    return { state: 'invalid' };
   }
-  return { state:'finished' };
+  return { state: 'finished' };
 }
 
-// --- Search & status filter ---
 function getFilteredFixtures(group){
   const searchEl = document.getElementById('search-' + group);
   const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
@@ -646,12 +642,31 @@ function renderGroup(group){
       const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
       const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
       const result = matchState(v1, v2);
+      
       if(result.state === 'invalid'){
         errEl.textContent = 'Điểm không hợp lệ';
+        
+        // Thêm viền đỏ nếu 1 bên chưa điền hoặc khoảng cách điểm < 1
+        if(v1 === null || isNaN(v1)){
+          s1input.classList.add('invalid');
+        } else {
+          s1input.classList.remove('invalid');
+        }
+
+        if(v2 === null || isNaN(v2)){
+          s2input.classList.add('invalid');
+        } else {
+          s2input.classList.remove('invalid');
+        }
+
+        // Nếu cả hai đã điền nhưng không hợp lệ (ví dụ: khoảng cách < 1 hoặc < 15 điểm)
+        if(v1 !== null && v2 !== null){
+          [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
+        }
+
         [s1input, s2input].forEach(inp => {
-          inp.classList.add('invalid');
           inp.classList.remove('shake');
-          void inp.offsetWidth; // restart animation on repeated invalid keystrokes
+          void inp.offsetWidth;
           inp.classList.add('shake');
         });
       } else {
@@ -675,7 +690,7 @@ function renderGroup(group){
         writeOp = scoresRef.child(id).set({ s1: v1, s2: v2, played: result.state === 'finished', note: result.state });
       }
       writeOp.catch(error => {
-        showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + '). Kiểm tra lại Firebase Rules (phải cho phép ghi) và databaseURL.');
+        showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + ').');
         console.error('Firebase write error:', error);
       });
     }
@@ -734,7 +749,6 @@ function medalPointsFor(rankIndex){
 }
 
 function computeOverall(){
-  // Medal points only count once a group's round-robin is fully completed
   const medalMap = {};
   ['nam','nu'].forEach(group => {
     const fixtures = FIXTURES[group];
@@ -747,7 +761,6 @@ function computeOverall(){
     }
   });
 
-  // Old rank = position in the ranking list supplied before this event (already sorted desc)
   const withOldRank = OVERALL_DATA.map((r, i) => ({
     name: r.name,
     oldPoints: r.points,
@@ -759,7 +772,6 @@ function computeOverall(){
     return { ...r, medal, newTotal: r.oldPoints + medal };
   });
 
-  // Stable sort by newTotal desc — ties keep their original relative order
   const ranked = [...withNew].sort((a, b) => b.newTotal - a.newTotal);
   ranked.forEach((r, i) => {
     r.newRank = i + 1;
@@ -801,7 +813,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// --- Header icon interactions: search toggle + filter dropdown, per group ---
 function closeAllFilterMenus(){
   ['nam','nu'].forEach(group => {
     document.getElementById('filter-menu-' + group).classList.remove('open');
@@ -866,7 +877,6 @@ document.addEventListener('click', () => {
 renderAll();
 ['nam','nu'].forEach(renderStandings);
 renderOverall();
-
 </script>
 </body>
 </html>
