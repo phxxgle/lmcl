@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* --- (Toàn bộ CSS giữ nguyên) --- */
   :root {
     --green-bg: #062617;
     --card-bg: #0a3320;
@@ -1889,10 +1890,21 @@ document.querySelectorAll('.drawer-link[data-target-tab]').forEach(btn => {
       targetGroupEl.classList.add('active');
       document.body.setAttribute('data-theme', 'allmatches');
       
+      // LOGIC MỚI: Ẩn/Hiện thẻ Tabs tùy thuộc vào màn hình được chọn
+      const tabsEl = document.querySelector('.tabs');
+      if (targetGroup === 'members') {
+        tabsEl.style.display = 'none'; // Ẩn tab
+      } else {
+        tabsEl.style.display = 'flex'; // Hiện lại tab nếu chuyển về Tour
+      }
+
       // Nếu bấm vào Tour -> kích hoạt lại tab 'all' trên thanh navigation chính
       if (targetGroup === 'all') {
         const allTabBtn = document.querySelector('.tab-btn[data-group="all"]');
         if (allTabBtn) allTabBtn.classList.add('active');
+        activeGroupTab = 'all'; // Đảm bảo gán đúng biến hệ thống
+      } else {
+        activeGroupTab = targetGroup;
       }
     }
     closeHamburgerMenu();
