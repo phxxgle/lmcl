@@ -38,8 +38,8 @@
     --on-accent:#031B2A;
   }
   body[data-theme="allmatches"]{
-    --accent:#A78BFA;
-    --on-accent:#1E1033;
+    --accent:#c1ff72;
+    --on-accent:#1A2E05;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   
@@ -304,7 +304,15 @@
   .icon-btn.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent);}
   #search-toggle-all,
   #filter-toggle-all{
-    border-color: var(--accent);
+    border-color: #c1ff72;
+  }
+  #search-toggle-view-nam,
+  #filter-toggle-view-nam{
+    border-color: var(--gold);
+  }
+  #search-toggle-view-nu,
+  #filter-toggle-view-nu{
+    border-color: var(--pink);
   }
   #info-toggle-nam{
     border: none;
@@ -779,8 +787,8 @@
 
   <div class="tabs">
     <button class="tab-btn active" data-group="all">All Matches</button>
-    <button class="tab-btn" data-group="nam">Men's Singles</button>
-    <button class="tab-btn" data-group="nu">Women's Singles</button>
+    <button class="tab-btn" data-group="nam">MS</button>
+    <button class="tab-btn" data-group="nu">WS</button>
     <button class="tab-btn" data-group="overall">Overall</button>
   </div>
 
@@ -799,6 +807,11 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
             </button>
             <div class="filter-menu" id="filter-menu-all">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
               <div class="filter-section-label">Trạng thái</div>
               <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
               <button type="button" data-filter="status" data-value="played">Đã đấu</button>
@@ -808,11 +821,6 @@
               <button type="button" data-filter="gender" data-value="all" class="active">Tất cả</button>
               <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
               <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
-              <div class="filter-divider"></div>
-              <div class="filter-section-label">Ngày</div>
-              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
-              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
-              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
             </div>
           </div>
         </div>
@@ -827,8 +835,34 @@
 
   <div id="group-nam" class="group">
     <div class="card">
-      <h2>Results — Men's Singles</h2>
+      <div class="card-header">
+        <h2>Results — Men's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-view-nam" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-view-nam" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-view-nam">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <p class="sub" id="progress-view-nam"></p>
+      <div class="search-wrap" id="search-wrap-view-nam">
+        <input type="text" class="search-input" id="search-view-nam" placeholder="Tìm theo tên vận động viên...">
+      </div>
       <div class="fixtures" id="fixtures-view-nam"></div>
     </div>
     <div class="card">
@@ -849,8 +883,34 @@
 
   <div id="group-nu" class="group">
     <div class="card">
-      <h2>Results — Women's Singles</h2>
+      <div class="card-header">
+        <h2>Results — Women's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-view-nu" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-view-nu" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-view-nu">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <p class="sub" id="progress-view-nu"></p>
+      <div class="search-wrap" id="search-wrap-view-nu">
+        <input type="text" class="search-input" id="search-view-nu" placeholder="Tìm theo tên vận động viên...">
+      </div>
       <div class="fixtures" id="fixtures-view-nu"></div>
     </div>
     <div class="card">
@@ -979,12 +1039,15 @@ if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOU
 }
 
 let scores = {};
-// Đọc trạng thái admin từ sessionStorage (tự hết hạn khi đóng tab)
 let isAdmin = sessionStorage.getItem('lmcl_is_admin') === 'true'; 
 const SECRET_PIN = "BTC";
 
 const uiState = {
   all: { status: 'all', gender: 'all', day: 'all' }
+};
+const uiStateView = {
+  nam: { status: 'all', day: 'all', search: '' },
+  nu: { status: 'all', day: 'all', search: '' }
 };
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1013,7 +1076,6 @@ function playerGroup(name){
   return null;
 }
 
-// Thứ tự thi đấu cố định theo yêu cầu: 15 trận đầu = Ngày 1, 16 trận cuối = Ngày 2
 const DAY1_COUNT = 15;
 const CUSTOM_MATCH_ORDER = [
   ["Trần Trung Hiếu", "Nguyễn Văn Thành"],
@@ -1239,11 +1301,10 @@ function renderAllFixtures(){
     [s1input, s2input].forEach(inp => {
       inp.addEventListener('animationend', () => inp.classList.remove('shake'));
       
-      // GIẢI PHÁP: Tự động cuộn mượt mà đưa ô input lên tầm nhìn trung tâm khi focus[cite: 1]
       inp.addEventListener('focus', () => {
         setTimeout(() => {
           inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300); // Thêm độ trễ nhỏ để bàn phím ảo kịp xuất hiện trên mobile
+        }, 300);
       });
     });
 
@@ -1294,7 +1355,7 @@ function renderAllFixtures(){
 function renderReadonlyGroup(group){
   const container = document.getElementById('fixtures-view-' + group);
   if(!container) return;
-  const fixtures = FIXTURES[group];
+  const fixtures = ALL_FIXTURES.filter(f => f.group === group);
   const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
   const progEl = document.getElementById('progress-view-' + group);
   if(progEl){
@@ -1306,7 +1367,29 @@ function renderReadonlyGroup(group){
     invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
   };
 
-  container.innerHTML = fixtures.map((f, idx) => {
+  const state = uiStateView[group];
+  const filtered = fixtures.filter(f => {
+    if(state.day !== 'all' && String(f.day) !== state.day) return false;
+    if(state.search){
+      const hay = (f.p1 + ' ' + f.p2).toLowerCase();
+      if(!hay.includes(state.search.toLowerCase())) return false;
+    }
+    if(state.status !== 'all'){
+      const sc = scores[f.id];
+      const played = !!(sc && sc.played);
+      if(state.status === 'played' && !played) return false;
+      if(state.status === 'unplayed' && played) return false;
+    }
+    return true;
+  });
+
+  if(filtered.length === 0){
+    container.innerHTML = '<div class="no-results">Không tìm thấy trận đấu phù hợp</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(f => {
+    const origIdx = fixtures.indexOf(f);
     const sc = scores[f.id];
     const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
     const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
@@ -1317,7 +1400,7 @@ function renderReadonlyGroup(group){
     const s2Winner = (!isInvalid && v1 !== null && v2 !== null && v2 > v1) ? 'winner' : '';
     const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
     return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}">
-      <span class="fixture-num">${idx + 1}</span>
+      <span class="fixture-num">${origIdx + 1}</span>
       <span class="name right" title="${escapeHtml(f.p1)}">${escapeHtml(f.p1)}</span>
       <span class="score-display ${isInvalid ? 'invalid' : s1Winner}">${hasVal1 ? sc.s1 : '-'}</span>
       <span></span>
@@ -1536,64 +1619,113 @@ function openStandingsTab(group){
   paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
 
+// Khởi tạo các sự kiện tìm kiếm và bộ lọc
 (() => {
-  const searchBtn = document.getElementById('search-toggle-all');
-  const searchWrap = document.getElementById('search-wrap-all');
-  const searchInput = document.getElementById('search-all');
+  // All Matches
+  const searchBtnAll = document.getElementById('search-toggle-all');
+  const searchWrapAll = document.getElementById('search-wrap-all');
+  const searchInputAll = document.getElementById('search-all');
 
-  if (searchBtn && searchWrap && searchInput) {
-    searchBtn.addEventListener('click', (e) => {
+  if (searchBtnAll && searchWrapAll && searchInputAll) {
+    searchBtnAll.addEventListener('click', (e) => {
       e.stopPropagation();
-      const isOpen = searchWrap.classList.toggle('open');
-      searchBtn.classList.toggle('active', isOpen);
-      if (isOpen) {
-        searchInput.focus();
-      }
+      const isOpen = searchWrapAll.classList.toggle('open');
+      searchBtnAll.classList.toggle('active', isOpen);
+      if (isOpen) searchInputAll.focus();
     });
-
-    searchInput.addEventListener('input', () => {
-      renderAllFixtures();
-    });
+    searchInputAll.addEventListener('input', () => renderAllFixtures());
   }
 
-  const filterBtn = document.getElementById('filter-toggle-all');
-  const filterMenu = document.getElementById('filter-menu-all');
+  const filterBtnAll = document.getElementById('filter-toggle-all');
+  const filterMenuAll = document.getElementById('filter-menu-all');
 
-  if (filterBtn && filterMenu) {
-    filterBtn.addEventListener('click', (e) => {
+  if (filterBtnAll && filterMenuAll) {
+    filterBtnAll.addEventListener('click', (e) => {
       e.stopPropagation();
-      const isOpen = filterMenu.classList.toggle('open');
-      filterBtn.classList.toggle('active', isOpen);
+      const isOpen = filterMenuAll.classList.toggle('open');
+      filterBtnAll.classList.toggle('active', isOpen);
     });
 
-    filterMenu.querySelectorAll('button[data-filter]').forEach(btn => {
+    filterMenuAll.querySelectorAll('button[data-filter]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const dim = btn.getAttribute('data-filter');
         const val = btn.getAttribute('data-value');
         uiState.all[dim] = val;
 
-        filterMenu.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
+        filterMenuAll.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
         const hasFilter = uiState.all.status !== 'all' || uiState.all.gender !== 'all' || uiState.all.day !== 'all';
-        filterBtn.classList.toggle('has-filter', hasFilter);
+        filterBtnAll.classList.toggle('has-filter', hasFilter);
 
-        filterMenu.classList.remove('open');
-        filterBtn.classList.remove('active');
+        filterMenuAll.classList.remove('open');
+        filterBtnAll.classList.remove('active');
         renderAllFixtures();
       });
     });
   }
+
+  // Setup Search/Filter cho MS và WS
+  ['nam', 'nu'].forEach(group => {
+    const searchBtn = document.getElementById('search-toggle-view-' + group);
+    const searchWrap = document.getElementById('search-wrap-view-' + group);
+    const searchInput = document.getElementById('search-view-' + group);
+
+    if (searchBtn && searchWrap && searchInput) {
+      searchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = searchWrap.classList.toggle('open');
+        searchBtn.classList.toggle('active', isOpen);
+        if (isOpen) searchInput.focus();
+      });
+      searchInput.addEventListener('input', () => {
+        uiStateView[group].search = searchInput.value.trim();
+        renderReadonlyGroup(group);
+      });
+    }
+
+    const filterBtn = document.getElementById('filter-toggle-view-' + group);
+    const filterMenu = document.getElementById('filter-menu-view-' + group);
+
+    if (filterBtn && filterMenu) {
+      filterBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = filterMenu.classList.toggle('open');
+        filterBtn.classList.toggle('active', isOpen);
+      });
+
+      filterMenu.querySelectorAll('button[data-filter]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const dim = btn.getAttribute('data-filter');
+          const val = btn.getAttribute('data-value');
+          uiStateView[group][dim] = val;
+
+          filterMenu.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const hasFilter = uiStateView[group].status !== 'all' || uiStateView[group].day !== 'all';
+          filterBtn.classList.toggle('has-filter', hasFilter);
+
+          filterMenu.classList.remove('open');
+          filterBtn.classList.remove('active');
+          renderReadonlyGroup(group);
+        });
+      });
+    }
+  });
 })();
 
 document.addEventListener('click', () => {
-  const filterMenu = document.getElementById('filter-menu-all');
-  const filterBtn = document.getElementById('filter-toggle-all');
-  if (filterMenu && filterMenu.classList.contains('open')) {
-    filterMenu.classList.remove('open');
-    if (filterBtn) filterBtn.classList.remove('active');
-  }
+  ['all', 'view-nam', 'view-nu'].forEach(id => {
+    const filterMenu = document.getElementById('filter-menu-' + id);
+    const filterBtn = document.getElementById('filter-toggle-' + id);
+    if (filterMenu && filterMenu.classList.contains('open')) {
+      filterMenu.classList.remove('open');
+      if (filterBtn) filterBtn.classList.remove('active');
+    }
+  });
 });
 
 const authToggleBtn = document.getElementById('auth-toggle-btn');
@@ -1607,11 +1739,11 @@ function updateAuthUI() {
   if (isAdmin) {
     authToggleBtn.classList.add('is-admin');
     authToggleBtn.setAttribute('title', 'Đang ở quyền BTC (Bấm để thoát)');
-    sessionStorage.setItem('lmcl_is_admin', 'true'); // Lưu trạng thái vào sessionStorage
+    sessionStorage.setItem('lmcl_is_admin', 'true');
   } else {
     authToggleBtn.classList.remove('is-admin');
     authToggleBtn.setAttribute('title', 'Kích hoạt quyền BTC');
-    sessionStorage.removeItem('lmcl_is_admin'); // Xóa trạng thái khỏi sessionStorage
+    sessionStorage.removeItem('lmcl_is_admin');
   }
   renderAll();
 }
@@ -1696,9 +1828,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Khởi chạy cập nhật giao diện ban đầu dựa theo sessionStorage
 updateAuthUI();
-
 renderAll();
 renderReadonlyGroup('nam');
 renderReadonlyGroup('nu');
