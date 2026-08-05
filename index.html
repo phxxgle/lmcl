@@ -1133,6 +1133,13 @@ function renderGroup(group){
 
     [s1input, s2input].forEach(inp => {
       inp.addEventListener('animationend', () => inp.classList.remove('shake'));
+      
+      // GIẢI PHÁP: Tự động cuộn mượt mà đưa ô input lên tầm nhìn trung tâm khi focus[cite: 1]
+      inp.addEventListener('focus', () => {
+        setTimeout(() => {
+          inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300); // Thêm độ trễ nhỏ để bàn phím ảo kịp xuất hiện trên mobile
+      });
     });
 
     function commit(){
