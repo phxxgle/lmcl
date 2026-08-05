@@ -14,15 +14,19 @@
 <style>
   :root {
     --green-bg: #062617;
+    --card-bg: #0a3320;
+    --card-border: rgba(255, 255, 255, 0.08);
+    
+    /* Glassmorphism Variables (chỉ dùng cho Tabs và Bảng) */
     --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-bg-hover: rgba(255, 255, 255, 0.12);
-    --glass-card: rgba(14, 60, 38, 0.45);
+    --glass-table-bg: rgba(10, 45, 28, 0.55);
     --glass-border: rgba(255, 255, 255, 0.15);
     --glass-border-light: rgba(255, 255, 255, 0.25);
-    --glass-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.37);
-    --glass-blur: blur(16px);
+    --glass-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.3);
+    --glass-blur: blur(14px);
     
-    --line: rgba(255, 255, 255, 0.12);
+    --line: rgba(255, 255, 255, 0.1);
     --chalk: #F8FAFC;
     --chalk-dim: #A1C1B0;
     --gold: #FFD166;
@@ -61,37 +65,13 @@
   
   body {
     font-family: 'Inter', sans-serif;
-    background: radial-gradient(circle at 10% 10%, #0d4b2e 0%, #062617 50%, #03140c 100%);
+    background: var(--green-bg);
     color: var(--chalk);
     min-height: 100vh;
     padding: 0 0 48px;
     position: relative;
     overflow-x: hidden;
     margin: 0;
-  }
-
-  /* Glassmorphism Background Glow Effects */
-  body::before, body::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(90px);
-    z-index: 0;
-    pointer-events: none;
-  }
-  body::before {
-    width: 280px;
-    height: 280px;
-    background: rgba(56, 189, 248, 0.15);
-    top: -50px;
-    left: -50px;
-  }
-  body::after {
-    width: 320px;
-    height: 320px;
-    background: rgba(193, 255, 114, 0.12);
-    bottom: 100px;
-    right: -80px;
   }
 
   .wrap { max-width: 440px; margin: 0 auto; padding: 0 12px; position: relative; z-index: 1; }
@@ -145,9 +125,8 @@
 
   .badge-date {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     color: var(--chalk);
     font-size: 11px;
     font-weight: 700;
@@ -177,10 +156,8 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     color: var(--chalk-dim);
     display: flex;
     align-items: center;
@@ -191,15 +168,17 @@
     z-index: 2;
   }
   .admin-icon-btn svg { width: 16px; height: 16px; }
-  .admin-icon-btn:hover { color: var(--chalk); background: var(--glass-bg-hover); border-color: var(--glass-border-light); }
+  .admin-icon-btn:hover { color: var(--chalk); border-color: var(--glass-border-light); }
   .admin-icon-btn.is-admin {
     background: var(--accent);
     color: var(--on-accent);
     border-color: var(--accent);
-    box-shadow: 0 0 16px rgba(255, 209, 102, 0.4);
+    box-shadow: 0 0 12px rgba(255, 209, 102, 0.3);
   }
 
-  /* Glassmorphism Tabs Sticky Header */
+  /* =========================================
+     GLASSMORPHISM: TABS NAVIGATION
+     ========================================= */
   .tabs {
     display: flex;
     gap: 8px;
@@ -207,9 +186,9 @@
     margin: 0 -12px;
     position: sticky;
     top: 0;
-    background: rgba(6, 38, 23, 0.65);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(6, 38, 23, 0.6);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     border-bottom: 1px solid var(--glass-border);
     z-index: 20;
     opacity: 0;
@@ -246,7 +225,7 @@
     color: var(--on-accent);
     border-color: transparent;
     font-weight: bold;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .tab-btn.active::before {
@@ -293,16 +272,13 @@
     transform: translateY(0);
   }
 
-  /* Glassmorphism Cards */
+  /* Standard Card (Flat) */
   .card {
-    background: var(--glass-card);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     padding: 16px;
     margin-top: 16px;
-    box-shadow: var(--glass-shadow);
   }
   .card h2 {
     font-family: 'Bebas Neue', sans-serif;
@@ -310,7 +286,6 @@
     letter-spacing: 1.5px;
     margin: 0 0 4px;
     color: var(--accent);
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
   .card .sub {
     font-size: 12px;
@@ -337,9 +312,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     color: var(--chalk-dim);
     cursor: pointer;
@@ -348,16 +322,16 @@
     transition: all 0.2s ease;
   }
   .icon-btn svg { width: 15px; height: 15px; }
-  .icon-btn:hover { color: var(--chalk); background: var(--glass-bg-hover); border-color: var(--glass-border-light); }
+  .icon-btn:hover { color: var(--chalk); border-color: var(--glass-border-light); }
   .icon-btn.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   
-  #search-toggle-all, #filter-toggle-all { border-color: rgba(193, 255, 114, 0.4); }
-  #search-toggle-view-nam, #filter-toggle-view-nam { border-color: rgba(56, 189, 248, 0.4); }
-  #search-toggle-view-nu, #filter-toggle-view-nu { border-color: rgba(255, 101, 132, 0.4); }
+  #search-toggle-all, #filter-toggle-all { border-color: rgba(193, 255, 114, 0.3); }
+  #search-toggle-view-nam, #filter-toggle-view-nam { border-color: rgba(56, 189, 248, 0.3); }
+  #search-toggle-view-nu, #filter-toggle-view-nu { border-color: rgba(255, 101, 132, 0.3); }
   
   #info-toggle-nam { border: none; background: transparent; color: var(--blue); }
   #info-toggle-nu { border: none; background: transparent; color: var(--pink); }
-  #info-toggle-nam:hover, #info-toggle-nu:hover { background: var(--glass-bg-hover); }
+  #info-toggle-nam:hover, #info-toggle-nu:hover { background: rgba(255, 255, 255, 0.05); }
   
   .icon-btn.has-filter::after {
     content: '';
@@ -377,9 +351,8 @@
   .search-wrap.open { max-height: 52px; margin-bottom: 10px; }
   .search-input {
     width: 100%;
-    background: rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     color: var(--chalk);
     font-family: 'Inter', sans-serif;
@@ -388,7 +361,7 @@
     margin-top: 4px;
   }
   .search-input::placeholder { color: var(--chalk-dim); }
-  .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+  .search-input:focus { outline: none; border-color: var(--accent); }
 
   .filter-menu-wrap { position: relative; }
   .filter-menu {
@@ -396,15 +369,13 @@
     position: absolute;
     top: 40px;
     right: 0;
-    background: rgba(10, 45, 28, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: var(--card-bg);
     border: 1px solid var(--glass-border-light);
     border-radius: 12px;
     padding: 8px;
     min-width: 130px;
     z-index: 10;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
   }
   .filter-menu.open { display: block; }
   .filter-menu button {
@@ -421,8 +392,8 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .filter-menu button:hover { background: var(--glass-bg-hover); color: var(--chalk); }
-  .filter-menu button.active { color: var(--accent); font-weight: 600; background: rgba(255,255,255,0.05); }
+  .filter-menu button:hover { background: rgba(255,255,255,0.05); color: var(--chalk); }
+  .filter-menu button.active { color: var(--accent); font-weight: 600; background: rgba(255,255,255,0.08); }
 
   .no-results {
     text-align: center;
@@ -437,17 +408,16 @@
     grid-template-columns: 14px 1fr 40px 4px 40px 1fr;
     align-items: center;
     gap: 4px;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     padding: 8px 8px;
     transition: all 0.25s ease;
   }
   
   .fixture-row.played {
-    border-color: rgba(74, 222, 128, 0.4);
-    background: rgba(74, 222, 128, 0.05);
+    border-color: rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.03);
   }
 
   .fixture-num { color: var(--chalk-dim); font-family: 'Space Mono', monospace; font-size: 11px; text-align: center; }
@@ -464,8 +434,8 @@
   .fixture-row .name.right { text-align: center; }
 
   input[type=number] {
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     color: var(--chalk);
     font-family: 'Space Mono', monospace;
@@ -488,17 +458,16 @@
   input[type=number]:disabled {
     opacity: 0.85;
     cursor: default;
-    background: rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.05);
   }
   
-  input[type=number]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255, 209, 102, 0.35); }
+  input[type=number]:focus { outline: none; border-color: var(--accent); }
 
   input[type=number].winner {
     background: var(--accent) !important;
     color: var(--on-accent) !important;
     border-color: var(--accent) !important;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
   }
 
   .fixture-row.row-nam { border-left: 3px solid var(--blue); }
@@ -530,8 +499,8 @@
   }
 
   .score-display {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     color: var(--chalk);
     font-family: 'Space Mono', monospace;
@@ -547,7 +516,6 @@
     background: var(--accent) !important;
     color: var(--on-accent) !important;
     border-color: var(--accent) !important;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
   }
   #fixtures-view-nam .score-display.winner {
     background: var(--blue) !important;
@@ -598,13 +566,25 @@
   .fixture-status.error { color: var(--red); }
   .fixture-status:empty { display: none; }
 
-  .table-scroll { overflow-x: visible; margin: 0; padding: 0; }
+  /* =========================================
+     GLASSMORPHISM: STANDINGS TABLES
+     ========================================= */
+  .table-scroll { 
+    overflow-x: visible; 
+    margin: 12px 0 0; 
+    padding: 8px;
+    background: var(--glass-table-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--glass-shadow);
+  }
   
   table.standings {
     width: 100%;
     border-collapse: collapse;
     font-size: 11px;
-    margin-top: 4px;
     table-layout: fixed;
   }
   
@@ -614,8 +594,8 @@
     text-transform: uppercase;
     letter-spacing: 0.3px;
     color: var(--chalk-dim);
-    padding: 0 2px 8px;
-    border-bottom: 1px solid var(--line);
+    padding: 4px 2px 8px;
+    border-bottom: 1px solid var(--glass-border);
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -672,7 +652,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     width: 20px; height: 20px; border-radius: 50%;
     font-family: 'Bebas Neue', sans-serif; font-size: 11px;
-    background: var(--glass-bg); color: var(--chalk-dim);
+    background: rgba(255, 255, 255, 0.08); color: var(--chalk-dim);
     border: 1px solid var(--glass-border);
   }
   .rank-badge.rank-1 {
@@ -721,14 +701,12 @@
     table.standings tbody tr.rk-glow { animation: none !important; }
   }
 
-  /* Glassmorphism Modals */
+  /* Modals */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.7);
     z-index: 100;
     align-items: center;
     justify-content: center;
@@ -736,15 +714,13 @@
   }
   .modal-overlay.open { display: flex; }
   .modal-box {
-    background: rgba(14, 60, 38, 0.75);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
+    background: var(--card-bg);
     border: 1px solid var(--glass-border-light);
     border-radius: 16px;
     padding: 24px;
     width: 100%;
     max-width: 320px;
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.5);
     text-align: center;
   }
   .modal-box h3 { margin: 0 0 8px; font-size: 17px; }
@@ -753,7 +729,7 @@
     width: 100%;
     padding: 10px;
     background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     color: var(--chalk);
     text-align: center;
@@ -762,20 +738,20 @@
     letter-spacing: 2px;
     margin-bottom: 12px;
   }
-  .modal-box input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+  .modal-box input:focus { outline: none; border-color: var(--accent); }
   .modal-actions { display: flex; gap: 8px; }
   .modal-actions button {
     flex: 1;
     padding: 10px;
     border-radius: 10px;
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--card-border);
     font-weight: 600;
     cursor: pointer;
     font-size: 13px;
     transition: all 0.2s;
   }
-  .btn-cancel { background: var(--glass-bg); color: var(--chalk); }
-  .btn-cancel:hover { background: var(--glass-bg-hover); }
+  .btn-cancel { background: rgba(255,255,255,0.05); color: var(--chalk); }
+  .btn-cancel:hover { background: rgba(255,255,255,0.1); }
   .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
   
@@ -810,6 +786,7 @@
     </div>
   </header>
 
+  <!-- GLASSMORPHISM TABS -->
   <div class="tabs">
     <button class="tab-btn active" data-group="all">All Matches</button>
     <button class="tab-btn" data-group="nam">MS</button>
@@ -890,6 +867,7 @@
       </div>
       <div class="fixtures" id="fixtures-view-nam"></div>
     </div>
+    
     <div class="card">
       <div class="card-header">
         <h2>Standings — Men's Singles</h2>
@@ -897,6 +875,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         </button>
       </div>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
@@ -938,6 +917,7 @@
       </div>
       <div class="fixtures" id="fixtures-view-nu"></div>
     </div>
+    
     <div class="card">
       <div class="card-header">
         <h2>Standings — Women's Singles</h2>
@@ -945,6 +925,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         </button>
       </div>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
@@ -957,6 +938,7 @@
   <div id="group-overall" class="group">
     <div class="card">
       <h2>LMCL Rankings</h2>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-overall">
           <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
@@ -1644,9 +1626,8 @@ function openStandingsTab(group){
   paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
 
-// Khởi tạo các sự kiện tìm kiếm và bộ lọc
+// Event Listeners
 (() => {
-  // All Matches
   const searchBtnAll = document.getElementById('search-toggle-all');
   const searchWrapAll = document.getElementById('search-wrap-all');
   const searchInputAll = document.getElementById('search-all');
@@ -1691,7 +1672,6 @@ function openStandingsTab(group){
     });
   }
 
-  // Setup Search/Filter cho MS và WS
   ['nam', 'nu'].forEach(group => {
     const searchBtn = document.getElementById('search-toggle-view-' + group);
     const searchWrap = document.getElementById('search-wrap-view-' + group);
