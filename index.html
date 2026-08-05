@@ -55,10 +55,6 @@
     overflow-x: hidden;
     margin: 0;
   }
-  body.page-loading{
-    overflow-y: hidden;
-    height: 100vh;
-  }
 
   .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
 
@@ -66,8 +62,6 @@
     text-align:center;
     padding:24px 16px 8px;
     position:relative;
-    z-index: 30;
-    transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
   }
 
   .brand-container {
@@ -149,13 +143,9 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.45s ease;
+    transition: all 0.2s ease;
     padding: 0;
     z-index: 2;
-  }
-  body.page-loading .admin-icon-btn{
-    opacity: 0;
-    pointer-events: none;
   }
   .admin-icon-btn svg { width: 16px; height: 16px; }
   .admin-icon-btn:hover { color: var(--chalk); border-color: rgba(255,255,255,0.3); }
@@ -177,29 +167,9 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     z-index: 20;
-  }
-
-  /* Reveal-after-intro: tabs, the active tab's cards, the connection banner
-     and the footer stay hidden while body has .page-loading, then fade/slide
-     in one after another once it's removed. */
-  .tabs,
-  .group.active .card,
-  #conn-banner,
-  .foot-note{
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  body.page-loading .tabs,
-  body.page-loading .group.active .card,
-  body.page-loading #conn-banner,
-  body.page-loading .foot-note{
     opacity: 0;
-    transform: translateY(8px);
-    pointer-events: none;
+    animation: fadeInContent 0.6s ease forwards 1.4s;
   }
-  .tabs{ transition-delay: 0s; }
-  .group.active .card:nth-of-type(1){ transition-delay: 0.15s; }
-  .group.active .card:nth-of-type(2){ transition-delay: 0.3s; }
-  .foot-note{ transition-delay: 0.45s; }
   
   .tab-btn{
     position: relative;
@@ -739,7 +709,7 @@
   }
 </style>
 </head>
-<body data-theme="men" class="page-loading">
+<body data-theme="men">
 
 <div class="wrap">
   <header>
@@ -901,50 +871,6 @@
   </div>
 </div>
 
-<script>
-(function(){
-  var HOLD_MS = 1500;          // giữ logo/tên ở giữa màn hình trong 1.5 giây
-  var SLIDE_MS = 700;          // thời gian trượt lên (khớp với transition trong CSS)
-  var REVEAL_EXTRA_DELAY = 100; // khoảng nghỉ nhỏ trước khi bắt đầu hiện nội dung bên dưới
-
-  function centerHeaderInstantly(){
-    var header = document.querySelector('header');
-    if(!header) return;
-    var rect = header.getBoundingClientRect();
-    var headerCenterY = rect.top + rect.height / 2;
-    var viewportCenterY = window.innerHeight / 2;
-    var offset = Math.max(0, viewportCenterY - headerCenterY);
-
-    header.style.transition = 'none';
-    header.style.transform = 'translateY(' + offset + 'px)';
-    // Ép trình duyệt tính lại layout ngay lập tức để phần transition ở dưới
-    // không bị áp dụng nhầm vào bước đặt vị trí ban đầu này.
-    header.getBoundingClientRect();
-    header.style.transition = '';
-  }
-
-  function slideHeaderUpAndReveal(){
-    var header = document.querySelector('header');
-    if(header){
-      header.style.transform = 'translateY(0)';
-    }
-    setTimeout(function(){
-      document.body.classList.remove('page-loading');
-    }, SLIDE_MS + REVEAL_EXTRA_DELAY);
-  }
-
-  function startIntro(){
-    centerHeaderInstantly();
-    setTimeout(slideHeaderUpAndReveal, HOLD_MS);
-  }
-
-  if(document.readyState === 'complete'){
-    startIntro();
-  } else {
-    window.addEventListener('load', startIntro);
-  }
-})();
-</script>
 <script>
 const ROSTERS = {
   nam: [
