@@ -777,6 +777,11 @@
     background: rgba(193, 255, 114, 0.1);
     border: 1px solid rgba(193, 255, 114, 0.35);
     color: var(--menu-accent);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .admin-banner.fading { opacity: 0; transform: translateY(-4px); }
+  @media (prefers-reduced-motion: reduce) {
+    .admin-banner { transition: none; }
   }
   .readonly-note {
     background: rgba(255, 255, 255, 0.04);
@@ -1120,7 +1125,7 @@
       </div>
       <div class="admin-banner">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-        <span>Quyền BTC đang bật. Nhập tỷ số vào các ô viền đứt ngay tại tab này — đây là nơi duy nhất lưu được điểm.</span>
+        <span>Nhập tỷ số vào các ô bên dưới</span>
       </div>
       <p class="sub" id="progress-all"></p>
       <div class="search-wrap" id="search-wrap-all">
@@ -2146,15 +2151,33 @@ const pinError = document.getElementById('pin-error');
 const pinCancelBtn = document.getElementById('pin-cancel-btn');
 const pinSubmitBtn = document.getElementById('pin-submit-btn');
 
+// Banner nhắc BTC chỉ là lời chào lúc vào quyền: hiện 4 giây rồi tự mờ đi.
+// Viền đứt ở các ô còn trống vẫn ở lại làm dấu hiệu lâu dài.
+let adminBannerTimers = [];
+function flashAdminBanner(show){
+  const banner = document.querySelector('.admin-banner');
+  if(!banner) return;
+  adminBannerTimers.forEach(clearTimeout);
+  adminBannerTimers = [];
+  banner.style.display = '';
+  banner.classList.remove('fading');
+  if(!show) return;
+  adminBannerTimers.push(setTimeout(() => banner.classList.add('fading'), 4000));
+  adminBannerTimers.push(setTimeout(() => { banner.style.display = 'none'; }, 4400));
+}
+
 function updateAuthUI() {
   const navLoginLabel = document.getElementById('nav-login-label');
+  const wasAdmin = document.body.classList.contains('admin-mode');
   document.body.classList.toggle('admin-mode', isAdmin);
   if (isAdmin) {
+    if (!wasAdmin) flashAdminBanner(true);
     authToggleBtn.classList.add('is-admin');
     authToggleBtn.setAttribute('title', 'Đang ở quyền BTC (Bấm để thoát)');
     sessionStorage.setItem('lmcl_is_admin', 'true');
     if (navLoginLabel) navLoginLabel.textContent = 'Đăng xuất (Đang là BTC)';
   } else {
+    flashAdminBanner(false);
     authToggleBtn.classList.remove('is-admin');
     authToggleBtn.setAttribute('title', 'Kích hoạt quyền BTC');
     sessionStorage.removeItem('lmcl_is_admin');
