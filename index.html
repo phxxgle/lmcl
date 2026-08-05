@@ -156,6 +156,7 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
+  /* TABS & HIỆU ỨNG ELEGANT GLOW RUNNING BORDER */
   .tabs{
     display: flex;
     gap: 8px;
@@ -540,12 +541,15 @@
 
   table.standings-overall{table-layout:fixed;}
   table.standings-overall th:nth-child(1),
-  table.standings-overall td:nth-child(1){width:26px;}
+  table.standings-overall td:nth-child(1){width:28px;}
   table.standings-overall th:nth-child(3),
-  table.standings-overall td:nth-child(3){width:65px;}
+  table.standings-overall td:nth-child(3){width:70px;}
   table.standings-overall th:nth-child(4),
-  table.standings-overall td:nth-child(4){width:42px;}
-  table.standings-overall tbody td:nth-child(2){
+  table.standings-overall td:nth-child(4){width:52px;}
+  table.standings-overall th:nth-child(5),
+  table.standings-overall td:nth-child(5){width:70px;}
+  table.standings-overall tbody td:nth-child(2),
+  table.standings-overall tbody td:nth-child(3){
     text-align:left;
     white-space:normal;
     overflow:visible;
@@ -600,7 +604,10 @@
   .diff-neg{color:var(--red);}
   .total-pts{color:var(--chalk);font-weight:700;font-size:14px;}
   
-  .territory-cell{font-size:9.5px;color:var(--chalk-dim);font-family:'Inter',sans-serif;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .rank-change{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;white-space:nowrap;}
+  .rank-up{color:var(--green-ok);background:rgba(74,222,128,0.12);padding:2px 6px;border-radius:4px;}
+  .rank-down{color:var(--red);background:rgba(248,113,113,0.12);padding:2px 6px;border-radius:4px;}
+  .rank-same{color:var(--chalk-dim);}
 
   table.standings tbody tr{ position:relative; transition: background-color 1s ease; }
 
@@ -619,15 +626,6 @@
       opacity:1 !important;
     }
     table.standings tbody tr.rk-glow{ animation:none !important; }
-  }
-
-  .foot-note {
-    font-size: 8px;
-    color: var(--chalk-dim);
-    text-align: center;
-    margin-top: 24px;
-    letter-spacing: 0.3px;
-    opacity: 0.7;
   }
 
   .modal-overlay {
@@ -681,6 +679,15 @@
   .btn-cancel { background: rgba(255,255,255,0.08); color: var(--chalk); }
   .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
+  
+  /* Yêu cầu chỉnh sửa kích thước chữ Copyright nhỏ đi */
+  .foot-note {
+    font-size: 9.5px;
+    color: var(--chalk-dim);
+    text-align: center;
+    margin-top: 24px;
+    letter-spacing: 0.3px;
+  }
 </style>
 </head>
 <body data-theme="men">
@@ -802,14 +809,14 @@
       <h2>Overall Ranking</h2>
       <div class="table-scroll">
         <table class="standings standings-overall">
-          <thead><tr><th>#</th><th>Player</th><th>TERRITORY</th><th>PTS</th></tr></thead>
+          <thead><tr><th>#</th><th>Player</th><th>Territory</th><th>PTS</th><th>Change +/-</th></tr></thead>
           <tbody id="standings-overall"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <p class="foot-note" style="font-size: 5px;">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
+  <p class="foot-note">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
 </div>
 
 <!-- MODAL XÁC THỰC MÃ PIN -->
@@ -880,7 +887,8 @@ const OVERALL_DATA = [
   { name: "Nguyễn Tiến Trung", points: 4 }
 ];
 
-const TERRITORY_MAP = {
+// Bản đồ Territory ứng với từng VĐV
+const PLAYER_TERRITORIES = {
   "Lê Thanh Phương": "Hà Nội",
   "Nguyễn Đình Đạt": "Hà Nội",
   "Nguyễn Đan Quyên": "Quảng Ninh",
@@ -1214,18 +1222,20 @@ function computeOverall(){
 
   const withOldRank = OVERALL_DATA.map((r, i) => ({
     name: r.name,
+    territory: PLAYER_TERRITORIES[r.name] || '',
     oldPoints: r.points,
     oldRank: i + 1
   }));
 
   const withNew = withOldRank.map(r => {
     const medal = medalMap[r.name] || 0;
-    return { ...r, medal, newTotal: r.oldPoints + medal, territory: TERRITORY_MAP[r.name] || '' };
+    return { ...r, medal, newTotal: r.oldPoints + medal };
   });
 
   const ranked = [...withNew].sort((a, b) => b.newTotal - a.newTotal);
   ranked.forEach((r, i) => {
     r.newRank = i + 1;
+    r.change = r.oldRank - r.newRank;
   });
 
   return ranked;
@@ -1251,11 +1261,16 @@ function buildStandingsRowHtml(group, r, idx){
   const badgeHtml = getRankBadgeHtml(rank);
 
   if(group === 'overall'){
+    let changeCls = 'rank-same';
+    let changeText = '–';
+    if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
+    else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
     return `<tr data-name="${escapeHtml(r.name)}">
       <td>${badgeHtml}</td>
       <td>${escapeHtml(r.name)}</td>
-      <td class="territory-cell" title="${escapeHtml(r.territory)}">${escapeHtml(r.territory)}</td>
+      <td>${escapeHtml(r.territory)}</td>
       <td class="total-pts"><span class="count-val">${r.newTotal}</span></td>
+      <td class="rank-change ${changeCls}">${changeText}</td>
     </tr>`;
   }
   return `<tr data-name="${escapeHtml(r.name)}">
@@ -1525,6 +1540,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
+// Khởi chạy mặc định tab đầu tiên
 openStandingsTab('nam');
 </script>
 </body>
