@@ -1,139 +1,1867 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iPhone Glassmorphism Effect</title>
-  <style>
-    /* Reset & Cấu hình cơ bản */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* Nền Gradient đa sắc rực rỡ để hiệu ứng kính nổi bật nhất */
-      background: radial-gradient(circle at 20% 20%, #ff758c 0%, transparent 40%),
-                  radial-gradient(circle at 80% 80%, #4facfe 0%, transparent 40%),
-                  radial-gradient(circle at 50% 50%, #00f2fe 0%, transparent 50%),
-                  linear-gradient(135deg, #111827 0%, #1f2937 100%);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      overflow: hidden;
-    }
-
-    /* Khung thẻ hiệu ứng Glassmorphism */
-    .iphone-glass-card {
-      width: 340px;
-      padding: 28px;
-      
-      /* 1. Nền trắng bán trong suốt */
-      background: rgba(255, 255, 255, 0.18);
-      
-      /* 2. Hiệu ứng làm mờ + tăng độ rực màu hậu cảnh (đặc trưng iOS) */
-      -webkit-backdrop-filter: blur(25px) saturate(190%);
-      backdrop-filter: blur(25px) saturate(190%);
-      
-      /* 3. Bo góc lớn mềm mại */
-      border-radius: 32px;
-      
-      /* 4. Viền siêu mỏng bắt sáng cạnh kính */
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      
-      /* 5. Đổ bóng diện rộng, mềm mại */
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.4);
-
-      color: #ffffff;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    /* Hiệu ứng rê chuột nhẹ nhàng */
-    .iphone-glass-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 35px 70px rgba(0, 0, 0, 0.3),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    }
-
-    /* Nội dung bên trong thẻ */
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .badge {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 4px 10px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .card-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
-
-    .card-description {
-      font-size: 14px;
-      line-height: 1.5;
-      color: rgba(255, 255, 255, 0.85);
-      margin-bottom: 24px;
-    }
-
-    /* Nút bấm chuẩn iOS Glass */
-    .glass-btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: all 0.2s ease;
-    }
-
-    .glass-btn:hover {
-      background: rgba(255, 255, 255, 0.35);
-    }
-
-    .glass-btn:active {
-      transform: scale(0.98);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Thẻ kính iPhone -->
-  <div class="iphone-glass-card">
-    <div class="card-header">
-      <span class="badge">iOS 18 Glass</span>
-      <span style="opacity: 0.7; font-size: 12px;">Vừa xong</span>
-    </div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#062617">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LMCL Rankings – August 2026</title>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-bg: #062617;
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-bg-hover: rgba(255, 255, 255, 0.12);
+    --glass-card: rgba(14, 60, 38, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-border-light: rgba(255, 255, 255, 0.25);
+    --glass-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.37);
+    --glass-blur: blur(16px);
     
-    <h2 class="card-title">Glassmorphism</h2>
-    <p class="card-description">
-      Giao diện kính mờ mượt mà với hiệu ứng blur, đổ bóng nhẹ và đường viền phản chiếu ánh sáng.
-    </p>
+    --line: rgba(255, 255, 255, 0.12);
+    --chalk: #F8FAFC;
+    --chalk-dim: #A1C1B0;
+    --gold: #FFD166;
+    --pink: #FF6584;
+    --blue: #38BDF8;
+    --accent: #c1ff72;
+    --on-accent: #1A2E05;
+    --green-ok: #4ADE80;
+    --red: #F87171;
+  }
 
-    <button class="glass-btn">Khám phá ngay</button>
+  body[data-theme="men"] {
+    --accent: var(--blue);
+    --on-accent: #031B2A;
+  }
+  body[data-theme="women"] {
+    --accent: var(--pink);
+    --on-accent: #2D0310;
+  }
+  body[data-theme="rankings"] {
+    --accent: var(--gold);
+    --on-accent: #1C1300;
+  }
+  body[data-theme="allmatches"] {
+    --accent: #c1ff72;
+    --on-accent: #1A2E05;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  html {
+    background-color: var(--green-bg);
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at 10% 10%, #0d4b2e 0%, #062617 50%, #03140c 100%);
+    color: var(--chalk);
+    min-height: 100vh;
+    padding: 0 0 48px;
+    position: relative;
+    overflow-x: hidden;
+    margin: 0;
+  }
+
+  /* Glassmorphism Background Glow Effects */
+  body::before, body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before {
+    width: 280px;
+    height: 280px;
+    background: rgba(56, 189, 248, 0.15);
+    top: -50px;
+    left: -50px;
+  }
+  body::after {
+    width: 320px;
+    height: 320px;
+    background: rgba(193, 255, 114, 0.12);
+    bottom: 100px;
+    right: -80px;
+  }
+
+  .wrap { max-width: 440px; margin: 0 auto; padding: 0 12px; position: relative; z-index: 1; }
+
+  header {
+    text-align: center;
+    padding: 24px 16px 8px;
+    position: relative;
+  }
+
+  .brand-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .site-logo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+    animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+
+  .brand-divider {
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: 300;
+    font-size: 52px;
+    color: var(--chalk-dim);
+    line-height: 1;
+    opacity: 0;
+    animation: fadeInContent 0.5s ease forwards 1s;
+  }
+
+  h1 {
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 1px;
+    margin: 0;
+    color: var(--chalk);
+    line-height: 1.2;
+    text-align: left;
+    opacity: 0;
+    animation: fadeInContent 0.6s ease forwards 1.2s;
+  }
+
+  .badge-date {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    color: var(--chalk);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 7px;
+    border-radius: 6px;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
+  @keyframes logoIntro {
+    0% { transform: scale(1.5) translateX(50px); opacity: 0; }
+    35% { transform: scale(1.5) translateX(50px); opacity: 1; }
+    70%, 100% { transform: scale(1) translateX(0); opacity: 1; }
+  }
+
+  @keyframes fadeInContent {
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .admin-icon-btn {
+    position: absolute;
+    top: 18px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    color: var(--chalk-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+    z-index: 2;
+  }
+  .admin-icon-btn svg { width: 16px; height: 16px; }
+  .admin-icon-btn:hover { color: var(--chalk); background: var(--glass-bg-hover); border-color: var(--glass-border-light); }
+  .admin-icon-btn.is-admin {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 16px rgba(255, 209, 102, 0.4);
+  }
+
+  /* Glassmorphism Tabs Sticky Header */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    margin: 0 -12px;
+    position: sticky;
+    top: 0;
+    background: rgba(6, 38, 23, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 20;
+    opacity: 0;
+    animation: fadeInContent 0.6s ease forwards 1.4s;
+  }
+  
+  .tab-btn {
+    position: relative;
+    flex: 1;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.6px;
+    background: var(--glass-bg);
+    color: var(--chalk-dim);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 999px;
+    padding: 10px 3px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .tab-btn:hover {
+    color: var(--chalk);
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-border-light);
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: transparent;
+    font-weight: bold;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .tab-btn.active::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.9) 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.9) 75%,
+      transparent 100%
+    );
+    border-radius: 999px;
+    animation: elegantGlow 4s linear infinite;
+    z-index: -2;
+  }
+
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    background: var(--accent);
+    border-radius: 999px;
+    z-index: -1;
+    transition: background 0.3s ease;
+  }
+
+  @keyframes elegantGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .group {
+    display: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .group.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Glassmorphism Cards */
+  .card {
+    background: var(--glass-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 16px;
+    box-shadow: var(--glass-shadow);
+  }
+  .card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    margin: 0 0 4px;
+    color: var(--accent);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .card .sub {
+    font-size: 12px;
+    color: var(--chalk-dim);
+    margin: 0 0 14px;
+    line-height: 1.5;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .card-header h2 { margin: 0; }
+  .header-icons {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: var(--chalk-dim);
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  .icon-btn svg { width: 15px; height: 15px; }
+  .icon-btn:hover { color: var(--chalk); background: var(--glass-bg-hover); border-color: var(--glass-border-light); }
+  .icon-btn.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  
+  #search-toggle-all, #filter-toggle-all { border-color: rgba(193, 255, 114, 0.4); }
+  #search-toggle-view-nam, #filter-toggle-view-nam { border-color: rgba(56, 189, 248, 0.4); }
+  #search-toggle-view-nu, #filter-toggle-view-nu { border-color: rgba(255, 101, 132, 0.4); }
+  
+  #info-toggle-nam { border: none; background: transparent; color: var(--blue); }
+  #info-toggle-nu { border: none; background: transparent; color: var(--pink); }
+  #info-toggle-nam:hover, #info-toggle-nu:hover { background: var(--glass-bg-hover); }
+  
+  .icon-btn.has-filter::after {
+    content: '';
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 1.5px solid var(--green-bg);
+  }
+
+  .search-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.22s ease, margin-bottom 0.22s ease;
+  }
+  .search-wrap.open { max-height: 52px; margin-bottom: 10px; }
+  .search-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 9px 12px;
+    margin-top: 4px;
+  }
+  .search-input::placeholder { color: var(--chalk-dim); }
+  .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+
+  .filter-menu-wrap { position: relative; }
+  .filter-menu {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: rgba(10, 45, 28, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border-light);
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 130px;
+    z-index: 10;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  }
+  .filter-menu.open { display: block; }
+  .filter-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--chalk-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-menu button:hover { background: var(--glass-bg-hover); color: var(--chalk); }
+  .filter-menu button.active { color: var(--accent); font-weight: 600; background: rgba(255,255,255,0.05); }
+
+  .no-results {
+    text-align: center;
+    color: var(--chalk-dim);
+    font-size: 12.5px;
+    padding: 18px 4px;
+  }
+
+  .fixtures { display: flex; flex-direction: column; gap: 8px; }
+  .fixture-row {
+    display: grid;
+    grid-template-columns: 14px 1fr 40px 4px 40px 1fr;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 8px 8px;
+    transition: all 0.25s ease;
+  }
+  
+  .fixture-row.played {
+    border-color: rgba(74, 222, 128, 0.4);
+    background: rgba(74, 222, 128, 0.05);
+  }
+
+  .fixture-num { color: var(--chalk-dim); font-family: 'Space Mono', monospace; font-size: 11px; text-align: center; }
+  
+  .fixture-row .name {
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+  .fixture-row .name.right { text-align: center; }
+
+  input[type=number] {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--chalk);
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    width: 40px;
+    height: 35px;
+    padding: 0;
+    transition: all 0.2s ease;
+    -moz-appearance: textfield;
+  }
+
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type=number]:disabled {
+    opacity: 0.85;
+    cursor: default;
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  
+  input[type=number]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255, 209, 102, 0.35); }
+
+  input[type=number].winner {
+    background: var(--accent) !important;
+    color: var(--on-accent) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  }
+
+  .fixture-row.row-nam { border-left: 3px solid var(--blue); }
+  .fixture-row.row-nam input[type=number].winner,
+  .fixture-row.row-nam .score-display.winner {
+    background: var(--blue) !important;
+    color: #031B2A !important;
+    border-color: var(--blue) !important;
+  }
+  .fixture-row.row-nu { border-left: 3px solid var(--pink); }
+  .fixture-row.row-nu input[type=number].winner,
+  .fixture-row.row-nu .score-display.winner {
+    background: var(--pink) !important;
+    color: #2D0310 !important;
+    border-color: var(--pink) !important;
+  }
+
+  .filter-section-label {
+    font-size: 9.5px;
+    color: var(--chalk-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 10px 2px;
+  }
+  .filter-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 4px 2px;
+  }
+
+  .score-display {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--chalk);
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    width: 40px;
+    height: 35px;
+    line-height: 33px;
+    display: inline-block;
+  }
+  .score-display.winner {
+    background: var(--accent) !important;
+    color: var(--on-accent) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+  }
+  #fixtures-view-nam .score-display.winner {
+    background: var(--blue) !important;
+    color: #031B2A !important;
+    border-color: var(--blue) !important;
+  }
+  #fixtures-view-nu .score-display.winner {
+    background: var(--pink) !important;
+    color: #2D0310 !important;
+    border-color: var(--pink) !important;
+  }
+  .score-display.invalid { border-color: var(--red) !important; }
+
+  @keyframes shake-x {
+    10%,90% { transform: translateX(-1px); }
+    20%,80% { transform: translateX(2px); }
+    30%,50%,70% { transform: translateX(-4px); }
+    40%,60% { transform: translateX(4px); }
+  }
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .score-input.shake { animation: shake-x 0.4s; }
+  .score-input.invalid {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.3);
+  }
+  .error-msg {
+    grid-column: 1/-1;
+    font-size: 10.5px;
+    text-align: center;
+    color: var(--red);
+    margin-top: -2px;
+    animation: slide-down 0.25s ease;
+  }
+  .error-msg:empty { display: none; animation: none; }
+
+  .fixture-status {
+    grid-column: 1/-1;
+    font-size: 10.5px;
+    text-align: right;
+    color: var(--chalk-dim);
+    margin-top: -2px;
+  }
+  .fixture-status.done { color: var(--green-ok); }
+  .fixture-status.warn { color: var(--accent); }
+  .fixture-status.error { color: var(--red); }
+  .fixture-status:empty { display: none; }
+
+  .table-scroll { overflow-x: visible; margin: 0; padding: 0; }
+  
+  table.standings {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 4px;
+    table-layout: fixed;
+  }
+  
+  table.standings thead th {
+    text-align: center;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--chalk-dim);
+    padding: 0 2px 8px;
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  table.standings tbody td {
+    text-align: center;
+    padding: 8px 2px;
+    border-bottom: 1px solid var(--line);
+    font-family: 'Space Mono', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  table.standings tbody td:nth-child(2) {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    padding-left: 6px;
+    padding-right: 6px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+    line-height: 1.25;
+  }
+  table.standings thead th:nth-child(2) { text-align: left; }
+
+  table.standings thead th:nth-child(2),
+  table.standings tbody td:nth-child(2) { border-right: 1px solid var(--line); }
+
+  table.standings-overall th:nth-child(3),
+  table.standings-overall td:nth-child(3) { border-right: 1px solid var(--line); }
+
+  table.standings-overall th:nth-child(1), table.standings-overall td:nth-child(1) { width: 12%; }
+  table.standings-overall th:nth-child(2), table.standings-overall td:nth-child(2) { width: 48%; }
+  table.standings-overall th:nth-child(3), table.standings-overall td:nth-child(3) { width: 18%; }
+  table.standings-overall th:nth-child(4), table.standings-overall td:nth-child(4) { width: 22%; }
+
+  table.standings tbody tr:last-child td { border-bottom: none; }
+
+  table.standings-full th:nth-child(1), table.standings-full td:nth-child(1) { width: 6%; }
+  table.standings-full th:nth-child(2), table.standings-full td:nth-child(2) { width: 36%; }
+  table.standings-full th:nth-child(3), table.standings-full td:nth-child(3),
+  table.standings-full th:nth-child(4), table.standings-full td:nth-child(4),
+  table.standings-full th:nth-child(5), table.standings-full td:nth-child(5) { width: 8%; }
+  table.standings-full th:nth-child(6), table.standings-full td:nth-child(6),
+  table.standings-full th:nth-child(7), table.standings-full td:nth-child(7) { width: 11%; }
+  table.standings-full th:nth-child(8), table.standings-full td:nth-child(8) { width: 12%; }
+
+  .rank-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    font-family: 'Bebas Neue', sans-serif; font-size: 11px;
+    background: var(--glass-bg); color: var(--chalk-dim);
+    border: 1px solid var(--glass-border);
+  }
+  .rank-badge.rank-1 {
+    background: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
+    color: #4A2E00;
+    box-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+    font-weight: 700;
+    border: none;
+  }
+  .rank-badge.rank-2 {
+    background: linear-gradient(135deg, #E2E8F0 0%, #94A3B8 100%);
+    color: #0F172A;
+    font-weight: 700;
+    border: none;
+  }
+  .rank-badge.rank-3 {
+    background: linear-gradient(135deg, #F6AD55 0%, #DD6B20 100%);
+    color: #3C1500;
+    font-weight: 700;
+    border: none;
+  }
+
+  .diff-pos { color: var(--green-ok); }
+  .diff-neg { color: var(--red); }
+  .total-pts { color: var(--chalk); font-weight: 700; font-size: 13px; }
+  
+  .rank-change { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 10.5px; white-space: nowrap; }
+  .rank-up { color: var(--green-ok); background: rgba(74, 222, 128, 0.15); padding: 2px 4px; border-radius: 4px; }
+  .rank-down { color: var(--red); background: rgba(248, 113, 113, 0.15); padding: 2px 4px; border-radius: 4px; }
+  .rank-same { color: var(--chalk-dim); }
+
+  table.standings tbody tr { position: relative; transition: background-color 1s ease; }
+
+  @keyframes rk-row-flash {
+    0%   { background-color: rgba(56, 189, 248, 0.35); }
+    100% { background-color: transparent; }
+  }
+  table.standings tbody tr.rk-glow { animation: rk-row-flash 1s ease-out; }
+
+  @media (prefers-reduced-motion: reduce) {
+    table.standings tbody tr {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+    table.standings tbody tr.rk-glow { animation: none !important; }
+  }
+
+  /* Glassmorphism Modals */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: rgba(14, 60, 38, 0.75);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border-light);
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 320px;
+    box-shadow: var(--glass-shadow);
+    text-align: center;
+  }
+  .modal-box h3 { margin: 0 0 8px; font-size: 17px; }
+  .modal-box p { margin: 0 0 16px; font-size: 12px; color: var(--chalk-dim); }
+  .modal-box input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: var(--chalk);
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .modal-box input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+  .modal-actions { display: flex; gap: 8px; }
+  .modal-actions button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .btn-cancel { background: var(--glass-bg); color: var(--chalk); }
+  .btn-cancel:hover { background: var(--glass-bg-hover); }
+  .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
+  
+  .foot-note {
+    font-size: 9.5px;
+    color: var(--chalk-dim);
+    text-align: left;
+    margin-top: 24px;
+    letter-spacing: 0.3px;
+  }
+</style>
+</head>
+<body data-theme="allmatches">
+
+<div class="wrap">
+  <header>
+    <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+      </svg>
+    </button>
+
+    <div class="brand-container">
+      <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
+      <span class="brand-divider">|</span>
+      <h1>
+        LMCL<br>
+        ALLSTARS<br>
+        RANKINGS<br>
+        <span class="badge-date">AUGUST 2026</span>
+      </h1>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-group="all">All Matches</button>
+    <button class="tab-btn" data-group="nam">MS</button>
+    <button class="tab-btn" data-group="nu">WS</button>
+    <button class="tab-btn" data-group="overall">Rankings</button>
   </div>
 
+  <div id="conn-banner" style="display:none;background:rgba(248,113,113,0.18);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
+
+  <div id="group-all" class="group active">
+    <div class="card">
+      <div class="card-header">
+        <h2>Schedule — All Matches</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-all" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-all" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-all">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Nội dung</div>
+              <button type="button" data-filter="gender" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
+              <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="sub" id="progress-all"></p>
+      <div class="search-wrap" id="search-wrap-all">
+        <input type="text" class="search-input" id="search-all" placeholder="Tìm theo tên vận động viên...">
+      </div>
+      <div class="fixtures" id="fixtures-all"></div>
+    </div>
+  </div>
+
+  <div id="group-nam" class="group">
+    <div class="card">
+      <div class="card-header">
+        <h2>Results — Men's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-view-nam" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-view-nam" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-view-nam">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="sub" id="progress-view-nam"></p>
+      <div class="search-wrap" id="search-wrap-view-nam">
+        <input type="text" class="search-input" id="search-view-nam" placeholder="Tìm theo tên vận động viên...">
+      </div>
+      <div class="fixtures" id="fixtures-view-nam"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>Standings — Men's Singles</h2>
+        <button type="button" class="icon-btn" id="info-toggle-nam" aria-label="Chú thích">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </button>
+      </div>
+      <div class="table-scroll">
+        <table class="standings standings-full">
+          <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
+          <tbody id="standings-nam"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="group-nu" class="group">
+    <div class="card">
+      <div class="card-header">
+        <h2>Results — Women's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-view-nu" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-view-nu" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-view-nu">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="sub" id="progress-view-nu"></p>
+      <div class="search-wrap" id="search-wrap-view-nu">
+        <input type="text" class="search-input" id="search-view-nu" placeholder="Tìm theo tên vận động viên...">
+      </div>
+      <div class="fixtures" id="fixtures-view-nu"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>Standings — Women's Singles</h2>
+        <button type="button" class="icon-btn" id="info-toggle-nu" aria-label="Chú thích">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </button>
+      </div>
+      <div class="table-scroll">
+        <table class="standings standings-full">
+          <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
+          <tbody id="standings-nu"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="group-overall" class="group">
+    <div class="card">
+      <h2>LMCL Rankings</h2>
+      <div class="table-scroll">
+        <table class="standings standings-overall">
+          <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
+          <tbody id="standings-overall"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot-note">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
+</div>
+
+<!-- MODAL XÁC THỰC MÃ PIN -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal-box">
+    <h3>Xác nhận quyền BTC</h3>
+    <p>Vui lòng nhập mã PIN để kích hoạt quyền cập nhật điểm số</p>
+    <input type="password" id="pin-input" placeholder="Mã PIN" autocomplete="off">
+    <div class="pin-error" id="pin-error">Mã PIN không chính xác!</div>
+    <div class="modal-actions">
+      <button type="button" class="btn-cancel" id="pin-cancel-btn">Hủy</button>
+      <button type="button" class="btn-submit" id="pin-submit-btn">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CHÚ THÍCH BẢNG STANDINGS -->
+<div class="modal-overlay" id="info-modal">
+  <div class="modal-box" style="max-width:340px;text-align:left;">
+    <h3 style="text-align:center;">Chú thích</h3>
+    <div style="font-size:12.5px;color:var(--chalk-dim);line-height:1.85;">
+      <p><strong style="color:var(--chalk);">P (Played):</strong> Số trận đã thi đấu</p>
+      <p><strong style="color:var(--chalk);">W (Won):</strong> Số trận thắng</p>
+      <p><strong style="color:var(--chalk);">L (Lost):</strong> Số trận thua</p>
+      <p><strong style="color:var(--chalk);">PF (Points For):</strong> Tổng điểm ghi được trong tất cả các trận</p>
+      <p><strong style="color:var(--chalk);">PA (Points Against):</strong> Tổng điểm đối thủ ghi được trước người chơi</p>
+      <p><strong style="color:var(--chalk);">DIFF (Point Difference):</strong> Hiệu số điểm = PF − PA</p>
+      <p style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);">Xếp hạng theo thứ tự: số trận thắng nhiều nhất → hiệu số điểm cao nhất → tổng điểm ghi được nhiều nhất.</p>
+    </div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button type="button" class="btn-submit" id="info-close-btn" style="flex:1;">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ROSTERS = {
+  nam: [
+    "Vương Mạnh Chuyền",
+    "Chu Văn Huynh",
+    "Phạm Minh Quân",
+    "Nguyễn Văn Thành",
+    "Nguyễn Đình Đạt",
+    "Trần Trung Hiếu",
+    "Nguyễn Tiến Trung"
+  ],
+  nu: [
+    "Nguyễn Đan Quyên",
+    "Lê Thanh Phương",
+    "Vũ Ngọc Linh",
+    "Bùi Huyền Trang",
+    "Đặng Thị Nhung"
+  ]
+};
+
+const OVERALL_DATA = [
+  { name: "Nguyễn Đan Quyên", points: 12 },
+  { name: "Vương Mạnh Chuyền", points: 11 },
+  { name: "Lê Thanh Phương", points: 11 },
+  { name: "Chu Văn Huynh", points: 10 },
+  { name: "Phạm Minh Quân", points: 9 },
+  { name: "Vũ Ngọc Linh", points: 9 },
+  { name: "Nguyễn Văn Thành", points: 6 },
+  { name: "Nguyễn Đình Đạt", points: 5 },
+  { name: "Bùi Huyền Trang", points: 5 },
+  { name: "Đặng Thị Nhung", points: 5 },
+  { name: "Trần Trung Hiếu", points: 4 },
+  { name: "Nguyễn Tiến Trung", points: 4 }
+];
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAxF7hj25lOR8QGhPMW1ie9_ZU1RsoCVL0",
+  authDomain: "lmcl-rankings.firebaseapp.com",
+  databaseURL: "https://lmcl-rankings-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "lmcl-rankings",
+  storageBucket: "lmcl-rankings.firebasestorage.app",
+  messagingSenderId: "454282404352",
+  appId: "1:454282404352:web:a6ead42afcd9c954c8aee5",
+  measurementId: "G-TFFCH8D97K"
+};
+firebase.initializeApp(firebaseConfig);
+const scoresRef = firebase.database().ref('scores');
+
+function showConnBanner(msg){
+  const el = document.getElementById('conn-banner');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideConnBanner(){
+  document.getElementById('conn-banner').style.display = 'none';
+}
+
+if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOUR_PROJECT'){
+  showConnBanner('⚠️ Chưa cấu hình Firebase...');
+}
+
+let scores = {};
+let isAdmin = sessionStorage.getItem('lmcl_is_admin') === 'true'; 
+const SECRET_PIN = "BTC";
+
+const uiState = {
+  all: { status: 'all', gender: 'all', day: 'all' }
+};
+const uiStateView = {
+  nam: { status: 'all', day: 'all', search: '' },
+  nu: { status: 'all', day: 'all', search: '' }
+};
+
+const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let activeGroupTab = 'all';
+const paintedStandings = { nam: null, nu: null, overall: null };
+const ROW_ANIM_MS = 260;   
+const STAGGER_MS = 65;     
+const COUNT_MS = 650;      
+
+function buildFixtures(group){
+  const players = ROSTERS[group];
+  const fixtures = [];
+  for(let i = 0; i < players.length; i++){
+    for(let j = i + 1; j < players.length; j++){
+      fixtures.push({ id: group + '-' + i + '-' + j, p1: players[i], p2: players[j] });
+    }
+  }
+  return fixtures;
+}
+
+const FIXTURES = { nam: buildFixtures('nam'), nu: buildFixtures('nu') };
+
+function playerGroup(name){
+  if(ROSTERS.nam.includes(name)) return 'nam';
+  if(ROSTERS.nu.includes(name)) return 'nu';
+  return null;
+}
+
+const DAY1_COUNT = 15;
+const CUSTOM_MATCH_ORDER = [
+  ["Trần Trung Hiếu", "Nguyễn Văn Thành"],
+  ["Bùi Huyền Trang", "Đặng Thị Nhung"],
+  ["Nguyễn Tiến Trung", "Vương Mạnh Chuyền"],
+  ["Vũ Ngọc Linh", "Đặng Thị Nhung"],
+  ["Chu Văn Huynh", "Nguyễn Văn Thành"],
+  ["Bùi Huyền Trang", "Lê Thanh Phương"],
+  ["Trần Trung Hiếu", "Vương Mạnh Chuyền"],
+  ["Vũ Ngọc Linh", "Bùi Huyền Trang"],
+  ["Nguyễn Đình Đạt", "Chu Văn Huynh"],
+  ["Đặng Thị Nhung", "Lê Thanh Phương"],
+  ["Trần Trung Hiếu", "Nguyễn Tiến Trung"],
+  ["Vũ Ngọc Linh", "Lê Thanh Phương"],
+  ["Chu Văn Huynh", "Vương Mạnh Chuyền"],
+  ["Nguyễn Đình Đạt", "Nguyễn Văn Thành"],
+  ["Trần Trung Hiếu", "Chu Văn Huynh"],
+  ["Nguyễn Đình Đạt", "Trần Trung Hiếu"],
+  ["Phạm Minh Quân", "Nguyễn Văn Thành"],
+  ["Nguyễn Đan Quyên", "Bùi Huyền Trang"],
+  ["Nguyễn Tiến Trung", "Chu Văn Huynh"],
+  ["Phạm Minh Quân", "Vương Mạnh Chuyền"],
+  ["Nguyễn Đan Quyên", "Đặng Thị Nhung"],
+  ["Nguyễn Đình Đạt", "Vương Mạnh Chuyền"],
+  ["Phạm Minh Quân", "Nguyễn Tiến Trung"],
+  ["Nguyễn Đan Quyên", "Lê Thanh Phương"],
+  ["Nguyễn Văn Thành", "Nguyễn Tiến Trung"],
+  ["Phạm Minh Quân", "Chu Văn Huynh"],
+  ["Nguyễn Đan Quyên", "Vũ Ngọc Linh"],
+  ["Nguyễn Đình Đạt", "Phạm Minh Quân"],
+  ["Nguyễn Văn Thành", "Vương Mạnh Chuyền"],
+  ["Nguyễn Đình Đạt", "Nguyễn Tiến Trung"],
+  ["Phạm Minh Quân", "Trần Trung Hiếu"]
+];
+
+const ALL_FIXTURES = CUSTOM_MATCH_ORDER.map((pair, idx) => {
+  const [nameA, nameB] = pair;
+  const group = playerGroup(nameA);
+  const roster = ROSTERS[group];
+  const ia = roster.indexOf(nameA);
+  const ib = roster.indexOf(nameB);
+  const i = Math.min(ia, ib);
+  const j = Math.max(ia, ib);
+  return {
+    id: group + '-' + i + '-' + j,
+    p1: roster[i],
+    p2: roster[j],
+    group,
+    day: idx < DAY1_COUNT ? 1 : 2
+  };
+});
+
+function isEditingScoreInput(){
+  const active = document.activeElement;
+  return !!(active && active.tagName === 'INPUT' && active.classList.contains('score-input'));
+}
+
+scoresRef.on('value', snapshot => {
+  hideConnBanner();
+  scores = snapshot.val() || {};
+  if(isEditingScoreInput()) return;
+  renderAll();
+  renderReadonlyGroup('nam');
+  renderReadonlyGroup('nu');
+  ['nam','nu','overall'].forEach(refreshStandings);
+}, error => {
+  showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
+  console.error('Firebase error:', error);
+});
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+const WIN_SCORE = 15;
+
+function matchState(v1, v2){
+  if(v1 === null && v2 === null){
+    return { state: 'empty' };
+  }
+  if(v1 === null || v2 === null){
+    return { state: 'invalid' };
+  }
+  if(v1 < 0 || v2 < 0){
+    return { state: 'invalid' };
+  }
+  
+  const hi = Math.max(v1, v2);
+  const diff = Math.abs(v1 - v2);
+  
+  if(diff < 2 || hi < WIN_SCORE){
+    return { state: 'invalid' };
+  }
+  
+  return { state: 'finished' };
+}
+
+function getFilteredAllFixtures(){
+  const searchEl = document.getElementById('search-all');
+  const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
+  const status = uiState.all.status;
+  const gender = uiState.all.gender;
+  const day = uiState.all.day;
+  return ALL_FIXTURES.filter(f => {
+    if(day !== 'all' && String(f.day) !== day) return false;
+    if(gender !== 'all' && f.group !== gender) return false;
+    if(search){
+      const hay = (f.p1 + ' ' + f.p2).toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    if(status !== 'all'){
+      const sc = scores[f.id];
+      const played = !!(sc && sc.played);
+      if(status === 'played' && !played) return false;
+      if(status === 'unplayed' && played) return false;
+    }
+    return true;
+  });
+}
+
+function renderAll(){
+  renderAllFixtures();
+}
+
+function renderAllFixtures(){
+  const container = document.getElementById('fixtures-all');
+  if(!container) return;
+  const playedCount = ALL_FIXTURES.filter(f => scores[f.id] && scores[f.id].played).length;
+  document.getElementById('progress-all').textContent =
+    `Đã hoàn thành ${playedCount}/${ALL_FIXTURES.length} trận`;
+
+  const STATUS_LABEL = {
+    finished: { text:'Đã đấu', cls:'done' },
+    invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
+  };
+
+  const visible = getFilteredAllFixtures();
+
+  if(visible.length === 0){
+    container.innerHTML = '<div class="no-results">Không tìm thấy trận đấu phù hợp</div>';
+    return;
+  }
+
+  const disabledAttr = isAdmin ? '' : 'disabled';
+
+  container.innerHTML = visible.map(f => {
+    const idx = ALL_FIXTURES.indexOf(f);
+    const sc = scores[f.id];
+    const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
+    const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
+    const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
+    const isInvalid = sc && sc.note === 'invalid';
+    const v1 = hasVal1 ? sc.s1 : null;
+    const v2 = hasVal2 ? sc.s2 : null;
+    const s1Winner = (v1 !== null && v2 !== null && v1 > v2) ? 'winner' : '';
+    const s2Winner = (v1 !== null && v2 !== null && v2 > v1) ? 'winner' : '';
+    return `<div class="fixture-row row-${f.group} ${sc && sc.played ? 'played' : ''}" data-id="${f.id}">
+      <span class="fixture-num">${idx + 1}</span>
+      <span class="name right" title="${escapeHtml(f.p1)}">${escapeHtml(f.p1)}</span>
+      <input type="number" inputmode="numeric" min="0" class="score-input s1 ${isInvalid ? 'invalid' : s1Winner}" value="${hasVal1 ? sc.s1 : ''}" placeholder="-" ${disabledAttr}>
+      <span></span>
+      <input type="number" inputmode="numeric" min="0" class="score-input s2 ${isInvalid ? 'invalid' : s2Winner}" value="${hasVal2 ? sc.s2 : ''}" placeholder="-" ${disabledAttr}>
+      <span class="name" title="${escapeHtml(f.p2)}">${escapeHtml(f.p2)}</span>
+      <span class="error-msg"></span>
+      <span class="fixture-status ${label ? label.cls : ''}">${label ? label.text : ''}</span>
+    </div>`;
+  }).join('');
+
+  if(!isAdmin) return;
+
+  container.querySelectorAll('.fixture-row').forEach(row => {
+    const id = row.getAttribute('data-id');
+    const s1input = row.querySelector('.s1');
+    const s2input = row.querySelector('.s2');
+    const errEl = row.querySelector('.error-msg');
+
+    function updateWinnerHighlight(){
+      const v1 = s1input.value === '' ? NaN : parseInt(s1input.value, 10);
+      const v2 = s2input.value === '' ? NaN : parseInt(s2input.value, 10);
+
+      s1input.classList.remove('winner');
+      s2input.classList.remove('winner');
+
+      if(!isNaN(v1) && !isNaN(v2) && v1 !== v2){
+        if(v1 > v2) s1input.classList.add('winner');
+        else s2input.classList.add('winner');
+      }
+    }
+
+    function validateLive(){
+      const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
+      const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
+      const result = matchState(v1, v2);
+      
+      if(result.state === 'invalid'){
+        errEl.textContent = 'Tỷ số không hợp lệ';
+        
+        if(v1 !== null && v2 !== null){
+          [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
+        } else {
+          if(v1 === null || isNaN(v1)) s1input.classList.add('invalid');
+          else s1input.classList.remove('invalid');
+
+          if(v2 === null || isNaN(v2)) s2input.classList.add('invalid');
+          else s2input.classList.remove('invalid');
+        }
+
+        [s1input, s2input].forEach(inp => {
+          inp.classList.remove('shake');
+          void inp.offsetWidth;
+          inp.classList.add('shake');
+        });
+      } else {
+        errEl.textContent = '';
+        [s1input, s2input].forEach(inp => inp.classList.remove('invalid'));
+      }
+
+      updateWinnerHighlight();
+    }
+
+    [s1input, s2input].forEach(inp => {
+      inp.addEventListener('animationend', () => inp.classList.remove('shake'));
+      
+      inp.addEventListener('focus', () => {
+        setTimeout(() => {
+          inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      });
+    });
+
+    function commit(){
+      const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
+      const v2 = s2input.value === '' ? null : parseInt(s2input.value, 10);
+      let writeOp;
+      if(v1 === null && v2 === null){
+        writeOp = scoresRef.child(id).remove();
+      } else {
+        const result = matchState(v1, v2);
+        writeOp = scoresRef.child(id).set({ s1: v1, s2: v2, played: result.state === 'finished', note: result.state });
+      }
+      writeOp.catch(error => {
+        showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + ').');
+        console.error('Firebase write error:', error);
+      });
+    }
+
+    s1input.addEventListener('input', validateLive);
+    s2input.addEventListener('input', validateLive);
+
+    s1input.addEventListener('change', () => {
+      commit();
+      if(document.activeElement !== s2input){
+        s2input.focus();
+        s2input.select();
+      }
+    });
+    s2input.addEventListener('change', commit);
+
+    s1input.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        s2input.focus();
+        s2input.select();
+      }
+    });
+    s2input.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        s2input.blur();
+      }
+    });
+  });
+}
+
+function renderReadonlyGroup(group){
+  const container = document.getElementById('fixtures-view-' + group);
+  if(!container) return;
+  const fixtures = ALL_FIXTURES.filter(f => f.group === group);
+  const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
+  const progEl = document.getElementById('progress-view-' + group);
+  if(progEl){
+    progEl.textContent = `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
+  }
+
+  const STATUS_LABEL = {
+    finished: { text:'Đã đấu', cls:'done' },
+    invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
+  };
+
+  const state = uiStateView[group];
+  const filtered = fixtures.filter(f => {
+    if(state.day !== 'all' && String(f.day) !== state.day) return false;
+    if(state.search){
+      const hay = (f.p1 + ' ' + f.p2).toLowerCase();
+      if(!hay.includes(state.search.toLowerCase())) return false;
+    }
+    if(state.status !== 'all'){
+      const sc = scores[f.id];
+      const played = !!(sc && sc.played);
+      if(state.status === 'played' && !played) return false;
+      if(state.status === 'unplayed' && played) return false;
+    }
+    return true;
+  });
+
+  if(filtered.length === 0){
+    container.innerHTML = '<div class="no-results">Không tìm thấy trận đấu phù hợp</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(f => {
+    const origIdx = fixtures.indexOf(f);
+    const sc = scores[f.id];
+    const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
+    const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
+    const isInvalid = sc && sc.note === 'invalid';
+    const v1 = hasVal1 ? sc.s1 : null;
+    const v2 = hasVal2 ? sc.s2 : null;
+    const s1Winner = (!isInvalid && v1 !== null && v2 !== null && v1 > v2) ? 'winner' : '';
+    const s2Winner = (!isInvalid && v1 !== null && v2 !== null && v2 > v1) ? 'winner' : '';
+    const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
+    return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}">
+      <span class="fixture-num">${origIdx + 1}</span>
+      <span class="name right" title="${escapeHtml(f.p1)}">${escapeHtml(f.p1)}</span>
+      <span class="score-display ${isInvalid ? 'invalid' : s1Winner}">${hasVal1 ? sc.s1 : '-'}</span>
+      <span></span>
+      <span class="score-display ${isInvalid ? 'invalid' : s2Winner}">${hasVal2 ? sc.s2 : '-'}</span>
+      <span class="name" title="${escapeHtml(f.p2)}">${escapeHtml(f.p2)}</span>
+      <span class="fixture-status ${label ? label.cls : ''}">${label ? label.text : ''}</span>
+    </div>`;
+  }).join('');
+}
+
+function computeStandings(group){
+  const table = {};
+  ROSTERS[group].forEach(name => {
+    table[name] = { name, played:0, win:0, loss:0, ptsFor:0, ptsAgainst:0 };
+  });
+  FIXTURES[group].forEach(f => {
+    const sc = scores[f.id];
+    if(!sc || !sc.played) return;
+    const a = table[f.p1];
+    const b = table[f.p2];
+    a.played++; b.played++;
+    a.ptsFor += sc.s1; a.ptsAgainst += sc.s2;
+    b.ptsFor += sc.s2; b.ptsAgainst += sc.s1;
+    if(sc.s1 > sc.s2){ a.win++; b.loss++; } else { b.win++; a.loss++; }
+  });
+  const rows = Object.values(table).map(r => ({ ...r, diff: r.ptsFor - r.ptsAgainst }));
+  rows.sort((x, y) => {
+    if(y.win !== x.win) return y.win - x.win;
+    if(y.diff !== x.diff) return y.diff - x.diff;
+    return y.ptsFor - x.ptsFor;
+  });
+  return rows;
+}
+
+function medalPointsFor(rankIndex){
+  if(rankIndex === 0) return 3;
+  if(rankIndex === 1) return 2;
+  if(rankIndex === 2) return 1;
+  return 0;
+}
+
+function computeOverall(){
+  const medalMap = {};
+  ['nam','nu'].forEach(group => {
+    const fixtures = FIXTURES[group];
+    const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
+    const isComplete = playedCount === fixtures.length;
+    if(isComplete){
+      computeStandings(group).forEach((r, i) => {
+        medalMap[r.name] = medalPointsFor(i);
+      });
+    }
+  });
+
+  const withOldRank = OVERALL_DATA.map((r, i) => ({
+    name: r.name,
+    oldPoints: r.points,
+    oldRank: i + 1
+  }));
+
+  const withNew = withOldRank.map(r => {
+    const medal = medalMap[r.name] || 0;
+    return { ...r, medal, newTotal: r.oldPoints + medal };
+  });
+
+  const ranked = [...withNew].sort((a, b) => b.newTotal - a.newTotal);
+  ranked.forEach((r, i) => {
+    r.newRank = i + 1;
+    r.change = r.oldRank - r.newRank;
+  });
+
+  return ranked;
+}
+
+function getRowsFor(group){
+  return group === 'overall' ? computeOverall() : computeStandings(group);
+}
+
+function rowScoreValue(group, r){
+  return group === 'overall' ? r.newTotal : r.ptsFor;
+}
+
+function getRankBadgeHtml(rank){
+  if(rank === 1) return `<span class="rank-badge rank-1" title="Hạng 1">1</span>`;
+  if(rank === 2) return `<span class="rank-badge rank-2" title="Hạng 2">2</span>`;
+  if(rank === 3) return `<span class="rank-badge rank-3" title="Hạng 3">3</span>`;
+  return `<span class="rank-badge">${rank}</span>`;
+}
+
+function buildStandingsRowHtml(group, r, idx){
+  const rank = group === 'overall' ? r.newRank : (idx + 1);
+  const badgeHtml = getRankBadgeHtml(rank);
+
+  if(group === 'overall'){
+    let changeCls = 'rank-same';
+    let changeText = '–';
+    if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
+    else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
+    return `<tr data-name="${escapeHtml(r.name)}">
+      <td>${badgeHtml}</td>
+      <td>${escapeHtml(r.name)}</td>
+      <td class="total-pts"><span class="count-val">${r.newTotal}</span></td>
+      <td class="rank-change ${changeCls}">${changeText}</td>
+    </tr>`;
+  }
+  return `<tr data-name="${escapeHtml(r.name)}">
+    <td>${badgeHtml}</td>
+    <td>${escapeHtml(r.name)}</td>
+    <td>${r.played}</td>
+    <td>${r.win}</td>
+    <td>${r.loss}</td>
+    <td><span class="count-val">${r.ptsFor}</span></td>
+    <td>${r.ptsAgainst}</td>
+    <td class="${r.diff > 0 ? 'diff-pos' : (r.diff < 0 ? 'diff-neg' : '')}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
+  </tr>`;
+}
+
+function paintTable(group, rows, opts){
+  opts = opts || {};
+  const forceEntrance = !!opts.forceEntrance;
+  const tbody = document.getElementById('standings-' + group);
+  if(!tbody) return;
+
+  const prev = paintedStandings[group];
+  const prevIndex = {};
+  const prevScore = {};
+  if(prev){
+    prev.order.forEach((name, i) => { prevIndex[name] = i; });
+    Object.assign(prevScore, prev.scoreByName);
+  }
+
+  tbody.innerHTML = rows.map((r, i) => buildStandingsRowHtml(group, r, i)).join('');
+
+  const newSnapshot = { order: rows.map(r => r.name), scoreByName: {} };
+  rows.forEach(r => { newSnapshot.scoreByName[r.name] = rowScoreValue(group, r); });
+
+  if(REDUCE_MOTION){
+    paintedStandings[group] = newSnapshot;
+    return;
+  }
+
+  const trs = Array.from(tbody.querySelectorAll('tr[data-name]'));
+  if(trs.length === 0){ paintedStandings[group] = newSnapshot; return; }
+
+  const rowHeight = trs[0].getBoundingClientRect().height || 34;
+  const items = [];
+
+  trs.forEach((tr, newIdx) => {
+    const name = tr.getAttribute('data-name');
+    const oldIdx = prev ? prevIndex[name] : undefined;
+    const hasMoved = !!prev && oldIdx !== undefined && oldIdx !== newIdx;
+    const oldScoreVal = prev ? prevScore[name] : undefined;
+    const newScore = newSnapshot.scoreByName[name];
+    const scoreIncreased = !!prev && oldScoreVal !== undefined && newScore > oldScoreVal;
+    const needsEntrance = forceEntrance || !prev;
+
+    if(!needsEntrance && !hasMoved && !scoreIncreased) return;
+
+    const delay = needsEntrance ? newIdx * STAGGER_MS : 0;
+    let ty = 0;
+    if(hasMoved) ty += (oldIdx - newIdx) * rowHeight;
+    if(needsEntrance) ty += 6;
+
+    tr.style.transition = 'none';
+    tr.style.transform = ty !== 0 ? `translateY(${ty}px)` : '';
+    tr.style.opacity = needsEntrance ? '0' : '1';
+
+    items.push({ tr, oldIdx, newIdx, hasMoved, scoreIncreased, oldScoreVal, newScore, delay });
+  });
+
+  void tbody.offsetHeight;
+
+  requestAnimationFrame(() => {
+    items.forEach(item => {
+      item.tr.style.transition =
+        `transform ${ROW_ANIM_MS}ms ease ${item.delay}ms, opacity ${ROW_ANIM_MS}ms ease ${item.delay}ms`;
+      item.tr.style.transform = '';
+      item.tr.style.opacity = '1';
+    });
+  });
+
+  items.forEach(item => {
+    if(!item.hasMoved) return;
+    setTimeout(() => {
+      item.tr.classList.add('rk-glow');
+    }, item.delay);
+  });
+
+  items.forEach(item => {
+    if(!item.scoreIncreased) return;
+    const target = item.tr.querySelector('.count-val');
+    if(!target) return;
+    const start = item.oldScoreVal;
+    const end = item.newScore;
+    const startTime = performance.now() + item.delay;
+    function tick(now){
+      if(now < startTime){ requestAnimationFrame(tick); return; }
+      const p = Math.min(1, (now - startTime) / COUNT_MS);
+      const eased = 1 - Math.pow(1 - p, 2);
+      target.textContent = Math.round(start + (end - start) * eased);
+      if(p < 1) requestAnimationFrame(tick);
+      else target.textContent = end;
+    }
+    requestAnimationFrame(tick);
+  });
+
+  paintedStandings[group] = newSnapshot;
+}
+
+function refreshStandings(group){
+  if(activeGroupTab !== group) return;
+  paintTable(group, getRowsFor(group), { forceEntrance: false });
+}
+
+function openStandingsTab(group){
+  paintTable(group, getRowsFor(group), { forceEntrance: true });
+}
+
+// Khởi tạo các sự kiện tìm kiếm và bộ lọc
+(() => {
+  // All Matches
+  const searchBtnAll = document.getElementById('search-toggle-all');
+  const searchWrapAll = document.getElementById('search-wrap-all');
+  const searchInputAll = document.getElementById('search-all');
+
+  if (searchBtnAll && searchWrapAll && searchInputAll) {
+    searchBtnAll.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = searchWrapAll.classList.toggle('open');
+      searchBtnAll.classList.toggle('active', isOpen);
+      if (isOpen) searchInputAll.focus();
+    });
+    searchInputAll.addEventListener('input', () => renderAllFixtures());
+  }
+
+  const filterBtnAll = document.getElementById('filter-toggle-all');
+  const filterMenuAll = document.getElementById('filter-menu-all');
+
+  if (filterBtnAll && filterMenuAll) {
+    filterBtnAll.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = filterMenuAll.classList.toggle('open');
+      filterBtnAll.classList.toggle('active', isOpen);
+    });
+
+    filterMenuAll.querySelectorAll('button[data-filter]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dim = btn.getAttribute('data-filter');
+        const val = btn.getAttribute('data-value');
+        uiState.all[dim] = val;
+
+        filterMenuAll.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const hasFilter = uiState.all.status !== 'all' || uiState.all.gender !== 'all' || uiState.all.day !== 'all';
+        filterBtnAll.classList.toggle('has-filter', hasFilter);
+
+        filterMenuAll.classList.remove('open');
+        filterBtnAll.classList.remove('active');
+        renderAllFixtures();
+      });
+    });
+  }
+
+  // Setup Search/Filter cho MS và WS
+  ['nam', 'nu'].forEach(group => {
+    const searchBtn = document.getElementById('search-toggle-view-' + group);
+    const searchWrap = document.getElementById('search-wrap-view-' + group);
+    const searchInput = document.getElementById('search-view-' + group);
+
+    if (searchBtn && searchWrap && searchInput) {
+      searchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = searchWrap.classList.toggle('open');
+        searchBtn.classList.toggle('active', isOpen);
+        if (isOpen) searchInput.focus();
+      });
+      searchInput.addEventListener('input', () => {
+        uiStateView[group].search = searchInput.value.trim();
+        renderReadonlyGroup(group);
+      });
+    }
+
+    const filterBtn = document.getElementById('filter-toggle-view-' + group);
+    const filterMenu = document.getElementById('filter-menu-view-' + group);
+
+    if (filterBtn && filterMenu) {
+      filterBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = filterMenu.classList.toggle('open');
+        filterBtn.classList.toggle('active', isOpen);
+      });
+
+      filterMenu.querySelectorAll('button[data-filter]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const dim = btn.getAttribute('data-filter');
+          const val = btn.getAttribute('data-value');
+          uiStateView[group][dim] = val;
+
+          filterMenu.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const hasFilter = uiStateView[group].status !== 'all' || uiStateView[group].day !== 'all';
+          filterBtn.classList.toggle('has-filter', hasFilter);
+
+          filterMenu.classList.remove('open');
+          filterBtn.classList.remove('active');
+          renderReadonlyGroup(group);
+        });
+      });
+    }
+  });
+})();
+
+document.addEventListener('click', () => {
+  ['all', 'view-nam', 'view-nu'].forEach(id => {
+    const filterMenu = document.getElementById('filter-menu-' + id);
+    const filterBtn = document.getElementById('filter-toggle-' + id);
+    if (filterMenu && filterMenu.classList.contains('open')) {
+      filterMenu.classList.remove('open');
+      if (filterBtn) filterBtn.classList.remove('active');
+    }
+  });
+});
+
+const authToggleBtn = document.getElementById('auth-toggle-btn');
+const pinModal = document.getElementById('pin-modal');
+const pinInput = document.getElementById('pin-input');
+const pinError = document.getElementById('pin-error');
+const pinCancelBtn = document.getElementById('pin-cancel-btn');
+const pinSubmitBtn = document.getElementById('pin-submit-btn');
+
+function updateAuthUI() {
+  if (isAdmin) {
+    authToggleBtn.classList.add('is-admin');
+    authToggleBtn.setAttribute('title', 'Đang ở quyền BTC (Bấm để thoát)');
+    sessionStorage.setItem('lmcl_is_admin', 'true');
+  } else {
+    authToggleBtn.classList.remove('is-admin');
+    authToggleBtn.setAttribute('title', 'Kích hoạt quyền BTC');
+    sessionStorage.removeItem('lmcl_is_admin');
+  }
+  renderAll();
+}
+
+authToggleBtn.addEventListener('click', () => {
+  if (isAdmin) {
+    isAdmin = false;
+    updateAuthUI();
+  } else {
+    pinInput.value = '';
+    pinError.style.display = 'none';
+    pinModal.classList.add('open');
+    pinInput.focus();
+  }
+});
+
+pinCancelBtn.addEventListener('click', () => {
+  pinModal.classList.remove('open');
+});
+
+const infoModal = document.getElementById('info-modal');
+const infoCloseBtn = document.getElementById('info-close-btn');
+const infoToggleNam = document.getElementById('info-toggle-nam');
+const infoToggleNu = document.getElementById('info-toggle-nu');
+
+function openInfoModal(){
+  infoModal.classList.add('open');
+}
+function closeInfoModal(){
+  infoModal.classList.remove('open');
+}
+
+if (infoToggleNam) infoToggleNam.addEventListener('click', openInfoModal);
+if (infoToggleNu) infoToggleNu.addEventListener('click', openInfoModal);
+infoCloseBtn.addEventListener('click', closeInfoModal);
+infoModal.addEventListener('click', (e) => {
+  if (e.target === infoModal) closeInfoModal();
+});
+
+function verifyPin() {
+  if (pinInput.value === SECRET_PIN) {
+    isAdmin = true;
+    pinModal.classList.remove('open');
+    updateAuthUI();
+  } else {
+    pinError.style.display = 'block';
+    pinInput.value = '';
+    pinInput.focus();
+  }
+}
+
+pinSubmitBtn.addEventListener('click', verifyPin);
+pinInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') verifyPin();
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const grp = btn.getAttribute('data-group');
+    if(grp === activeGroupTab) return; 
+
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('group-' + grp).classList.add('active');
+    
+    let themeAttr = 'allmatches';
+    if(grp === 'nam') themeAttr = 'men';
+    else if(grp === 'nu') themeAttr = 'women';
+    else if(grp === 'overall') themeAttr = 'rankings';
+    
+    document.body.setAttribute('data-theme', themeAttr);
+
+    activeGroupTab = grp;
+
+    if(grp === 'nam' || grp === 'nu' || grp === 'overall'){
+      openStandingsTab(grp);
+    }
+    if(grp === 'nam' || grp === 'nu'){
+      renderReadonlyGroup(grp);
+    }
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
+  });
+});
+
+updateAuthUI();
+renderAll();
+renderReadonlyGroup('nam');
+renderReadonlyGroup('nu');
+openStandingsTab('nam');
+</script>
 </body>
 </html>
