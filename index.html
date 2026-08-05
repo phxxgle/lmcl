@@ -896,6 +896,9 @@
   table.standings-teams th:nth-child(7), table.standings-teams td:nth-child(7) { width: 10%; }
   table.standings-teams th:nth-child(8), table.standings-teams td:nth-child(8) { width: 8%; }
 
+  table.standings-simple th:nth-child(1), table.standings-simple td:nth-child(1) { width: 16%; }
+  table.standings-simple th:nth-child(2), table.standings-simple td:nth-child(2) { width: 84%; }
+
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
@@ -1567,6 +1570,16 @@ const TOUR_DATA = {
             { a: 0, b: 1, sa: 19, sb: 21 },
             { a: 5, b: 4, sa: 24, sb: 22 },
             { a: 1, b: 2, sa: 14, sb: 21 }
+          ],
+          // Hạng mục này xếp hạng theo thể thức riêng (không dựa trên W/L, hiệu số),
+          // nên thứ hạng được ghi thẳng ở đây. t = chỉ số đội trong mảng teams.
+          finalRanking: [
+            { rank: 1, t: 5 },
+            { rank: 2, t: 4 },
+            { rank: 3, t: 3 },
+            { rank: 3, t: 2 },
+            { rank: 5, t: 1 },
+            { rank: 6, t: 0 }
           ]
         }
       },
@@ -2565,6 +2578,21 @@ function eventContentHtml(ev){
     </div>`;
   }).join('');
 
+  // Hạng mục có finalRanking dùng bảng rút gọn: chỉ thứ hạng và tên đội.
+  if(ev.finalRanking){
+    const simple = ev.finalRanking.map(r => `<tr>
+      <td>${getRankBadgeHtml(r.rank)}</td>
+      <td>${pairHtml(ev.teams[r.t])}</td>
+    </tr>`).join('');
+    return `<div class="fixtures">${fixtures}</div>
+      <div class="table-scroll">
+        <table class="standings standings-simple">
+          <thead><tr><th>#</th><th>Đội</th></tr></thead>
+          <tbody>${simple}</tbody>
+        </table>
+      </div>`;
+  }
+
   const standings = computeEventStandings(ev).map((r, i) => `<tr>
     <td>${getRankBadgeHtml(i + 1)}</td>
     <td>${pairHtml(r.pair)}</td>
@@ -2576,8 +2604,7 @@ function eventContentHtml(ev){
     <td class="${r.diff > 0 ? 'diff-pos' : (r.diff < 0 ? 'diff-neg' : '')}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
   </tr>`).join('');
 
-  return `<p class="sub">${escapeHtml(ev.title)} — ${ev.matches.length} trận${ev.date ? ' · ' + escapeHtml(ev.date) : ''}</p>
-    <div class="fixtures">${fixtures}</div>
+  return `<div class="fixtures">${fixtures}</div>
     <div class="table-scroll">
       <table class="standings standings-teams">
         <thead><tr><th>#</th><th>Đội</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
@@ -2587,8 +2614,7 @@ function eventContentHtml(ev){
 }
 
 function rankContentHtml(t){
-  return `<p class="sub">Bảng xếp hạng chung cuộc — ${t.standings.length} vận động viên.</p>
-    <div class="table-scroll">
+  return `<div class="table-scroll">
       <table class="standings standings-overall">
         <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
         <tbody>${staticRankingRowsHtml(t.standings)}</tbody>
@@ -2611,7 +2637,8 @@ function renderTournamentDetail(t, tabKey){
   const active = tabs.some(x => x.key === tabKey) ? tabKey : tabs[0].key;
 
   document.getElementById('tour-detail-title').textContent = t.name;
-  document.getElementById('tour-detail-sub').textContent = t.note || '';
+  const subEl = document.getElementById('tour-detail-sub');
+  if(subEl) subEl.style.display = 'none';
 
   tabsEl.innerHTML = tabs.map(x =>
     `<button type="button" class="sub-tab-btn ${x.key === active ? 'active' : ''}" data-tab="${x.key}">${escapeHtml(x.label)}</button>`
