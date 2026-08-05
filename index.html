@@ -17,7 +17,7 @@
     --card-bg: #0a3320;
     --card-border: rgba(255, 255, 255, 0.08);
     
-    /* Glassmorphism Variables (chỉ dùng cho Tabs và Bảng) */
+    /* Glassmorphism Variables */
     --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-bg-hover: rgba(255, 255, 255, 0.12);
     --glass-table-bg: rgba(10, 45, 28, 0.55);
@@ -152,7 +152,6 @@
   .admin-icon-btn {
     position: absolute;
     top: 18px;
-    right: 12px;
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -176,8 +175,14 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.3);
   }
 
+  /* Định vị nút Hamburger ở góc TRÁI TRÊN CÙNG */
   #hamburger-toggle-btn {
-    right: 56px;
+    left: 12px;
+  }
+
+  /* Định vị nút Auth/Admin ở góc PHẢI TRÊN CÙNG */
+  #auth-toggle-btn {
+    right: 12px;
   }
 
   /* =========================================
@@ -760,20 +765,20 @@
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
   
   /* =========================================
-     HAMBURGER DRAWER STYLES
+     HAMBURGER DRAWER STYLES (SLIDE FROM LEFT)
      ========================================= */
   .hamburger-drawer {
     width: 82%;
     max-width: 320px;
     height: 100%;
     background: var(--card-bg);
-    border-left: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
-    transform: translateX(100%);
+    transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
@@ -805,14 +810,6 @@
     gap: 8px;
   }
 
-  .drawer-section-title {
-    font-size: 10px;
-    color: var(--chalk-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin: 12px 4px 4px;
-  }
-
   .drawer-link {
     display: flex;
     align-items: center;
@@ -824,8 +821,8 @@
     padding: 12px 14px;
     color: var(--chalk);
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 13.5px;
+    font-weight: 600;
     text-align: left;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -847,12 +844,6 @@
     color: var(--accent);
   }
 
-  .drawer-divider {
-    height: 1.5px;
-    background: var(--line);
-    margin: 12px 4px;
-  }
-
   .drawer-footer {
     padding: 16px;
     text-align: center;
@@ -869,13 +860,36 @@
     margin-top: 24px;
     letter-spacing: 0.3px;
   }
+
+  /* Style Trang trống (Empty View) */
+  .empty-page-box {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--chalk-dim);
+  }
+  .empty-page-box svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+    color: var(--accent);
+  }
+  .empty-page-box h3 {
+    font-size: 16px;
+    color: var(--chalk);
+    margin: 0 0 6px;
+  }
+  .empty-page-box p {
+    font-size: 12px;
+    margin: 0;
+  }
 </style>
 </head>
 <body data-theme="allmatches">
 
 <div class="wrap">
   <header>
-    <!-- NÚT HAMBURGER -->
+    <!-- NÚT HAMBURGER (GÓC TRÁI TRÊN CÙNG) -->
     <button type="button" class="admin-icon-btn" id="hamburger-toggle-btn" aria-label="Menu" title="Menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -884,6 +898,7 @@
       </svg>
     </button>
 
+    <!-- NÚT AUTH/ADMIN (GÓC PHẢI TRÊN CÙNG) -->
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -1061,11 +1076,33 @@
     </div>
   </div>
 
+  <!-- TRANG TRỐNG: RANKINGS -->
+  <div id="group-rankings-empty" class="group">
+    <div class="card">
+      <div class="empty-page-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        <h3>Trang Rankings</h3>
+        <p>Nội dung đang được cập nhật...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANG TRỐNG: MEMBERS -->
+  <div id="group-members-empty" class="group">
+    <div class="card">
+      <div class="empty-page-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <h3>Trang Members</h3>
+        <p>Nội dung đang được cập nhật...</p>
+      </div>
+    </div>
+  </div>
+
   <p class="foot-note">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
 </div>
 
-<!-- MENU HAMBURGER DRAWER -->
-<div class="modal-overlay" id="hamburger-modal" style="justify-content: flex-end; padding: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);">
+<!-- MENU HAMBURGER DRAWER (MỞ TỪ BÊN TRÁI SANG) -->
+<div class="modal-overlay" id="hamburger-modal" style="justify-content: flex-start; padding: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);">
   <div class="hamburger-drawer">
     <div class="drawer-header">
       <div class="drawer-title">LMCL MENU</div>
@@ -1075,34 +1112,28 @@
     </div>
     
     <div class="drawer-body">
-      <div class="drawer-section-title">Điều hướng nhanh</div>
+      <!-- Mục 1: Tour -->
       <button type="button" class="drawer-link" data-target-tab="all">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        All Matches (Lịch thi đấu)
-      </button>
-      <button type="button" class="drawer-link" data-target-tab="nam">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        Đơn Nam (MS) & Standings
-      </button>
-      <button type="button" class="drawer-link" data-target-tab="nu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        Đơn Nữ (WS) & Standings
-      </button>
-      <button type="button" class="drawer-link" data-target-tab="overall">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-        LMCL Rankings (Bảng xếp hạng tổng)
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 16 16 16 12 8"></polygon></svg>
+        Tour
       </button>
 
-      <div class="drawer-divider"></div>
-      
-      <div class="drawer-section-title">Tiện ích hệ thống</div>
-      <button type="button" class="drawer-link" id="drawer-info-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        Quy chế tính điểm & Chú thích
+      <!-- Mục 2: Rankings (Trang trống) -->
+      <button type="button" class="drawer-link" data-target-tab="rankings-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        Rankings
       </button>
+
+      <!-- Mục 3: Members (Trang trống) -->
+      <button type="button" class="drawer-link" data-target-tab="members-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Members
+      </button>
+
+      <!-- Mục 4: Đăng nhập (Dành cho admin) -->
       <button type="button" class="drawer-link" id="drawer-auth-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-        <span id="drawer-auth-text">Kích hoạt quyền Trọng tài (BTC)</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        <span id="drawer-auth-text">Đăng nhập (Admin)</span>
       </button>
     </div>
 
@@ -1115,7 +1146,7 @@
 <!-- MODAL XÁC THỰC MÃ PIN -->
 <div class="modal-overlay" id="pin-modal">
   <div class="modal-box">
-    <h3>Xác nhận quyền BTC</h3>
+    <h3>Đăng nhập Admin (BTC)</h3>
     <p>Vui lòng nhập mã PIN để kích hoạt quyền cập nhật điểm số</p>
     <input type="password" id="pin-input" placeholder="Mã PIN" autocomplete="off">
     <div class="pin-error" id="pin-error">Mã PIN không chính xác!</div>
@@ -1974,7 +2005,7 @@ const hamburgerCloseBtn = document.getElementById('hamburger-close-btn');
 function openHamburgerMenu() {
   const drawerAuthText = document.getElementById('drawer-auth-text');
   if (drawerAuthText) {
-    drawerAuthText.textContent = isAdmin ? 'Thoát quyền Trọng tài (BTC)' : 'Kích hoạt quyền Trọng tài (BTC)';
+    drawerAuthText.textContent = isAdmin ? 'Thoát Admin' : 'Đăng nhập (Admin)';
   }
   hamburgerModal.classList.add('open');
 }
@@ -1993,21 +2024,24 @@ hamburgerModal.addEventListener('click', (e) => {
 document.querySelectorAll('.drawer-link[data-target-tab]').forEach(btn => {
   btn.addEventListener('click', () => {
     const targetGroup = btn.getAttribute('data-target-tab');
+    
+    // Tắt các tab chính & các trang đang active
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
+    
     const correspondingTabBtn = document.querySelector(`.tab-btn[data-group="${targetGroup}"]`);
     if (correspondingTabBtn) {
       correspondingTabBtn.click();
+    } else {
+      const targetGroupEl = document.getElementById('group-' + targetGroup);
+      if (targetGroupEl) {
+        targetGroupEl.classList.add('active');
+        document.body.setAttribute('data-theme', 'allmatches');
+      }
     }
     closeHamburgerMenu();
   });
 });
-
-const drawerInfoBtn = document.getElementById('drawer-info-btn');
-if (drawerInfoBtn) {
-  drawerInfoBtn.addEventListener('click', () => {
-    closeHamburgerMenu();
-    openInfoModal();
-  });
-}
 
 const drawerAuthBtn = document.getElementById('drawer-auth-btn');
 if (drawerAuthBtn) {
