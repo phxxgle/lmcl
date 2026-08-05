@@ -17,7 +17,7 @@
     --card-bg: #0a3320;
     --card-border: rgba(255, 255, 255, 0.08);
     
-    /* Glassmorphism Variables */
+    /* Glassmorphism Variables (chỉ dùng cho Tabs và Bảng) */
     --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-bg-hover: rgba(255, 255, 255, 0.12);
     --glass-table-bg: rgba(10, 45, 28, 0.55);
@@ -149,28 +149,6 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
-  /* Nút Hamburger ở góc trên bên trái */
-  .hamburger-btn {
-    position: absolute;
-    top: 18px;
-    left: 12px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--chalk-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    padding: 0;
-    z-index: 2;
-  }
-  .hamburger-btn svg { width: 18px; height: 18px; }
-  .hamburger-btn:hover { color: var(--chalk); border-color: var(--glass-border-light); }
-
   .admin-icon-btn {
     position: absolute;
     top: 18px;
@@ -198,88 +176,8 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.3);
   }
 
-  /* =========================================
-     MENU OVERLAY (HAMBURGER MENU)
-     ========================================= */
-  .menu-overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--green-bg);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    padding: 24px 20px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-  }
-  .menu-overlay.open {
-    opacity: 1;
-    visibility: visible;
-  }
-  .menu-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
-  .menu-close-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--card-border);
-    color: var(--chalk);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-left: auto;
-  }
-  .menu-close-btn:hover { background: rgba(255, 255, 255, 0.15); }
-  .menu-close-btn svg { width: 20px; height: 20px; }
-
-  .menu-search-box {
-    position: relative;
-    margin-bottom: 24px;
-  }
-  .menu-search-input {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    color: var(--chalk);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    padding: 12px 16px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .menu-search-input:focus { border-color: var(--accent); }
-  .menu-search-input::placeholder { color: var(--chalk-dim); }
-
-  .menu-nav-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .menu-nav-item a {
-    display: block;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 1px;
-    color: var(--chalk-dim);
-    text-decoration: none;
-    padding: 8px 0;
-    transition: color 0.2s, transform 0.2s;
-  }
-  .menu-nav-item a:hover {
-    color: var(--accent);
-    transform: translateX(6px);
+  #hamburger-toggle-btn {
+    right: 56px;
   }
 
   /* =========================================
@@ -861,6 +759,109 @@
   .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
   
+  /* =========================================
+     HAMBURGER DRAWER STYLES
+     ========================================= */
+  .hamburger-drawer {
+    width: 82%;
+    max-width: 320px;
+    height: 100%;
+    background: var(--card-bg);
+    border-left: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .modal-overlay.open .hamburger-drawer {
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .drawer-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+  }
+
+  .drawer-body {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .drawer-section-title {
+    font-size: 10px;
+    color: var(--chalk-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 12px 4px 4px;
+  }
+
+  .drawer-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .drawer-link:hover {
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-border-light);
+    color: var(--accent);
+  }
+
+  .drawer-link svg {
+    color: var(--chalk-dim);
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+  }
+
+  .drawer-link:hover svg {
+    color: var(--accent);
+  }
+
+  .drawer-divider {
+    height: 1.5px;
+    background: var(--line);
+    margin: 12px 4px;
+  }
+
+  .drawer-footer {
+    padding: 16px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--chalk-dim);
+    border-top: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.15);
+  }
+
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
@@ -872,30 +873,10 @@
 </head>
 <body data-theme="allmatches">
 
-<!-- MENU OVERLAY (HAMBURGER MENU) -->
-<div class="menu-overlay" id="hamburger-menu">
-  <div class="menu-header">
-    <button type="button" class="menu-close-btn" id="menu-close-btn" aria-label="Đóng menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-  </div>
-  <div class="menu-search-box">
-    <input type="text" class="menu-search-input" id="menu-search-input" placeholder="Tìm kiếm nhanh nội dung...">
-  </div>
-  <ul class="menu-nav-list">
-    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="all">Tour</a></li>
-    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="members">Members (tạm thời chưa có nội dung)</a></li>
-    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="rankings">Rankings (tạm thời chưa có nội dung)</a></li>
-  </ul>
-</div>
-
 <div class="wrap">
   <header>
-    <!-- Nút Hamburger 3 gạch ở góc trên cùng bên trái -->
-    <button type="button" class="hamburger-btn" id="hamburger-toggle-btn" aria-label="Mở menu">
+    <!-- NÚT HAMBURGER -->
+    <button type="button" class="admin-icon-btn" id="hamburger-toggle-btn" aria-label="Menu" title="Menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="12" x2="21" y2="12"></line>
         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -1010,7 +991,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         </button>
       </div>
-      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
@@ -1060,7 +1040,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         </button>
       </div>
-      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
@@ -1073,7 +1052,6 @@
   <div id="group-overall" class="group">
     <div class="card">
       <h2>LMCL Rankings</h2>
-      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-overall">
           <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
@@ -1084,6 +1062,54 @@
   </div>
 
   <p class="foot-note">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
+</div>
+
+<!-- MENU HAMBURGER DRAWER -->
+<div class="modal-overlay" id="hamburger-modal" style="justify-content: flex-end; padding: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);">
+  <div class="hamburger-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">LMCL MENU</div>
+      <button type="button" class="icon-btn" id="hamburger-close-btn" aria-label="Đóng Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    
+    <div class="drawer-body">
+      <div class="drawer-section-title">Điều hướng nhanh</div>
+      <button type="button" class="drawer-link" data-target-tab="all">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        All Matches (Lịch thi đấu)
+      </button>
+      <button type="button" class="drawer-link" data-target-tab="nam">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        Đơn Nam (MS) & Standings
+      </button>
+      <button type="button" class="drawer-link" data-target-tab="nu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        Đơn Nữ (WS) & Standings
+      </button>
+      <button type="button" class="drawer-link" data-target-tab="overall">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        LMCL Rankings (Bảng xếp hạng tổng)
+      </button>
+
+      <div class="drawer-divider"></div>
+      
+      <div class="drawer-section-title">Tiện ích hệ thống</div>
+      <button type="button" class="drawer-link" id="drawer-info-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        Quy chế tính điểm & Chú thích
+      </button>
+      <button type="button" class="drawer-link" id="drawer-auth-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+        <span id="drawer-auth-text">Kích hoạt quyền Trọng tài (BTC)</span>
+      </button>
+    </div>
+
+    <div class="drawer-footer">
+      <span>LMCL ALLSTARS © 2026</span>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL XÁC THỰC MÃ PIN -->
@@ -1761,50 +1787,7 @@ function openStandingsTab(group){
   paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
 
-// Xử lý sự kiện Menu Hamburger
-const hamburgerToggleBtn = document.getElementById('hamburger-toggle-btn');
-const hamburgerMenu = document.getElementById('hamburger-menu');
-const menuCloseBtn = document.getElementById('menu-close-btn');
-const menuSearchInput = document.getElementById('menu-search-input');
-
-function openHamburgerMenu() {
-  hamburgerMenu.classList.add('open');
-  if (menuSearchInput) menuSearchInput.focus();
-}
-
-function closeHamburgerMenu() {
-  hamburgerMenu.classList.remove('open');
-}
-
-if (hamburgerToggleBtn) {
-  hamburgerToggleBtn.addEventListener('click', openHamburgerMenu);
-}
-if (menuCloseBtn) {
-  menuCloseBtn.addEventListener('click', closeHamburgerMenu);
-}
-
-// Bấm vào các mục trong menu Hamburger
-document.querySelectorAll('.menu-link').forEach(link => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    const target = link.getAttribute('data-target');
-    if(target === 'all'){
-      const tabBtn = document.querySelector(`.tab-btn[data-group="all"]`);
-      if (tabBtn) tabBtn.click();
-    } else if(target === 'members' || target === 'rankings'){
-      alert('Mục "' + link.textContent + '" tạm thời chưa có nội dung.');
-    }
-    closeHamburgerMenu();
-  });
-});
-
-if (menuSearchInput) {
-  menuSearchInput.addEventListener('input', (e) => {
-    const keyword = e.target.value.toLowerCase().trim();
-  });
-}
-
-// Event Listeners cho các tính năng khác
+// Event Listeners
 (() => {
   const searchBtnAll = document.getElementById('search-toggle-all');
   const searchWrapAll = document.getElementById('search-wrap-all');
@@ -1982,6 +1965,57 @@ pinSubmitBtn.addEventListener('click', verifyPin);
 pinInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') verifyPin();
 });
+
+// XỬ LÝ MENU HAMBURGER DRAWER
+const hamburgerToggleBtn = document.getElementById('hamburger-toggle-btn');
+const hamburgerModal = document.getElementById('hamburger-modal');
+const hamburgerCloseBtn = document.getElementById('hamburger-close-btn');
+
+function openHamburgerMenu() {
+  const drawerAuthText = document.getElementById('drawer-auth-text');
+  if (drawerAuthText) {
+    drawerAuthText.textContent = isAdmin ? 'Thoát quyền Trọng tài (BTC)' : 'Kích hoạt quyền Trọng tài (BTC)';
+  }
+  hamburgerModal.classList.add('open');
+}
+
+function closeHamburgerMenu() {
+  hamburgerModal.classList.remove('open');
+}
+
+if (hamburgerToggleBtn) hamburgerToggleBtn.addEventListener('click', openHamburgerMenu);
+if (hamburgerCloseBtn) hamburgerCloseBtn.addEventListener('click', closeHamburgerMenu);
+
+hamburgerModal.addEventListener('click', (e) => {
+  if (e.target === hamburgerModal) closeHamburgerMenu();
+});
+
+document.querySelectorAll('.drawer-link[data-target-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetGroup = btn.getAttribute('data-target-tab');
+    const correspondingTabBtn = document.querySelector(`.tab-btn[data-group="${targetGroup}"]`);
+    if (correspondingTabBtn) {
+      correspondingTabBtn.click();
+    }
+    closeHamburgerMenu();
+  });
+});
+
+const drawerInfoBtn = document.getElementById('drawer-info-btn');
+if (drawerInfoBtn) {
+  drawerInfoBtn.addEventListener('click', () => {
+    closeHamburgerMenu();
+    openInfoModal();
+  });
+}
+
+const drawerAuthBtn = document.getElementById('drawer-auth-btn');
+if (drawerAuthBtn) {
+  drawerAuthBtn.addEventListener('click', () => {
+    closeHamburgerMenu();
+    authToggleBtn.click();
+  });
+}
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
