@@ -573,6 +573,51 @@
   .rank-same{color:var(--chalk-dim);}
   .foot-note{font-size:11px;color:var(--chalk-dim);margin-top:16px;line-height:1.6;padding:0 4px;}
 
+  /* ===== Ranking tab reveal + live-update animations ===== */
+  table.standings tbody tr{ position:relative; }
+
+  @keyframes rk-row-glow{
+    0%   { background-color: rgba(255,209,102,0.28); }
+    100% { background-color: transparent; }
+  }
+  table.standings tbody tr.rk-glow{
+    animation: rk-row-glow 0.9s ease-out;
+  }
+
+  @keyframes rk-indicator-fade{
+    0%   { opacity:0; transform:translateY(-2px) scale(0.9); }
+    12%  { opacity:1; transform:translateY(0) scale(1); }
+    78%  { opacity:1; }
+    100% { opacity:0; transform:translateY(-2px) scale(0.9); }
+  }
+  .rk-indicator{
+    position:absolute;
+    top:-4px;
+    left:12px;
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    padding:1px 5px;
+    border-radius:999px;
+    background:rgba(0,0,0,0.55);
+    pointer-events:none;
+    z-index:3;
+    white-space:nowrap;
+    animation: rk-indicator-fade 2s ease forwards;
+  }
+  .rk-indicator.up{ color:var(--green-ok); }
+  .rk-indicator.down{ color:var(--red); }
+
+  @media (prefers-reduced-motion: reduce){
+    table.standings tbody tr{
+      transition:none !important;
+      transform:none !important;
+      opacity:1 !important;
+    }
+    table.standings tbody tr.rk-glow{ animation:none !important; }
+    .rk-indicator{ animation:none !important; opacity:0 !important; display:none; }
+  }
+
   .modal-overlay {
     display: none;
     position: fixed;
@@ -858,6 +903,15 @@ const uiState = {
   nu: { status: 'all' }
 };
 
+// ---- Ranking reveal / live-update animation state (presentation only) ----
+const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let activeGroupTab = 'nam';
+const paintedStandings = { nam: null, nu: null, overall: null };
+const ROW_ANIM_MS = 260;   // table/row fade-slide duration
+const STAGGER_MS = 65;     // delay between each row on entrance
+const INDICATOR_MS = 2000; // how long the ▲/▼ badge stays visible
+const COUNT_MS = 650;      // score count-up duration
+
 function buildFixtures(group){
   const players = ROSTERS[group];
   const fixtures = [];
@@ -887,8 +941,7 @@ scoresRef.on('value', snapshot => {
   scores = snapshot.val() || {};
   if(isEditingScoreInput()) return;
   renderAll();
-  ['nam','nu'].forEach(renderStandings);
-  renderOverall();
+  ['nam','nu','overall'].forEach(refreshStandings);
 }, error => {
   showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
   console.error('Firebase error:', error);
@@ -1116,21 +1169,6 @@ function computeStandings(group){
   return rows;
 }
 
-function renderStandings(group){
-  const rows = computeStandings(group);
-  const body = document.getElementById('standings-' + group);
-  body.innerHTML = rows.map((r, i) => `<tr>
-    <td><span class="rank-badge">${i+1}</span></td>
-    <td>${escapeHtml(r.name)}</td>
-    <td>${r.played}</td>
-    <td>${r.win}</td>
-    <td>${r.loss}</td>
-    <td>${r.ptsFor}</td>
-    <td>${r.ptsAgainst}</td>
-    <td class="${r.diff > 0 ? 'diff-pos' : (r.diff < 0 ? 'diff-neg' : '')}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
-  </tr>`).join('');
-}
-
 function medalPointsFor(rankIndex){
   if(rankIndex === 0) return 3;
   if(rankIndex === 1) return 2;
@@ -1171,10 +1209,16 @@ function computeOverall(){
   return ranked;
 }
 
-function renderOverall(){
-  const body = document.getElementById('standings-overall');
-  const rows = computeOverall();
-  body.innerHTML = rows.map(r => {
+function getRowsFor(group){
+  return group === 'overall' ? computeOverall() : computeStandings(group);
+}
+
+function rowScoreValue(group, r){
+  return group === 'overall' ? r.newTotal : r.ptsFor;
+}
+
+function buildStandingsRowHtml(group, r, idx){
+  if(group === 'overall'){
     const g = playerGroup(r.name);
     const chipCls = g === 'nu' ? 'chip-women' : 'chip-men';
     const chipText = g === 'nu' ? 'Nữ' : 'Nam';
@@ -1182,14 +1226,159 @@ function renderOverall(){
     let changeText = '–';
     if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
     else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
-    return `<tr>
+    return `<tr data-name="${escapeHtml(r.name)}">
       <td><span class="rank-badge">${r.newRank}</span></td>
       <td>${escapeHtml(r.name)}</td>
       <td><span class="chip ${chipCls}">${chipText}</span></td>
-      <td class="total-pts">${r.newTotal}</td>
+      <td class="total-pts"><span class="count-val">${r.newTotal}</span></td>
       <td class="rank-change ${changeCls}">${changeText}</td>
     </tr>`;
-  }).join('');
+  }
+  return `<tr data-name="${escapeHtml(r.name)}">
+    <td><span class="rank-badge">${idx+1}</span></td>
+    <td>${escapeHtml(r.name)}</td>
+    <td>${r.played}</td>
+    <td>${r.win}</td>
+    <td>${r.loss}</td>
+    <td><span class="count-val">${r.ptsFor}</span></td>
+    <td>${r.ptsAgainst}</td>
+    <td class="${r.diff > 0 ? 'diff-pos' : (r.diff < 0 ? 'diff-neg' : '')}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
+  </tr>`;
+}
+
+// Paints a standings table. computeStandings()/computeOverall() (the actual
+// ranking math) are never touched by this — this function is purely
+// presentational. When forceEntrance is true (the tab was just opened) every
+// row fades/slides in with a small stagger. Any row whose rank changed since
+// this table was last painted also gets a FLIP slide + glow flash + a
+// temporary ▲/▼ indicator, and any row whose score went up gets a count-up.
+// Only transform/opacity are animated (GPU-accelerated), and the FLIP offset
+// is derived from row index * a single measured row height rather than
+// measuring every row, so there's one forced layout read total per paint —
+// safe even with 40-50 players.
+function paintTable(group, rows, opts){
+  opts = opts || {};
+  const forceEntrance = !!opts.forceEntrance;
+  const tbody = document.getElementById('standings-' + group);
+  if(!tbody) return;
+
+  const prev = paintedStandings[group];
+  const prevIndex = {};
+  const prevScore = {};
+  if(prev){
+    prev.order.forEach((name, i) => { prevIndex[name] = i; });
+    Object.assign(prevScore, prev.scoreByName);
+  }
+
+  tbody.innerHTML = rows.map((r, i) => buildStandingsRowHtml(group, r, i)).join('');
+
+  const newSnapshot = { order: rows.map(r => r.name), scoreByName: {} };
+  rows.forEach(r => { newSnapshot.scoreByName[r.name] = rowScoreValue(group, r); });
+
+  if(REDUCE_MOTION){
+    paintedStandings[group] = newSnapshot;
+    return;
+  }
+
+  const trs = Array.from(tbody.querySelectorAll('tr[data-name]'));
+  if(trs.length === 0){ paintedStandings[group] = newSnapshot; return; }
+
+  const rowHeight = trs[0].getBoundingClientRect().height || 34;
+  const items = [];
+
+  trs.forEach((tr, newIdx) => {
+    const name = tr.getAttribute('data-name');
+    const oldIdx = prev ? prevIndex[name] : undefined;
+    const hasMoved = !!prev && oldIdx !== undefined && oldIdx !== newIdx;
+    const oldScoreVal = prev ? prevScore[name] : undefined;
+    const newScore = newSnapshot.scoreByName[name];
+    const scoreIncreased = !!prev && oldScoreVal !== undefined && newScore > oldScoreVal;
+    const needsEntrance = forceEntrance || !prev;
+
+    if(!needsEntrance && !hasMoved && !scoreIncreased) return;
+
+    const delay = needsEntrance ? newIdx * STAGGER_MS : 0;
+    let ty = 0;
+    if(hasMoved) ty += (oldIdx - newIdx) * rowHeight;
+    if(needsEntrance) ty += 6;
+
+    tr.style.transition = 'none';
+    tr.style.transform = ty !== 0 ? `translateY(${ty}px)` : '';
+    tr.style.opacity = needsEntrance ? '0' : '1';
+
+    items.push({ tr, oldIdx, newIdx, hasMoved, scoreIncreased, oldScoreVal, newScore, delay });
+  });
+
+  // One forced reflow to lock in the "before" state, then animate to the
+  // final state next frame (FLIP, using index math instead of measuring
+  // every row's rect, so there's no read/write/read/write thrashing).
+  void tbody.offsetHeight;
+
+  requestAnimationFrame(() => {
+    items.forEach(item => {
+      item.tr.style.transition =
+        `transform ${ROW_ANIM_MS}ms ease ${item.delay}ms, opacity ${ROW_ANIM_MS}ms ease ${item.delay}ms`;
+      item.tr.style.transform = '';
+      item.tr.style.opacity = '1';
+    });
+  });
+
+  items.forEach(item => {
+    if(!item.hasMoved) return;
+    const delta = item.oldIdx - item.newIdx;
+    const up = delta > 0;
+    setTimeout(() => {
+      item.tr.classList.add('rk-glow');
+      item.tr.addEventListener('animationend', function onEnd(e){
+        if(e.animationName === 'rk-row-glow'){
+          item.tr.classList.remove('rk-glow');
+          item.tr.removeEventListener('animationend', onEnd);
+        }
+      });
+      const badge = document.createElement('span');
+      badge.className = 'rk-indicator ' + (up ? 'up' : 'down');
+      badge.textContent = (up ? '▲ +' : '▼ -') + Math.abs(delta);
+      const firstCell = item.tr.querySelector('td');
+      if(firstCell) firstCell.appendChild(badge);
+      setTimeout(() => badge.remove(), INDICATOR_MS + 150);
+    }, item.delay);
+  });
+
+  items.forEach(item => {
+    if(!item.scoreIncreased) return;
+    const target = item.tr.querySelector('.count-val');
+    if(!target) return;
+    const start = item.oldScoreVal;
+    const end = item.newScore;
+    const startTime = performance.now() + item.delay;
+    function tick(now){
+      if(now < startTime){ requestAnimationFrame(tick); return; }
+      const p = Math.min(1, (now - startTime) / COUNT_MS);
+      const eased = 1 - Math.pow(1 - p, 2);
+      target.textContent = Math.round(start + (end - start) * eased);
+      if(p < 1) requestAnimationFrame(tick);
+      else target.textContent = end;
+    }
+    requestAnimationFrame(tick);
+  });
+
+  paintedStandings[group] = newSnapshot;
+}
+
+// Called on every Firebase update: only actually (re)paints the table that
+// is currently on screen. Hidden tables are left untouched so that when the
+// user does switch to them, paintTable() can still tell what changed since
+// they were last shown.
+function refreshStandings(group){
+  if(activeGroupTab !== group) return;
+  paintTable(group, getRowsFor(group), { forceEntrance: false });
+}
+
+// Called when a tab is opened: always plays the entrance animation, and
+// layers the FLIP/glow/indicator/count-up on top for anything that changed
+// since this table was last visible.
+function openStandingsTab(group){
+  paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
 
 ['nam', 'nu'].forEach(group => {
@@ -1332,12 +1521,17 @@ pinInput.addEventListener('keypress', (e) => {
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    const grp = btn.getAttribute('data-group');
+    if(grp === activeGroupTab) return; // already open, don't replay the animation
+
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
     btn.classList.add('active');
-    const grp = btn.getAttribute('data-group');
     document.getElementById('group-' + grp).classList.add('active');
     document.body.setAttribute('data-theme', grp === 'nu' ? 'women' : (grp === 'overall' ? 'overall' : 'men'));
+
+    activeGroupTab = grp;
+    openStandingsTab(grp);
   });
 });
 </script>
