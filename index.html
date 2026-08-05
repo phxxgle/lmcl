@@ -149,9 +149,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.45s ease;
     padding: 0;
     z-index: 2;
+  }
+  body.page-loading .admin-icon-btn{
+    opacity: 0;
+    pointer-events: none;
   }
   .admin-icon-btn svg { width: 16px; height: 16px; }
   .admin-icon-btn:hover { color: var(--chalk); border-color: rgba(255,255,255,0.3); }
@@ -899,7 +903,7 @@
 
 <script>
 (function(){
-  var HOLD_MS = 2000;          // giữ logo/tên ở giữa màn hình trong 2 giây
+  var HOLD_MS = 1500;          // giữ logo/tên ở giữa màn hình trong 1.5 giây
   var SLIDE_MS = 700;          // thời gian trượt lên (khớp với transition trong CSS)
   var REVEAL_EXTRA_DELAY = 100; // khoảng nghỉ nhỏ trước khi bắt đầu hiện nội dung bên dưới
 
