@@ -407,8 +407,8 @@
     font-size: 18px;
     font-weight: 700;
     text-align: center;
-    width: 35px;
-    height: 35px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     transition: all 0.2s ease;
@@ -431,10 +431,12 @@
   
   input[type=number]:focus{outline:none;border-color:var(--accent);box-shadow: 0 0 8px rgba(255, 209, 102, 0.35);}
 
-  /* Viền vàng cho ô đang có điểm cao hơn (đội đang dẫn / thắng) */
+  /* Ô đang có điểm cao hơn (đội đang dẫn / thắng): nền vàng, chữ cùng màu nền trang */
   input[type=number].winner{
+    background: var(--gold) !important;
+    color: var(--green-bg) !important;
     border-color: var(--gold) !important;
-    box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.3);
+    box-shadow: none;
   }
 
   @keyframes shake-x{
