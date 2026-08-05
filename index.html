@@ -74,6 +74,52 @@
     margin: 0;
   }
 
+  /* TOP NAVIGATION BAR */
+  .top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(6, 38, 23, 0.85);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+
+  .nav-brand {
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--chalk);
+    text-decoration: none;
+  }
+
+  .nav-menu {
+    display: flex;
+    gap: 16px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-menu li a {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--chalk-dim);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-menu li a:hover,
+  .nav-menu li a.active {
+    color: var(--accent);
+  }
+
   .wrap { max-width: 440px; margin: 0 auto; padding: 0 12px; position: relative; z-index: 1; }
 
   header {
@@ -185,7 +231,7 @@
     padding: 10px 12px;
     margin: 0 -12px;
     position: sticky;
-    top: 0;
+    top: 49px; /* Đẩy xuống dưới thanh top-navbar */
     background: rgba(6, 38, 23, 0.6);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
@@ -765,6 +811,15 @@
 </style>
 </head>
 <body data-theme="allmatches">
+
+  <!-- THANH MENU TRÊN CÙNG -->
+  <nav class="top-navbar">
+    <a href="#" class="nav-brand">LMCL</a>
+    <ul class="nav-menu">
+      <li><a href="#" class="active">Tour</a></li>
+      <li><a href="#">Members</a></li>
+    </ul>
+  </nav>
 
 <div class="wrap">
   <header>
