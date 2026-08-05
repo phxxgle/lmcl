@@ -525,6 +525,25 @@
     font-family:'Space Mono',monospace;
   }
   table.standings tbody td:nth-child(2){text-align:center;font-family:'Inter',sans-serif;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:0;}
+
+  /* Overall table: no gender column anymore, so give the name its own room
+     and show it in full instead of truncating with an ellipsis. */
+  table.standings-overall{table-layout:fixed;}
+  table.standings-overall th:nth-child(1),
+  table.standings-overall td:nth-child(1){width:26px;}
+  table.standings-overall th:nth-child(3),
+  table.standings-overall td:nth-child(3){width:52px;}
+  table.standings-overall th:nth-child(4),
+  table.standings-overall td:nth-child(4){width:64px;}
+  table.standings-overall tbody td:nth-child(2){
+    text-align:left;
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+    max-width:none;
+    padding-left:6px;
+    line-height:1.3;
+  }
   table.standings tbody tr:last-child td{border-bottom:none;}
 
   /* Bảng Standings 8 cột (P/W/L/PF/PA/Diff): ép các cột số liệu hẹp lại, dồn khoảng trống còn lại cho cột Player */
@@ -764,8 +783,8 @@
     <div class="card">
       <h2>Overall Ranking</h2>
       <div class="table-scroll">
-        <table class="standings">
-          <thead><tr><th>#</th><th>Player</th><th>Nội dung</th><th>Điểm</th><th>Đổi hạng</th></tr></thead>
+        <table class="standings standings-overall">
+          <thead><tr><th>#</th><th>Player</th><th>Điểm</th><th>Đổi hạng</th></tr></thead>
           <tbody id="standings-overall"></tbody>
         </table>
       </div>
@@ -1193,9 +1212,6 @@ function rowScoreValue(group, r){
 
 function buildStandingsRowHtml(group, r, idx){
   if(group === 'overall'){
-    const g = playerGroup(r.name);
-    const chipCls = g === 'nu' ? 'chip-women' : 'chip-men';
-    const chipText = g === 'nu' ? 'Nữ' : 'Nam';
     let changeCls = 'rank-same';
     let changeText = '–';
     if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
@@ -1203,7 +1219,6 @@ function buildStandingsRowHtml(group, r, idx){
     return `<tr data-name="${escapeHtml(r.name)}">
       <td><span class="rank-badge">${r.newRank}</span></td>
       <td>${escapeHtml(r.name)}</td>
-      <td><span class="chip ${chipCls}">${chipText}</span></td>
       <td class="total-pts"><span class="count-val">${r.newTotal}</span></td>
       <td class="rank-change ${changeCls}">${changeText}</td>
     </tr>`;
