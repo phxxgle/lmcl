@@ -1265,6 +1265,21 @@
       <p class="sub" id="tour-sub">Chọn một giải đấu ở menu bên trái để xem chi tiết điểm số.</p>
       <div id="tour-list"></div>
     </div>
+    <div class="card" id="tour-detail" style="display:none;">
+      <div class="card-header">
+        <h2 id="tour-detail-title"></h2>
+        <button type="button" class="icon-btn" id="tour-detail-back" aria-label="Quay lại danh sách giải">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+      </div>
+      <p class="sub" id="tour-detail-sub"></p>
+      <div class="table-scroll">
+        <table class="standings standings-overall">
+          <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
+          <tbody id="tour-detail-body"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <div id="view-rankings" class="app-view">
@@ -1393,25 +1408,10 @@ const ROSTERS = {
   ]
 };
 
-const OVERALL_DATA = [
-  { name: "Nguyễn Đan Quyên", points: 12 },
-  { name: "Vương Mạnh Chuyền", points: 11 },
-  { name: "Lê Thanh Phương", points: 11 },
-  { name: "Chu Văn Huynh", points: 10 },
-  { name: "Phạm Minh Quân", points: 9 },
-  { name: "Vũ Ngọc Linh", points: 9 },
-  { name: "Nguyễn Văn Thành", points: 6 },
-  { name: "Nguyễn Đình Đạt", points: 5 },
-  { name: "Bùi Huyền Trang", points: 5 },
-  { name: "Đặng Thị Nhung", points: 5 },
-  { name: "Trần Trung Hiếu", points: 4 },
-  { name: "Nguyễn Tiến Trung", points: 4 }
-];
-
-// Dữ liệu các mùa giải cho mục "Tournament". Giải hiện tại (đang diễn ra) trỏ về Live Match.
-// Thêm giải đã kết thúc bằng cách thêm object vào mảng tournaments của năm tương ứng,
-// kèm standings [{name, points}] để hiển thị bảng điểm cuối giải.
-// titleLines + badge = phần chữ hiển thị cạnh logo khi xem giải đó (tên giải, không phải tên đội).
+// Dữ liệu các mùa giải cho mục "Tournament".
+// - status "live": giải đang diễn ra, bấm vào sẽ mở tab Live Match.
+// - status "finished": giải đã kết thúc, kèm mảng standings để hiển thị bảng xếp hạng cuối giải.
+//   change: số bậc thay đổi so với giải liền trước (0 = giữ nguyên).
 const TOUR_DATA = {
   2026: [
     {
@@ -1421,12 +1421,39 @@ const TOUR_DATA = {
       badge: "AUGUST 2026",
       status: "live",
       note: "Đang diễn ra"
+    },
+    {
+      id: "lmcl-jun-2026",
+      name: "LMCL Allstars — June 2026",
+      titleLines: ["LMCL", "ALLSTARS", "RANKINGS"],
+      badge: "JUNE 2026",
+      status: "finished",
+      note: "Đã kết thúc — Tháng 6",
+      standings: [
+        { name: "Nguyễn Đan Quyên",   points: 12, change:  0 },
+        { name: "Vương Mạnh Chuyền",  points: 11, change:  0 },
+        { name: "Lê Thanh Phương",    points: 11, change:  2 },
+        { name: "Chu Văn Huynh",      points: 10, change:  0 },
+        { name: "Phạm Minh Quân",     points:  9, change: -2 },
+        { name: "Vũ Ngọc Linh",       points:  9, change:  0 },
+        { name: "Nguyễn Văn Thành",   points:  6, change:  5 },
+        { name: "Nguyễn Đình Đạt",    points:  5, change:  3 },
+        { name: "Bùi Huyền Trang",    points:  5, change: -2 },
+        { name: "Đặng Thị Nhung",     points:  5, change: -2 },
+        { name: "Trần Trung Hiếu",    points:  4, change: -2 },
+        { name: "Nguyễn Tiến Trung",  points:  4, change: -2 }
+      ]
     }
   ]
 };
 
 // Giải đang diễn ra — quyết định phần chữ hiển thị ở mục Live Match.
 const CURRENT_TOURNAMENT = TOUR_DATA[2026][0];
+
+// Giải liền trước (June 2026) là điểm xuất phát của bảng xếp hạng hiện tại:
+// điểm và thứ hạng của nó được cộng thêm 3/2/1 cho top 3 mỗi nội dung khi giải mới kết thúc.
+const PREVIOUS_TOURNAMENT = TOUR_DATA[2026].find(t => t.id === "lmcl-jun-2026");
+const OVERALL_DATA = PREVIOUS_TOURNAMENT.standings.map(r => ({ name: r.name, points: r.points }));
 
 // Dữ liệu hồ sơ vận động viên cho mục "Members". Chỉnh sửa các trường bên dưới
 // (year: năm sinh, hometown: quê quán, achievements: thành tích, photo: URL ảnh) cho từng người.
@@ -2303,7 +2330,48 @@ function renderMembers(group){
    ========================================= */
 let currentTourYear = Object.keys(TOUR_DATA).sort((a,b) => b - a)[0];
 
+function findTournament(id){
+  for(const year of Object.keys(TOUR_DATA)){
+    const t = (TOUR_DATA[year] || []).find(x => x.id === id);
+    if(t) return t;
+  }
+  return null;
+}
+
+// Bảng xếp hạng cuối giải của một giải đã kết thúc — cùng bố cục với bảng Rankings.
+function renderTournamentDetail(t){
+  const card = document.getElementById('tour-detail');
+  const body = document.getElementById('tour-detail-body');
+  if(!card || !body || !t || !t.standings) return;
+
+  document.getElementById('tour-detail-title').textContent = t.name;
+  document.getElementById('tour-detail-sub').textContent =
+    'Bảng xếp hạng chung cuộc — ' + t.standings.length + ' vận động viên.';
+
+  body.innerHTML = t.standings.map((r, i) => {
+    let changeCls = 'rank-same';
+    let changeText = '–';
+    if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
+    else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
+    return `<tr>
+      <td>${getRankBadgeHtml(i + 1)}</td>
+      <td>${escapeHtml(r.name)}</td>
+      <td class="total-pts">${r.points}</td>
+      <td class="rank-change ${changeCls}">${changeText}</td>
+    </tr>`;
+  }).join('');
+
+  card.style.display = '';
+  if(t.titleLines) setHeader(t.titleLines, t.badge);
+}
+
+function hideTournamentDetail(){
+  const card = document.getElementById('tour-detail');
+  if(card) card.style.display = 'none';
+}
+
 function renderTourList(year){
+  hideTournamentDetail();
   currentTourYear = String(year);
   document.getElementById('tour-title').textContent = 'Tournament — ' + currentTourYear;
   const list = TOUR_DATA[currentTourYear] || [];
@@ -2327,11 +2395,13 @@ function renderTourList(year){
   listEl.querySelectorAll('.tour-card').forEach(card => {
     card.addEventListener('click', () => {
       if(card.getAttribute('data-status') === 'live'){
+        hideTournamentDetail();
         switchView('livematch');
         closeDrawer();
+        return;
       }
-      // Các giải đã kết thúc (status "finished") có thể mở rộng để hiển thị
-      // bảng điểm cuối giải tại đây khi có dữ liệu (standings) tương ứng.
+      const t = findTournament(card.getAttribute('data-tour-id'));
+      if(t) renderTournamentDetail(t);
     });
   });
 }
@@ -2361,11 +2431,12 @@ function renderTourSubmenu(){
       const id = btn.getAttribute('data-tour-id');
       renderTourList(year);
       if(btn.getAttribute('data-status') === 'live'){
+        hideTournamentDetail();
         switchView('livematch');
       } else {
         switchView('tour');
         const t = (TOUR_DATA[year] || []).find(x => x.id === id);
-        if(t && t.titleLines) setHeader(t.titleLines, t.badge);
+        if(t) renderTournamentDetail(t);
       }
       closeDrawer();
     });
@@ -2457,6 +2528,14 @@ document.getElementById('nav-livematch').addEventListener('click', () => {
   switchView('livematch');
   closeDrawer();
 });
+const tourDetailBack = document.getElementById('tour-detail-back');
+if(tourDetailBack){
+  tourDetailBack.addEventListener('click', () => {
+    hideTournamentDetail();
+    setHeader(['LMCL', 'TOURNAMENT'], currentTourYear);
+  });
+}
+
 document.getElementById('nav-rankings').addEventListener('click', () => {
   switchView('rankings');
   closeDrawer();
