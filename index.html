@@ -1520,7 +1520,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     const grp = btn.getAttribute('data-group');
     if(grp === activeGroupTab) return; 
 
-    document.querySelectorAll('.tab-bny').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
     btn.classList.add('active');
