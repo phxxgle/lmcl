@@ -555,7 +555,12 @@
     line-height: 1.25;
   }
   table.standings thead th:nth-child(2){
-    text-align:center;
+    text-align:left;
+  }
+
+  table.standings thead th:nth-child(2),
+  table.standings tbody td:nth-child(2){
+    border-right: 1px solid var(--line);
   }
 
   /* Cấu hình chiều rộng chuẩn cho bảng Overall (Đã bỏ cột Territory, còn lại 4 cột) */
@@ -693,7 +698,7 @@
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
-    text-align: center;
+    text-align: left;
     margin-top: 24px;
     letter-spacing: 0.3px;
   }
