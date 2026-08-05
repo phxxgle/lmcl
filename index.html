@@ -2,7 +2,9 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#093b23">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LMCL Rankings – August 2026</title>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
@@ -11,8 +13,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green-bg:#031B10;
-    --green-dark:#031B10;
+    --green-bg:#093b23;
+    --green-dark:#093b23;
     --green-surface:#0E4D2F;
     --line:rgba(255,255,255,0.12);
     --chalk:#F8FAFC;
@@ -36,18 +38,22 @@
     --on-accent:#031B2A;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{-webkit-text-size-adjust:100%;}
+  
+  html {
+    background-color: #093b23;
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
   
   body{
-    margin:0;
     font-family:'Inter',sans-serif;
-    background: linear-gradient(180deg, #093C24 0%, #052718 35%, #031B10 100%);
-    background-attachment: fixed;
+    background-color: #093b23;
     color:var(--chalk);
     min-height:100vh;
     padding:0 0 48px;
     position: relative;
     overflow-x: hidden;
+    margin: 0;
   }
 
   .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
@@ -158,7 +164,7 @@
     margin: 0 -12px;
     position: sticky;
     top: 0;
-    background: linear-gradient(180deg, rgba(8, 48, 30, 0.95) 0%, rgba(5, 33, 21, 0.92) 100%);
+    background: rgba(9, 59, 35, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     z-index: 20;
@@ -188,7 +194,6 @@
     background: rgba(255, 255, 255, 0.12);
   }
 
-  /* KHI TAB ĐƯỢC CHỌN (ACTIVE) */
   .tab-btn.active{
     background: var(--accent);
     color: var(--on-accent);
@@ -197,7 +202,6 @@
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
   }
 
-  /* TẠO VIỀN PHÁT SÁNG XOAY NHẸ NHÀNG */
   .tab-btn.active::before {
     content: '';
     position: absolute;
@@ -215,7 +219,6 @@
     z-index: -2;
   }
 
-  /* MẶT NẠ NỀN TRONG ĐỂ CHỈ HIỆN VIỀN PHÁT SÁNG */
   .tab-btn.active::after {
     content: '';
     position: absolute;
@@ -397,17 +400,25 @@
 
   input[type=number]{
     background: rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    border: 2px solid rgba(255, 255, 255, 0.22);
     border-radius: 9px;
     color: var(--chalk);
     font-family: 'Space Mono', monospace;
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 700;
     text-align: center;
     width: 44px;
-    padding: 9px 0;
+    height: 44px;
+    padding: 0;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     transition: all 0.2s ease;
+    -moz-appearance: textfield;
+  }
+
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
   
   input[type=number]:disabled {
@@ -419,6 +430,12 @@
   }
   
   input[type=number]:focus{outline:none;border-color:var(--accent);box-shadow: 0 0 8px rgba(255, 209, 102, 0.35);}
+
+  /* Viền vàng cho ô đang có điểm cao hơn (đội đang dẫn / thắng) */
+  input[type=number].winner{
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.3);
+  }
 
   @keyframes shake-x{
     10%,90%{transform:translateX(-1px);}
@@ -879,12 +896,16 @@ function renderGroup(group){
     const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
     const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
     const isInvalid = sc && sc.note === 'invalid';
+    const v1 = hasVal1 ? sc.s1 : null;
+    const v2 = hasVal2 ? sc.s2 : null;
+    const s1Winner = (v1 !== null && v2 !== null && v1 > v2) ? 'winner' : '';
+    const s2Winner = (v1 !== null && v2 !== null && v2 > v1) ? 'winner' : '';
     return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}" data-id="${f.id}">
       <span class="fixture-num">${idx + 1}</span>
       <span class="name right" title="${escapeHtml(f.p1)}">${escapeHtml(f.p1)}</span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s1 ${isInvalid ? 'invalid' : ''}" value="${hasVal1 ? sc.s1 : ''}" placeholder="-" ${disabledAttr}>
+      <input type="number" inputmode="numeric" min="0" class="score-input s1 ${isInvalid ? 'invalid' : s1Winner}" value="${hasVal1 ? sc.s1 : ''}" placeholder="-" ${disabledAttr}>
       <span></span>
-      <input type="number" inputmode="numeric" min="0" class="score-input s2 ${isInvalid ? 'invalid' : ''}" value="${hasVal2 ? sc.s2 : ''}" placeholder="-" ${disabledAttr}>
+      <input type="number" inputmode="numeric" min="0" class="score-input s2 ${isInvalid ? 'invalid' : s2Winner}" value="${hasVal2 ? sc.s2 : ''}" placeholder="-" ${disabledAttr}>
       <span class="name" title="${escapeHtml(f.p2)}">${escapeHtml(f.p2)}</span>
       <span class="error-msg"></span>
       <span class="fixture-status ${label ? label.cls : ''}">${label ? label.text : ''}</span>
@@ -898,6 +919,19 @@ function renderGroup(group){
     const s1input = row.querySelector('.s1');
     const s2input = row.querySelector('.s2');
     const errEl = row.querySelector('.error-msg');
+
+    function updateWinnerHighlight(){
+      const v1 = s1input.value === '' ? NaN : parseInt(s1input.value, 10);
+      const v2 = s2input.value === '' ? NaN : parseInt(s2input.value, 10);
+
+      s1input.classList.remove('winner');
+      s2input.classList.remove('winner');
+
+      if(!isNaN(v1) && !isNaN(v2) && v1 !== v2){
+        if(v1 > v2) s1input.classList.add('winner');
+        else s2input.classList.add('winner');
+      }
+    }
 
     function validateLive(){
       const v1 = s1input.value === '' ? null : parseInt(s1input.value, 10);
@@ -926,6 +960,8 @@ function renderGroup(group){
         errEl.textContent = '';
         [s1input, s2input].forEach(inp => inp.classList.remove('invalid'));
       }
+
+      updateWinnerHighlight();
     }
 
     [s1input, s2input].forEach(inp => {
@@ -961,7 +997,7 @@ function renderGroup(group){
     });
     s2input.addEventListener('change', commit);
 
-    // Cho phép nhấn Enter để xác nhận và chuyển ô nhanh hơn
+    // Nhấn Enter để chuyển ô nhanh hơn
     s1input.addEventListener('keydown', e => {
       if(e.key === 'Enter'){
         e.preventDefault();
