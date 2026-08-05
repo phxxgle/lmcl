@@ -302,13 +302,9 @@
   .icon-btn svg{width:15px;height:15px;}
   .icon-btn:hover{color:var(--chalk);border-color:rgba(255,255,255,0.3);}
   .icon-btn.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent);}
-  #search-toggle-nam,
-  #filter-toggle-nam{
-    border-color: var(--gold);
-  }
-  #search-toggle-nu,
-  #filter-toggle-nu{
-    border-color: var(--pink);
+  #search-toggle-all,
+  #filter-toggle-all{
+    border-color: var(--accent);
   }
   #info-toggle-nam{
     border: none;
@@ -812,6 +808,11 @@
               <button type="button" data-filter="gender" data-value="all" class="active">Tất cả</button>
               <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
               <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
             </div>
           </div>
         </div>
@@ -983,7 +984,7 @@ let isAdmin = sessionStorage.getItem('lmcl_is_admin') === 'true';
 const SECRET_PIN = "BTC";
 
 const uiState = {
-  all: { status: 'all', gender: 'all' }
+  all: { status: 'all', gender: 'all', day: 'all' }
 };
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1005,16 +1006,65 @@ function buildFixtures(group){
 }
 
 const FIXTURES = { nam: buildFixtures('nam'), nu: buildFixtures('nu') };
-const ALL_FIXTURES = [
-  ...FIXTURES.nam.map(f => ({ ...f, group: 'nam' })),
-  ...FIXTURES.nu.map(f => ({ ...f, group: 'nu' }))
-];
 
 function playerGroup(name){
   if(ROSTERS.nam.includes(name)) return 'nam';
   if(ROSTERS.nu.includes(name)) return 'nu';
   return null;
 }
+
+// Thứ tự thi đấu cố định theo yêu cầu: 15 trận đầu = Ngày 1, 16 trận cuối = Ngày 2
+const DAY1_COUNT = 15;
+const CUSTOM_MATCH_ORDER = [
+  ["Trần Trung Hiếu", "Nguyễn Văn Thành"],
+  ["Bùi Huyền Trang", "Đặng Thị Nhung"],
+  ["Nguyễn Tiến Trung", "Vương Mạnh Chuyền"],
+  ["Vũ Ngọc Linh", "Đặng Thị Nhung"],
+  ["Chu Văn Huynh", "Nguyễn Văn Thành"],
+  ["Bùi Huyền Trang", "Lê Thanh Phương"],
+  ["Trần Trung Hiếu", "Vương Mạnh Chuyền"],
+  ["Vũ Ngọc Linh", "Bùi Huyền Trang"],
+  ["Nguyễn Đình Đạt", "Chu Văn Huynh"],
+  ["Đặng Thị Nhung", "Lê Thanh Phương"],
+  ["Trần Trung Hiếu", "Nguyễn Tiến Trung"],
+  ["Vũ Ngọc Linh", "Lê Thanh Phương"],
+  ["Chu Văn Huynh", "Vương Mạnh Chuyền"],
+  ["Nguyễn Đình Đạt", "Nguyễn Văn Thành"],
+  ["Trần Trung Hiếu", "Chu Văn Huynh"],
+  ["Nguyễn Đình Đạt", "Trần Trung Hiếu"],
+  ["Phạm Minh Quân", "Nguyễn Văn Thành"],
+  ["Nguyễn Đan Quyên", "Bùi Huyền Trang"],
+  ["Nguyễn Tiến Trung", "Chu Văn Huynh"],
+  ["Phạm Minh Quân", "Vương Mạnh Chuyền"],
+  ["Nguyễn Đan Quyên", "Đặng Thị Nhung"],
+  ["Nguyễn Đình Đạt", "Vương Mạnh Chuyền"],
+  ["Phạm Minh Quân", "Nguyễn Tiến Trung"],
+  ["Nguyễn Đan Quyên", "Lê Thanh Phương"],
+  ["Nguyễn Văn Thành", "Nguyễn Tiến Trung"],
+  ["Phạm Minh Quân", "Chu Văn Huynh"],
+  ["Nguyễn Đan Quyên", "Vũ Ngọc Linh"],
+  ["Nguyễn Đình Đạt", "Phạm Minh Quân"],
+  ["Nguyễn Văn Thành", "Vương Mạnh Chuyền"],
+  ["Nguyễn Đình Đạt", "Nguyễn Tiến Trung"],
+  ["Phạm Minh Quân", "Trần Trung Hiếu"]
+];
+
+const ALL_FIXTURES = CUSTOM_MATCH_ORDER.map((pair, idx) => {
+  const [nameA, nameB] = pair;
+  const group = playerGroup(nameA);
+  const roster = ROSTERS[group];
+  const ia = roster.indexOf(nameA);
+  const ib = roster.indexOf(nameB);
+  const i = Math.min(ia, ib);
+  const j = Math.max(ia, ib);
+  return {
+    id: group + '-' + i + '-' + j,
+    p1: roster[i],
+    p2: roster[j],
+    group,
+    day: idx < DAY1_COUNT ? 1 : 2
+  };
+});
 
 function isEditingScoreInput(){
   const active = document.activeElement;
@@ -1068,7 +1118,9 @@ function getFilteredAllFixtures(){
   const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
   const status = uiState.all.status;
   const gender = uiState.all.gender;
+  const day = uiState.all.day;
   return ALL_FIXTURES.filter(f => {
+    if(day !== 'all' && String(f.day) !== day) return false;
     if(gender !== 'all' && f.group !== gender) return false;
     if(search){
       const hay = (f.p1 + ' ' + f.p2).toLowerCase();
@@ -1524,7 +1576,7 @@ function openStandingsTab(group){
         filterMenu.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        const hasFilter = uiState.all.status !== 'all' || uiState.all.gender !== 'all';
+        const hasFilter = uiState.all.status !== 'all' || uiState.all.gender !== 'all' || uiState.all.day !== 'all';
         filterBtn.classList.toggle('has-filter', hasFilter);
 
         filterMenu.classList.remove('open');
