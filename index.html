@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_code = """<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -369,13 +369,15 @@
     position: absolute;
     top: 40px;
     right: 0;
-    background: var(--card-bg);
+    background: #0d4029;
     border: 1px solid var(--glass-border-light);
     border-radius: 12px;
     padding: 8px;
     min-width: 130px;
     z-index: 10;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   .filter-menu.open { display: block; }
   .filter-menu button {
@@ -392,8 +394,8 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .filter-menu button:hover { background: rgba(255,255,255,0.05); color: var(--chalk); }
-  .filter-menu button.active { color: var(--accent); font-weight: 600; background: rgba(255,255,255,0.08); }
+  .filter-menu button:hover { background: rgba(255,255,255,0.08); color: var(--chalk); }
+  .filter-menu button.active { color: var(--accent); font-weight: 600; background: rgba(255,255,255,0.12); }
 
   .no-results {
     text-align: center;
@@ -1845,3 +1847,9 @@ openStandingsTab('nam');
 </script>
 </body>
 </html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_code)
+
+print("File index.html created successfully.")
