@@ -459,7 +459,6 @@
   
   input[type=number]:focus{outline:none;border-color:var(--accent);box-shadow: 0 0 8px rgba(255, 209, 102, 0.35);}
 
-  /* Ô đang có điểm cao hơn (đội đang dẫn / thắng): nền vàng, chữ cùng màu nền trang */
   input[type=number].winner{
     background: var(--gold) !important;
     color: var(--green-bg) !important;
@@ -524,32 +523,37 @@
     border-bottom:1px solid var(--line);
     font-family:'Space Mono',monospace;
   }
-  table.standings tbody td:nth-child(2){text-align:center;font-family:'Inter',sans-serif;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:0;}
+  table.standings tbody td:nth-child(2){
+    text-align:left;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    padding-left: 8px; /* Yêu cầu 1: Tăng khoảng cách badge và tên 6-8px */
+  }
 
-  /* Overall table: no gender column anymore, so give the name its own room
-     and show it in full instead of truncating with an ellipsis. */
   table.standings-overall{table-layout:fixed;}
   table.standings-overall th:nth-child(1),
-  table.standings-overall td:nth-child(1){width:26px;}
+  table.standings-overall td:nth-child(1){width:28px;}
   table.standings-overall th:nth-child(3),
   table.standings-overall td:nth-child(3){width:52px;}
   table.standings-overall th:nth-child(4),
-  table.standings-overall td:nth-child(4){width:64px;}
+  table.standings-overall td:nth-child(4){width:70px;}
   table.standings-overall tbody td:nth-child(2){
     text-align:left;
     white-space:normal;
     overflow:visible;
     text-overflow:clip;
     max-width:none;
-    padding-left:6px;
+    padding-left:8px; /* Yêu cầu 1: Tăng khoảng cách badge và tên cho bảng Overall */
     line-height:1.3;
   }
   table.standings tbody tr:last-child td{border-bottom:none;}
 
-  /* Bảng Standings 8 cột (P/W/L/PF/PA/Diff): ép các cột số liệu hẹp lại, dồn khoảng trống còn lại cho cột Player */
   table.standings-full{table-layout:fixed;}
   table.standings-full th:nth-child(1),
-  table.standings-full td:nth-child(1){width:20px;}
+  table.standings-full td:nth-child(1){width:24px;}
   table.standings-full th:nth-child(3),
   table.standings-full td:nth-child(3),
   table.standings-full th:nth-child(4),
@@ -562,7 +566,7 @@
   table.standings-full td:nth-child(7){width:27px;}
   table.standings-full th:nth-child(8),
   table.standings-full td:nth-child(8){width:30px;}
-  table.standings-full td:nth-child(2){padding-left:2px;padding-right:2px;}
+  table.standings-full td:nth-child(2){padding-left:8px;padding-right:2px;}
 
   .rank-badge{
     display:inline-flex;align-items:center;justify-content:center;
@@ -570,37 +574,32 @@
     font-family:'Bebas Neue',sans-serif;font-size:12px;
     background:rgba(255,255,255,0.12);color:var(--chalk-dim);
   }
-  table.standings tbody tr:nth-child(1) .rank-badge{background:var(--accent);color:var(--on-accent);}
-  table.standings tbody tr:nth-child(2) .rank-badge{background:var(--silver);color:#1E293B;}
-  table.standings tbody tr:nth-child(3) .rank-badge{background:var(--bronze);color:#2A1400;}
+  /* Yêu cầu 2: Huy hiệu Top 3 tối giản, hài hòa theme xanh, cùng kích thước badge */
+  .rank-badge.rank-1{background:var(--gold);color:var(--green-bg);box-shadow:0 0 8px rgba(255,209,102,0.4);}
+  .rank-badge.rank-2{background:var(--silver);color:#0E4D2F;}
+  .rank-badge.rank-3{background:var(--bronze);color:#0E4D2F;}
+
   .diff-pos{color:var(--green-ok);}
   .diff-neg{color:var(--red);}
-  .chip{
-    display:inline-block;
-    font-size:10px;
-    font-weight:600;
-    letter-spacing:0.3px;
-    padding:2px 8px;
-    border-radius:999px;
-  }
-  .chip-men{background:rgba(255,209,102,0.18);color:var(--gold);}
-  .chip-women{background:rgba(255,101,132,0.18);color:var(--pink);}
   .total-pts{color:var(--chalk);font-weight:700;font-size:14px;}
-  .rank-change{font-family:'Space Mono',monospace;font-weight:700;font-size:12.5px;white-space:nowrap;}
-  .rank-up{color:var(--green-ok);}
-  .rank-down{color:var(--red);}
+  
+  /* Yêu cầu 4: Badge thay đổi thứ hạng ▲ xanh, ▼ đỏ */
+  .rank-change{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;white-space:nowrap;}
+  .rank-up{color:var(--green-ok);background:rgba(74,222,128,0.12);padding:2px 6px;border-radius:4px;}
+  .rank-down{color:var(--red);background:rgba(248,113,113,0.12);padding:2px 6px;border-radius:4px;}
   .rank-same{color:var(--chalk-dim);}
+
   .foot-note{font-size:11px;color:var(--chalk-dim);margin-top:16px;line-height:1.6;padding:0 4px;}
 
-  /* ===== Ranking tab reveal + live-update animations ===== */
-  table.standings tbody tr{ position:relative; }
+  /* Yêu cầu 4: Hiệu ứng sáng nhẹ hàng khi đổi hạng & fade in bảng */
+  table.standings tbody tr{ position:relative; transition: background-color 1s ease; }
 
-  @keyframes rk-row-glow{
-    0%   { background-color: rgba(255,209,102,0.28); }
+  @keyframes rk-row-flash{
+    0%   { background-color: rgba(56, 189, 248, 0.35); }
     100% { background-color: transparent; }
   }
   table.standings tbody tr.rk-glow{
-    animation: rk-row-glow 0.9s ease-out;
+    animation: rk-row-flash 1s ease-out;
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -897,13 +896,12 @@ const uiState = {
   nu: { status: 'all' }
 };
 
-// ---- Ranking reveal / live-update animation state (presentation only) ----
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let activeGroupTab = 'nam';
 const paintedStandings = { nam: null, nu: null, overall: null };
-const ROW_ANIM_MS = 260;   // table/row fade-slide duration
-const STAGGER_MS = 65;     // delay between each row on entrance
-const COUNT_MS = 650;      // score count-up duration
+const ROW_ANIM_MS = 260;   
+const STAGGER_MS = 65;     
+const COUNT_MS = 650;      
 
 function buildFixtures(group){
   const players = ROSTERS[group];
@@ -1113,7 +1111,6 @@ function renderGroup(group){
 
     s1input.addEventListener('change', () => {
       commit();
-      // Sau khi lưu điểm ô 1, tự động chuyển sang ô 2 để nhập tiếp
       if(document.activeElement !== s2input){
         s2input.focus();
         s2input.select();
@@ -1121,7 +1118,6 @@ function renderGroup(group){
     });
     s2input.addEventListener('change', commit);
 
-    // Nhấn Enter để chuyển ô nhanh hơn
     s1input.addEventListener('keydown', e => {
       if(e.key === 'Enter'){
         e.preventDefault();
@@ -1210,21 +1206,31 @@ function rowScoreValue(group, r){
   return group === 'overall' ? r.newTotal : r.ptsFor;
 }
 
+function getRankBadgeHtml(rank){
+  if(rank === 1) return `<span class="rank-badge rank-1" title="🥇 Hạng 1">🥇</span>`;
+  if(rank === 2) return `<span class="rank-badge rank-2" title="🥈 Hạng 2">🥈</span>`;
+  if(rank === 3) return `<span class="rank-badge rank-3" title="🥉 Hạng 3">🥉</span>`;
+  return `<span class="rank-badge">${rank}</span>`;
+}
+
 function buildStandingsRowHtml(group, r, idx){
+  const rank = group === 'overall' ? r.newRank : (idx + 1);
+  const badgeHtml = getRankBadgeHtml(rank);
+
   if(group === 'overall'){
     let changeCls = 'rank-same';
     let changeText = '–';
     if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
     else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
     return `<tr data-name="${escapeHtml(r.name)}">
-      <td><span class="rank-badge">${r.newRank}</span></td>
+      <td>${badgeHtml}</td>
       <td>${escapeHtml(r.name)}</td>
       <td class="total-pts"><span class="count-val">${r.newTotal}</span></td>
       <td class="rank-change ${changeCls}">${changeText}</td>
     </tr>`;
   }
   return `<tr data-name="${escapeHtml(r.name)}">
-    <td><span class="rank-badge">${idx+1}</span></td>
+    <td>${badgeHtml}</td>
     <td>${escapeHtml(r.name)}</td>
     <td>${r.played}</td>
     <td>${r.win}</td>
@@ -1235,16 +1241,6 @@ function buildStandingsRowHtml(group, r, idx){
   </tr>`;
 }
 
-// Paints a standings table. computeStandings()/computeOverall() (the actual
-// ranking math) are never touched by this — this function is purely
-// presentational. When forceEntrance is true (the tab was just opened) every
-// row fades/slides in with a small stagger. Any row whose rank changed since
-// this table was last painted also gets a FLIP slide + glow flash + a
-// temporary ▲/▼ indicator, and any row whose score went up gets a count-up.
-// Only transform/opacity are animated (GPU-accelerated), and the FLIP offset
-// is derived from row index * a single measured row height rather than
-// measuring every row, so there's one forced layout read total per paint —
-// safe even with 40-50 players.
 function paintTable(group, rows, opts){
   opts = opts || {};
   const forceEntrance = !!opts.forceEntrance;
@@ -1298,9 +1294,6 @@ function paintTable(group, rows, opts){
     items.push({ tr, oldIdx, newIdx, hasMoved, scoreIncreased, oldScoreVal, newScore, delay });
   });
 
-  // One forced reflow to lock in the "before" state, then animate to the
-  // final state next frame (FLIP, using index math instead of measuring
-  // every row's rect, so there's no read/write/read/write thrashing).
   void tbody.offsetHeight;
 
   requestAnimationFrame(() => {
@@ -1316,12 +1309,6 @@ function paintTable(group, rows, opts){
     if(!item.hasMoved) return;
     setTimeout(() => {
       item.tr.classList.add('rk-glow');
-      item.tr.addEventListener('animationend', function onEnd(e){
-        if(e.animationName === 'rk-row-glow'){
-          item.tr.classList.remove('rk-glow');
-          item.tr.removeEventListener('animationend', onEnd);
-        }
-      });
     }, item.delay);
   });
 
@@ -1346,18 +1333,11 @@ function paintTable(group, rows, opts){
   paintedStandings[group] = newSnapshot;
 }
 
-// Called on every Firebase update: only actually (re)paints the table that
-// is currently on screen. Hidden tables are left untouched so that when the
-// user does switch to them, paintTable() can still tell what changed since
-// they were last shown.
 function refreshStandings(group){
   if(activeGroupTab !== group) return;
   paintTable(group, getRowsFor(group), { forceEntrance: false });
 }
 
-// Called when a tab is opened: always plays the entrance animation, and
-// layers the FLIP/glow/indicator/count-up on top for anything that changed
-// since this table was last visible.
 function openStandingsTab(group){
   paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
@@ -1503,7 +1483,7 @@ pinInput.addEventListener('keypress', (e) => {
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const grp = btn.getAttribute('data-group');
-    if(grp === activeGroupTab) return; // already open, don't replay the animation
+    if(grp === activeGroupTab) return; 
 
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
@@ -1515,6 +1495,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     openStandingsTab(grp);
   });
 });
+
+// Khởi chạy mặc định tab đầu tiên
+openStandingsTab('nam');
 </script>
 </body>
 </html>
