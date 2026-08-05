@@ -56,7 +56,67 @@
     margin: 0;
   }
 
-  .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
+  .wrap{
+    max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;
+    opacity: 1;
+    transition: opacity 0.55s ease;
+  }
+  body.page-loading .wrap{
+    opacity: 0;
+  }
+
+  .splash{
+    position: fixed;
+    inset: 0;
+    background: var(--green-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 0 24px;
+    transition: opacity 0.55s ease, transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .splash.splash-up{
+    transform: translateY(-70px);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .splash.splash-hidden{
+    display: none;
+  }
+  .splash-inner{
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .splash-logo{
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+  .splash-divider{
+    font-family:'Tomorrow',sans-serif;
+    font-weight: 300;
+    font-size: 52px;
+    color: var(--chalk-dim);
+    line-height: 1;
+    opacity: 0;
+    animation: fadeInContent 0.5s ease forwards 1s;
+  }
+  .splash-text{
+    font-family:'Tomorrow',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:1px;
+    margin:0;
+    color:var(--chalk);
+    line-height:1.2;
+    text-align: left;
+    opacity: 0;
+    animation: fadeInContent 0.6s ease forwards 1.2s;
+  }
   
   header{
     text-align:center;
@@ -709,7 +769,20 @@
   }
 </style>
 </head>
-<body data-theme="men">
+<body data-theme="men" class="page-loading">
+
+<div class="splash" id="splash">
+  <div class="splash-inner">
+    <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="splash-logo">
+    <span class="splash-divider">|</span>
+    <div class="splash-text">
+      LMCL<br>
+      ALLSTARS<br>
+      RANKINGS<br>
+      <span class="badge-date">AUGUST 2026</span>
+    </div>
+  </div>
+</div>
 
 <div class="wrap">
   <header>
@@ -871,6 +944,30 @@
   </div>
 </div>
 
+<script>
+(function(){
+  var SPLASH_HOLD_MS = 1400; // thời gian giữ màn hình logo trước khi trượt lên
+  var SPLASH_TRANSITION_MS = 650;
+
+  function startIntroTransition(){
+    var splash = document.getElementById('splash');
+    document.body.classList.remove('page-loading');
+    if(splash){
+      splash.classList.add('splash-up');
+      setTimeout(function(){
+        splash.classList.add('splash-hidden');
+      }, SPLASH_TRANSITION_MS);
+    }
+  }
+
+  window.addEventListener('load', function(){
+    setTimeout(startIntroTransition, SPLASH_HOLD_MS);
+  });
+  // Phòng trường hợp sự kiện 'load' không kích hoạt (ví dụ tài nguyên bị chặn),
+  // vẫn đảm bảo splash biến mất sau một khoảng thời gian tối đa.
+  setTimeout(startIntroTransition, SPLASH_HOLD_MS + 1500);
+})();
+</script>
 <script>
 const ROSTERS = {
   nam: [
