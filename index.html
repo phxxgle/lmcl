@@ -37,6 +37,10 @@
     --accent:var(--blue);
     --on-accent:#031B2A;
   }
+  body[data-theme="allmatches"]{
+    --accent:#A78BFA;
+    --on-accent:#1E1033;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   
   html {
@@ -175,13 +179,13 @@
     position: relative;
     flex:1;
     font-family:'Bebas Neue',sans-serif;
-    font-size:15px;
-    letter-spacing:0.8px;
+    font-size:14px;
+    letter-spacing:0.6px;
     background: rgba(255, 255, 255, 0.06);
     color: var(--chalk-dim);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 999px;
-    padding: 10px 4px;
+    padding: 10px 3px;
     cursor: pointer;
     transition: all 0.25s ease;
     overflow: hidden;
@@ -465,10 +469,57 @@
     box-shadow: none;
   }
 
-  #group-nu input[type=number].winner {
+  .fixture-row.row-nam{
+    border-left: 3px solid var(--gold);
+  }
+  .fixture-row.row-nu{
+    border-left: 3px solid var(--pink);
+  }
+  .fixture-row.row-nu input[type=number].winner,
+  .fixture-row.row-nu .score-display.winner {
     background: var(--pink) !important;
     color: var(--on-accent) !important;
     border-color: var(--pink) !important;
+  }
+  .filter-section-label{
+    font-size:9.5px;
+    color:var(--chalk-dim);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    padding:6px 10px 2px;
+  }
+  .filter-divider{
+    height:1px;
+    background:var(--line);
+    margin:4px 2px;
+  }
+
+  .score-display{
+    background: rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    color: var(--chalk);
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    width: 40px;
+    height: 35px;
+    line-height: 31px;
+    display: inline-block;
+  }
+  .score-display.winner{
+    background: var(--gold) !important;
+    color: var(--green-bg) !important;
+    border-color: var(--gold) !important;
+  }
+  #fixtures-view-nu .score-display.winner{
+    background: var(--pink) !important;
+    color: var(--on-accent) !important;
+    border-color: var(--pink) !important;
+  }
+  .score-display.invalid{
+    border-color: var(--red) !important;
   }
 
   @keyframes shake-x{
@@ -708,7 +759,7 @@
   }
 </style>
 </head>
-<body data-theme="men">
+<body data-theme="allmatches">
 
 <div class="wrap">
   <header>
@@ -731,38 +782,53 @@
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" data-group="nam">Men's Singles</button>
+    <button class="tab-btn active" data-group="all">All Matches</button>
+    <button class="tab-btn" data-group="nam">Men's Singles</button>
     <button class="tab-btn" data-group="nu">Women's Singles</button>
     <button class="tab-btn" data-group="overall">Overall</button>
   </div>
 
   <div id="conn-banner" style="display:none;background:rgba(248,113,113,0.18);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
 
-  <div id="group-nam" class="group active">
+  <div id="group-all" class="group active">
     <div class="card">
       <div class="card-header">
-        <h2>Schedule — Men's Singles</h2>
+        <h2>Schedule — All Matches</h2>
         <div class="header-icons">
-          <button type="button" class="icon-btn" id="search-toggle-nam" aria-label="Tìm kiếm">
+          <button type="button" class="icon-btn" id="search-toggle-all" aria-label="Tìm kiếm">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </button>
           <div class="filter-menu-wrap">
-            <button type="button" class="icon-btn" id="filter-toggle-nam" aria-label="Lọc trạng thái">
+            <button type="button" class="icon-btn" id="filter-toggle-all" aria-label="Lọc trạng thái">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
             </button>
-            <div class="filter-menu" id="filter-menu-nam">
-              <button type="button" data-value="all" class="active">Tất cả</button>
-              <button type="button" data-value="played">Đã đấu</button>
-              <button type="button" data-value="unplayed">Chưa đấu</button>
+            <div class="filter-menu" id="filter-menu-all">
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Nội dung</div>
+              <button type="button" data-filter="gender" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
+              <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
             </div>
           </div>
         </div>
       </div>
-      <p class="sub" id="progress-nam"></p>
-      <div class="search-wrap" id="search-wrap-nam">
-        <input type="text" class="search-input" id="search-nam" placeholder="Tìm theo tên vận động viên...">
+      <p class="sub" id="progress-all"></p>
+      <div class="search-wrap" id="search-wrap-all">
+        <input type="text" class="search-input" id="search-all" placeholder="Tìm theo tên vận động viên...">
       </div>
-      <div class="fixtures" id="fixtures-nam"></div>
+      <div class="fixtures" id="fixtures-all"></div>
+    </div>
+  </div>
+
+  <div id="group-nam" class="group">
+    <div class="card">
+      <h2>Results — Men's Singles</h2>
+      <p class="sub" id="progress-view-nam"></p>
+      <div class="fixtures" id="fixtures-view-nam"></div>
     </div>
     <div class="card">
       <div class="card-header">
@@ -782,29 +848,9 @@
 
   <div id="group-nu" class="group">
     <div class="card">
-      <div class="card-header">
-        <h2>Schedule — Women's Singles</h2>
-        <div class="header-icons">
-          <button type="button" class="icon-btn" id="search-toggle-nu" aria-label="Tìm kiếm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          </button>
-          <div class="filter-menu-wrap">
-            <button type="button" class="icon-btn" id="filter-toggle-nu" aria-label="Lọc trạng thái">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
-            </button>
-            <div class="filter-menu" id="filter-menu-nu">
-              <button type="button" data-value="all" class="active">Tất cả</button>
-              <button type="button" data-value="played">Đã đấu</button>
-              <button type="button" data-value="unplayed">Chưa đấu</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <p class="sub" id="progress-nu"></p>
-      <div class="search-wrap" id="search-wrap-nu">
-        <input type="text" class="search-input" id="search-nu" placeholder="Tìm theo tên vận động viên...">
-      </div>
-      <div class="fixtures" id="fixtures-nu"></div>
+      <h2>Results — Women's Singles</h2>
+      <p class="sub" id="progress-view-nu"></p>
+      <div class="fixtures" id="fixtures-view-nu"></div>
     </div>
     <div class="card">
       <div class="card-header">
@@ -937,12 +983,11 @@ let isAdmin = sessionStorage.getItem('lmcl_is_admin') === 'true';
 const SECRET_PIN = "BTC";
 
 const uiState = {
-  nam: { status: 'all' },
-  nu: { status: 'all' }
+  all: { status: 'all', gender: 'all' }
 };
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let activeGroupTab = 'nam';
+let activeGroupTab = 'all';
 const paintedStandings = { nam: null, nu: null, overall: null };
 const ROW_ANIM_MS = 260;   
 const STAGGER_MS = 65;     
@@ -960,6 +1005,10 @@ function buildFixtures(group){
 }
 
 const FIXTURES = { nam: buildFixtures('nam'), nu: buildFixtures('nu') };
+const ALL_FIXTURES = [
+  ...FIXTURES.nam.map(f => ({ ...f, group: 'nam' })),
+  ...FIXTURES.nu.map(f => ({ ...f, group: 'nu' }))
+];
 
 function playerGroup(name){
   if(ROSTERS.nam.includes(name)) return 'nam';
@@ -977,6 +1026,8 @@ scoresRef.on('value', snapshot => {
   scores = snapshot.val() || {};
   if(isEditingScoreInput()) return;
   renderAll();
+  renderReadonlyGroup('nam');
+  renderReadonlyGroup('nu');
   ['nam','nu','overall'].forEach(refreshStandings);
 }, error => {
   showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
@@ -1012,11 +1063,13 @@ function matchState(v1, v2){
   return { state: 'finished' };
 }
 
-function getFilteredFixtures(group){
-  const searchEl = document.getElementById('search-' + group);
+function getFilteredAllFixtures(){
+  const searchEl = document.getElementById('search-all');
   const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
-  const status = uiState[group].status;
-  return FIXTURES[group].filter(f => {
+  const status = uiState.all.status;
+  const gender = uiState.all.gender;
+  return ALL_FIXTURES.filter(f => {
+    if(gender !== 'all' && f.group !== gender) return false;
     if(search){
       const hay = (f.p1 + ' ' + f.p2).toLowerCase();
       if(!hay.includes(search)) return false;
@@ -1032,22 +1085,22 @@ function getFilteredFixtures(group){
 }
 
 function renderAll(){
-  ['nam','nu'].forEach(renderGroup);
+  renderAllFixtures();
 }
 
-function renderGroup(group){
-  const container = document.getElementById('fixtures-' + group);
-  const fixtures = FIXTURES[group];
-  const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
-  document.getElementById('progress-' + group).textContent =
-    `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
+function renderAllFixtures(){
+  const container = document.getElementById('fixtures-all');
+  if(!container) return;
+  const playedCount = ALL_FIXTURES.filter(f => scores[f.id] && scores[f.id].played).length;
+  document.getElementById('progress-all').textContent =
+    `Đã hoàn thành ${playedCount}/${ALL_FIXTURES.length} trận`;
 
   const STATUS_LABEL = {
     finished: { text:'Đã đấu', cls:'done' },
     invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
   };
 
-  const visible = getFilteredFixtures(group);
+  const visible = getFilteredAllFixtures();
 
   if(visible.length === 0){
     container.innerHTML = '<div class="no-results">Không tìm thấy trận đấu phù hợp</div>';
@@ -1057,7 +1110,7 @@ function renderGroup(group){
   const disabledAttr = isAdmin ? '' : 'disabled';
 
   container.innerHTML = visible.map(f => {
-    const idx = fixtures.indexOf(f);
+    const idx = ALL_FIXTURES.indexOf(f);
     const sc = scores[f.id];
     const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
     const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
@@ -1067,7 +1120,7 @@ function renderGroup(group){
     const v2 = hasVal2 ? sc.s2 : null;
     const s1Winner = (v1 !== null && v2 !== null && v1 > v2) ? 'winner' : '';
     const s2Winner = (v1 !== null && v2 !== null && v2 > v1) ? 'winner' : '';
-    return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}" data-id="${f.id}">
+    return `<div class="fixture-row row-${f.group} ${sc && sc.played ? 'played' : ''}" data-id="${f.id}">
       <span class="fixture-num">${idx + 1}</span>
       <span class="name right" title="${escapeHtml(f.p1)}">${escapeHtml(f.p1)}</span>
       <input type="number" inputmode="numeric" min="0" class="score-input s1 ${isInvalid ? 'invalid' : s1Winner}" value="${hasVal1 ? sc.s1 : ''}" placeholder="-" ${disabledAttr}>
@@ -1184,6 +1237,43 @@ function renderGroup(group){
       }
     });
   });
+}
+
+function renderReadonlyGroup(group){
+  const container = document.getElementById('fixtures-view-' + group);
+  if(!container) return;
+  const fixtures = FIXTURES[group];
+  const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
+  const progEl = document.getElementById('progress-view-' + group);
+  if(progEl){
+    progEl.textContent = `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
+  }
+
+  const STATUS_LABEL = {
+    finished: { text:'Đã đấu', cls:'done' },
+    invalid: { text:'Tỷ số không hợp lệ', cls:'error' }
+  };
+
+  container.innerHTML = fixtures.map((f, idx) => {
+    const sc = scores[f.id];
+    const hasVal1 = sc && sc.s1 !== undefined && sc.s1 !== null;
+    const hasVal2 = sc && sc.s2 !== undefined && sc.s2 !== null;
+    const isInvalid = sc && sc.note === 'invalid';
+    const v1 = hasVal1 ? sc.s1 : null;
+    const v2 = hasVal2 ? sc.s2 : null;
+    const s1Winner = (!isInvalid && v1 !== null && v2 !== null && v1 > v2) ? 'winner' : '';
+    const s2Winner = (!isInvalid && v1 !== null && v2 !== null && v2 > v1) ? 'winner' : '';
+    const label = sc && STATUS_LABEL[sc.note] ? STATUS_LABEL[sc.note] : null;
+    return `<div class="fixture-row ${sc && sc.played ? 'played' : ''}">
+      <span class="fixture-num">${idx + 1}</span>
+      <span class="name right" title="${escapeHtml(f.p1)}">${escapeHtml(f.p1)}</span>
+      <span class="score-display ${isInvalid ? 'invalid' : s1Winner}">${hasVal1 ? sc.s1 : '-'}</span>
+      <span></span>
+      <span class="score-display ${isInvalid ? 'invalid' : s2Winner}">${hasVal2 ? sc.s2 : '-'}</span>
+      <span class="name" title="${escapeHtml(f.p2)}">${escapeHtml(f.p2)}</span>
+      <span class="fixture-status ${label ? label.cls : ''}">${label ? label.text : ''}</span>
+    </div>`;
+  }).join('');
 }
 
 function computeStandings(group){
@@ -1394,10 +1484,10 @@ function openStandingsTab(group){
   paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
 
-['nam', 'nu'].forEach(group => {
-  const searchBtn = document.getElementById('search-toggle-' + group);
-  const searchWrap = document.getElementById('search-wrap-' + group);
-  const searchInput = document.getElementById('search-' + group);
+(() => {
+  const searchBtn = document.getElementById('search-toggle-all');
+  const searchWrap = document.getElementById('search-wrap-all');
+  const searchInput = document.getElementById('search-all');
 
   if (searchBtn && searchWrap && searchInput) {
     searchBtn.addEventListener('click', (e) => {
@@ -1410,56 +1500,48 @@ function openStandingsTab(group){
     });
 
     searchInput.addEventListener('input', () => {
-      renderGroup(group);
+      renderAllFixtures();
     });
   }
 
-  const filterBtn = document.getElementById('filter-toggle-' + group);
-  const filterMenu = document.getElementById('filter-menu-' + group);
+  const filterBtn = document.getElementById('filter-toggle-all');
+  const filterMenu = document.getElementById('filter-menu-all');
 
   if (filterBtn && filterMenu) {
     filterBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const otherGroup = group === 'nam' ? 'nu' : 'nam';
-      const otherMenu = document.getElementById('filter-menu-' + otherGroup);
-      if (otherMenu) otherMenu.classList.remove('open');
-
       const isOpen = filterMenu.classList.toggle('open');
       filterBtn.classList.toggle('active', isOpen);
     });
 
-    filterMenu.querySelectorAll('button').forEach(btn => {
+    filterMenu.querySelectorAll('button[data-filter]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        const dim = btn.getAttribute('data-filter');
         const val = btn.getAttribute('data-value');
-        uiState[group].status = val;
+        uiState.all[dim] = val;
 
-        filterMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        filterMenu.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        if (val !== 'all') {
-          filterBtn.classList.add('has-filter');
-        } else {
-          filterBtn.classList.remove('has-filter');
-        }
+        const hasFilter = uiState.all.status !== 'all' || uiState.all.gender !== 'all';
+        filterBtn.classList.toggle('has-filter', hasFilter);
 
         filterMenu.classList.remove('open');
         filterBtn.classList.remove('active');
-        renderGroup(group);
+        renderAllFixtures();
       });
     });
   }
-});
+})();
 
 document.addEventListener('click', () => {
-  ['nam', 'nu'].forEach(group => {
-    const filterMenu = document.getElementById('filter-menu-' + group);
-    const filterBtn = document.getElementById('filter-toggle-' + group);
-    if (filterMenu && filterMenu.classList.contains('open')) {
-      filterMenu.classList.remove('open');
-      if (filterBtn) filterBtn.classList.remove('active');
-    }
-  });
+  const filterMenu = document.getElementById('filter-menu-all');
+  const filterBtn = document.getElementById('filter-toggle-all');
+  if (filterMenu && filterMenu.classList.contains('open')) {
+    filterMenu.classList.remove('open');
+    if (filterBtn) filterBtn.classList.remove('active');
+  }
 });
 
 const authToggleBtn = document.getElementById('auth-toggle-btn');
@@ -1543,10 +1625,18 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('group-' + grp).classList.add('active');
-    document.body.setAttribute('data-theme', grp === 'nu' ? 'women' : (grp === 'overall' ? 'overall' : 'men'));
+    document.body.setAttribute('data-theme',
+      grp === 'nu' ? 'women' : (grp === 'overall' ? 'overall' : (grp === 'all' ? 'allmatches' : 'men'))
+    );
 
     activeGroupTab = grp;
-    openStandingsTab(grp);
+
+    if(grp === 'nam' || grp === 'nu' || grp === 'overall'){
+      openStandingsTab(grp);
+    }
+    if(grp === 'nam' || grp === 'nu'){
+      renderReadonlyGroup(grp);
+    }
 
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -1558,6 +1648,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 updateAuthUI();
 
 renderAll();
+renderReadonlyGroup('nam');
+renderReadonlyGroup('nu');
 openStandingsTab('nam');
 </script>
 </body>
