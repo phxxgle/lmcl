@@ -584,30 +584,6 @@
     animation: rk-row-glow 0.9s ease-out;
   }
 
-  @keyframes rk-indicator-fade{
-    0%   { opacity:0; transform:translateY(-2px) scale(0.9); }
-    12%  { opacity:1; transform:translateY(0) scale(1); }
-    78%  { opacity:1; }
-    100% { opacity:0; transform:translateY(-2px) scale(0.9); }
-  }
-  .rk-indicator{
-    position:absolute;
-    top:-4px;
-    left:12px;
-    font-family:'Space Mono',monospace;
-    font-size:10px;
-    font-weight:700;
-    padding:1px 5px;
-    border-radius:999px;
-    background:rgba(0,0,0,0.55);
-    pointer-events:none;
-    z-index:3;
-    white-space:nowrap;
-    animation: rk-indicator-fade 2s ease forwards;
-  }
-  .rk-indicator.up{ color:var(--green-ok); }
-  .rk-indicator.down{ color:var(--red); }
-
   @media (prefers-reduced-motion: reduce){
     table.standings tbody tr{
       transition:none !important;
@@ -615,7 +591,6 @@
       opacity:1 !important;
     }
     table.standings tbody tr.rk-glow{ animation:none !important; }
-    .rk-indicator{ animation:none !important; opacity:0 !important; display:none; }
   }
 
   .modal-overlay {
@@ -909,7 +884,6 @@ let activeGroupTab = 'nam';
 const paintedStandings = { nam: null, nu: null, overall: null };
 const ROW_ANIM_MS = 260;   // table/row fade-slide duration
 const STAGGER_MS = 65;     // delay between each row on entrance
-const INDICATOR_MS = 2000; // how long the ▲/▼ badge stays visible
 const COUNT_MS = 650;      // score count-up duration
 
 function buildFixtures(group){
@@ -1325,8 +1299,6 @@ function paintTable(group, rows, opts){
 
   items.forEach(item => {
     if(!item.hasMoved) return;
-    const delta = item.oldIdx - item.newIdx;
-    const up = delta > 0;
     setTimeout(() => {
       item.tr.classList.add('rk-glow');
       item.tr.addEventListener('animationend', function onEnd(e){
@@ -1335,12 +1307,6 @@ function paintTable(group, rows, opts){
           item.tr.removeEventListener('animationend', onEnd);
         }
       });
-      const badge = document.createElement('span');
-      badge.className = 'rk-indicator ' + (up ? 'up' : 'down');
-      badge.textContent = (up ? '▲ +' : '▼ -') + Math.abs(delta);
-      const firstCell = item.tr.querySelector('td');
-      if(firstCell) firstCell.appendChild(badge);
-      setTimeout(() => badge.remove(), INDICATOR_MS + 150);
     }, item.delay);
   });
 
