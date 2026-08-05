@@ -17,7 +17,7 @@
     --card-bg: #0a3320;
     --card-border: rgba(255, 255, 255, 0.08);
     
-    /* Glassmorphism Variables (chỉ dùng cho Tabs và Bảng) */
+    /* Glassmorphism Variables */
     --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-bg-hover: rgba(255, 255, 255, 0.12);
     --glass-table-bg: rgba(10, 45, 28, 0.55);
@@ -887,9 +887,8 @@
   </div>
   <ul class="menu-nav-list">
     <li class="menu-nav-item"><a href="#" class="menu-link" data-target="all">Tour</a></li>
-    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="overall">Rankings</a></li>
-    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="nam">Member (MS)</a></li>
-    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="nu">Member (WS)</a></li>
+    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="members">Members (tạm thời chưa có nội dung)</a></li>
+    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="rankings">Rankings (tạm thời chưa có nội dung)</a></li>
   </ul>
 </div>
 
@@ -1784,14 +1783,16 @@ if (menuCloseBtn) {
   menuCloseBtn.addEventListener('click', closeHamburgerMenu);
 }
 
-// Bấm ra ngoài (hoặc chọn mục) sẽ ẩn menu mượt mà
+// Bấm vào các mục trong menu Hamburger
 document.querySelectorAll('.menu-link').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
-    const targetGroup = link.getAttribute('data-target');
-    const tabBtn = document.querySelector(`.tab-btn[data-group="${targetGroup}"]`);
-    if (tabBtn) {
-      tabBtn.click();
+    const target = link.getAttribute('data-target');
+    if(target === 'all'){
+      const tabBtn = document.querySelector(`.tab-btn[data-group="all"]`);
+      if (tabBtn) tabBtn.click();
+    } else if(target === 'members' || target === 'rankings'){
+      alert('Mục "' + link.textContent + '" tạm thời chưa có nội dung.');
     }
     closeHamburgerMenu();
   });
@@ -1800,7 +1801,6 @@ document.querySelectorAll('.menu-link').forEach(link => {
 if (menuSearchInput) {
   menuSearchInput.addEventListener('input', (e) => {
     const keyword = e.target.value.toLowerCase().trim();
-    // Bạn có thể mở rộng logic tìm kiếm toàn trang từ đây nếu muốn
   });
 }
 
