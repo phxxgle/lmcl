@@ -932,7 +932,6 @@ if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOU
 }
 
 let scores = {};
-// Đọc trạng thái admin từ sessionStorage (tự hết hạn khi đóng tab)
 let isAdmin = sessionStorage.getItem('lmcl_is_admin') === 'true'; 
 const SECRET_PIN = "BTC";
 
@@ -1086,6 +1085,7 @@ function renderGroup(group){
     const s1input = row.querySelector('.s1');
     const s2input = row.querySelector('.s2');
     const errEl = row.querySelector('.error-msg');
+    const statusEl = row.querySelector('.fixture-status');
 
     function updateWinnerHighlight(){
       const v1 = s1input.value === '' ? NaN : parseInt(s1input.value, 10);
@@ -1133,6 +1133,13 @@ function renderGroup(group){
 
     [s1input, s2input].forEach(inp => {
       inp.addEventListener('animationend', () => inp.classList.remove('shake'));
+      
+      // UX Fix 1: Tự động scroll mượt mà đưa ô input lên tầm nhìn trung tâm màn hình khi focus trên mobile
+      inp.addEventListener('focus', () => {
+        setTimeout(() => {
+          inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      });
     });
 
     function commit(){
@@ -1145,14 +1152,43 @@ function renderGroup(group){
         const result = matchState(v1, v2);
         writeOp = scoresRef.child(id).set({ s1: v1, s2: v2, played: result.state === 'finished', note: result.state });
       }
-      writeOp.catch(error => {
+      writeOp.then(() => {
+        // UX Fix 2: Hiển thị thông báo nhỏ "Đã lưu" tại dòng trận đấu ngay khi hệ thống ghi nhận thành công
+        statusEl.textContent = "Đã lưu";
+        statusEl.className = "fixture-status done";
+        setTimeout(() => {
+          if(statusEl.textContent === "Đã lưu") {
+            const currentResult = matchState(v1, v2);
+            if(currentResult.state === 'finished') {
+              statusEl.textContent = "Đã đấu";
+              statusEl.className = "fixture-status done";
+            } else if(currentResult.state === 'invalid') {
+              statusEl.textContent = "Tỷ số không hợp lệ";
+              statusEl.className = "fixture-status error";
+            } else {
+              statusEl.textContent = "";
+              statusEl.className = "fixture-status";
+            }
+          }
+        }, 2000);
+      }).catch(error => {
         showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + ').');
         console.error('Firebase write error:', error);
       });
     }
 
-    s1input.addEventListener('input', validateLive);
-    s2input.addEventListener('input', validateLive);
+    // UX Fix 2: Tự động lưu ngay khi gõ với cơ chế debounce khoảng 500ms
+    let debounceTimer = null;
+    function handleAutoSave(){
+      validateLive();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        commit();
+      }, 500);
+    }
+
+    s1input.addEventListener('input', handleAutoSave);
+    s2input.addEventListener('input', handleAutoSave);
 
     s1input.addEventListener('change', () => {
       commit();
@@ -1466,11 +1502,11 @@ function updateAuthUI() {
   if (isAdmin) {
     authToggleBtn.classList.add('is-admin');
     authToggleBtn.setAttribute('title', 'Đang ở quyền BTC (Bấm để thoát)');
-    sessionStorage.setItem('lmcl_is_admin', 'true'); // Lưu trạng thái vào sessionStorage
+    sessionStorage.setItem('lmcl_is_admin', 'true');
   } else {
     authToggleBtn.classList.remove('is-admin');
     authToggleBtn.setAttribute('title', 'Kích hoạt quyền BTC');
-    sessionStorage.removeItem('lmcl_is_admin'); // Xóa trạng thái khỏi sessionStorage
+    sessionStorage.removeItem('lmcl_is_admin');
   }
   renderAll();
 }
@@ -1547,7 +1583,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Khởi chạy cập nhật giao diện ban đầu dựa theo sessionStorage
 updateAuthUI();
 
 renderAll();
