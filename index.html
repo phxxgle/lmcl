@@ -300,22 +300,32 @@
   .icon-btn:hover{color:var(--chalk);border-color:rgba(255,255,255,0.3);}
   .icon-btn.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent);}
   #search-toggle-nam,
-  #search-toggle-nu,
-  #filter-toggle-nam,
-  #filter-toggle-nu{
+  #filter-toggle-nam{
     border-color: var(--gold);
   }
-  #info-toggle-nam,
-  #info-toggle-nu{
+  #search-toggle-nu,
+  #filter-toggle-nu{
+    border-color: var(--pink);
+  }
+  #info-toggle-nam{
     border: none;
     background: transparent;
     color: var(--gold);
   }
-  #info-toggle-nam:hover,
-  #info-toggle-nu:hover{
+  #info-toggle-nu{
+    border: none;
+    background: transparent;
+    color: var(--pink);
+  }
+  #info-toggle-nam:hover{
     border: none;
     background: rgba(255,255,255,0.06);
     color: var(--gold);
+  }
+  #info-toggle-nu:hover{
+    border: none;
+    background: rgba(255,255,255,0.06);
+    color: var(--pink);
   }
   .icon-btn.has-filter::after{
     content:'';
@@ -770,7 +780,7 @@
       <p><strong style="color:var(--chalk);">PF (Points For):</strong> Tổng điểm ghi được trong tất cả các trận</p>
       <p><strong style="color:var(--chalk);">PA (Points Against):</strong> Tổng điểm đối thủ ghi được trước người chơi</p>
       <p><strong style="color:var(--chalk);">DIFF (Point Difference):</strong> Hiệu số điểm = PF − PA</p>
-      <p style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);">ℹ️ Ranking Rules: Số trận thắng nhiều nhất → Hiệu số điểm cao nhất → Tổng điểm ghi được nhiều nhất.</p>
+      <p style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);">Xếp hạng theo thứ tự: số trận thắng nhiều nhất → hiệu số điểm cao nhất → tổng điểm ghi được nhiều nhất.</p>
     </div>
     <div class="modal-actions" style="margin-top:14px;">
       <button type="button" class="btn-submit" id="info-close-btn" style="flex:1;">Đóng</button>
