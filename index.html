@@ -1255,7 +1255,7 @@
 
   <div id="view-tour" class="app-view">
     <div class="card">
-      <h2 id="tour-title">Tour — 2026</h2>
+      <h2 id="tour-title">Tournament — 2026</h2>
       <p class="sub" id="tour-sub">Chọn một giải đấu ở menu bên trái để xem chi tiết điểm số.</p>
       <div id="tour-list"></div>
     </div>
@@ -1292,10 +1292,10 @@
       Live Match
     </button>
 
-    <button type="button" class="drawer-item parent" id="nav-tour-toggle">
+    <button type="button" class="drawer-item parent" id="nav-tour-toggle" data-view="tour">
       <span class="di-left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0V4z"></path><path d="M7 5H4a2 2 0 0 0 2 4"></path><path d="M17 5h3a2 2 0 0 1-2 4"></path></svg>
-        Tour
+        Tournament
       </span>
       <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </button>
@@ -1384,7 +1384,7 @@ const OVERALL_DATA = [
   { name: "Nguyễn Tiến Trung", points: 4 }
 ];
 
-// Dữ liệu các mùa giải cho mục "Tour". Giải hiện tại (đang diễn ra) trỏ về Live Match.
+// Dữ liệu các mùa giải cho mục "Tournament". Giải hiện tại (đang diễn ra) trỏ về Live Match.
 // Thêm giải đã kết thúc bằng cách thêm object vào mảng tournaments của năm tương ứng,
 // kèm standings [{name, points}] để hiển thị bảng điểm cuối giải.
 // titleLines + badge = phần chữ hiển thị cạnh logo khi xem giải đó (tên giải, không phải tên đội).
@@ -2251,7 +2251,7 @@ let currentTourYear = Object.keys(TOUR_DATA).sort((a,b) => b - a)[0];
 
 function renderTourList(year){
   currentTourYear = String(year);
-  document.getElementById('tour-title').textContent = 'Tour — ' + currentTourYear;
+  document.getElementById('tour-title').textContent = 'Tournament — ' + currentTourYear;
   const list = TOUR_DATA[currentTourYear] || [];
   const listEl = document.getElementById('tour-list');
   const subEl = document.getElementById('tour-sub');
@@ -2298,6 +2298,7 @@ function renderTourSubmenu(){
       btn.classList.add('active');
       renderTourList(btn.getAttribute('data-year'));
       switchView('tour');
+      closeDrawer();
     });
   });
   submenu.querySelectorAll('.drawer-tour-item[data-tour-id]').forEach(btn => {
@@ -2340,7 +2341,7 @@ function switchView(view){
   } else if(view === 'members'){
     setHeader(['LMCL', 'TEAM', 'MEMBERS'], '');
   } else if(view === 'tour'){
-    setHeader(['LMCL', 'TOUR'], currentTourYear);
+    setHeader(['LMCL', 'TOURNAMENT'], currentTourYear);
   }
 
   document.querySelectorAll('.drawer-item[data-view]').forEach(b => {
