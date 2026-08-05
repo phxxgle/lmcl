@@ -12,13 +12,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* --- (Toàn bộ CSS giữ nguyên) --- */
   :root {
     --green-bg: #062617;
     --card-bg: #0a3320;
     --card-border: rgba(255, 255, 255, 0.08);
     
-    /* Glassmorphism Variables */
+    /* Glassmorphism Variables (chỉ dùng cho Tabs và Bảng) */
     --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-bg-hover: rgba(255, 255, 255, 0.12);
     --glass-table-bg: rgba(10, 45, 28, 0.55);
@@ -153,6 +152,7 @@
   .admin-icon-btn {
     position: absolute;
     top: 18px;
+    right: 12px;
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -176,9 +176,9 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.3);
   }
 
-  #hamburger-toggle-btn { left: 12px; }
-  #auth-toggle-btn { right: 12px; }
-
+  /* =========================================
+     GLASSMORPHISM: TABS NAVIGATION
+     ========================================= */
   .tabs {
     display: flex;
     gap: 8px;
@@ -272,6 +272,7 @@
     transform: translateY(0);
   }
 
+  /* Standard Card (Flat) */
   .card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -565,6 +566,9 @@
   .fixture-status.error { color: var(--red); }
   .fixture-status:empty { display: none; }
 
+  /* =========================================
+     GLASSMORPHISM: STANDINGS TABLES
+     ========================================= */
   .table-scroll { 
     overflow-x: visible; 
     margin: 12px 0 0; 
@@ -697,6 +701,7 @@
     table.standings tbody tr.rk-glow { animation: none !important; }
   }
 
+  /* Modals */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -750,92 +755,6 @@
   .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
   
-  .hamburger-drawer {
-    width: 82%;
-    max-width: 320px;
-    height: 100%;
-    background: var(--card-bg);
-    border-right: 1px solid var(--glass-border);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .modal-overlay.open .hamburger-drawer {
-    transform: translateX(0);
-  }
-
-  .drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 16px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .drawer-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 1.5px;
-    color: var(--accent);
-  }
-
-  .drawer-body {
-    padding: 16px;
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .drawer-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: var(--chalk);
-    font-family: 'Inter', sans-serif;
-    font-size: 13.5px;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .drawer-link:hover {
-    background: var(--glass-bg-hover);
-    border-color: var(--glass-border-light);
-    color: var(--accent);
-  }
-
-  .drawer-link svg {
-    color: var(--chalk-dim);
-    flex-shrink: 0;
-    transition: color 0.2s ease;
-  }
-
-  .drawer-link:hover svg {
-    color: var(--accent);
-  }
-
-  .drawer-footer {
-    padding: 16px;
-    text-align: center;
-    font-size: 10px;
-    color: var(--chalk-dim);
-    border-top: 1px solid var(--line);
-    background: rgba(0, 0, 0, 0.15);
-  }
-
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
@@ -849,14 +768,6 @@
 
 <div class="wrap">
   <header>
-    <button type="button" class="admin-icon-btn" id="hamburger-toggle-btn" aria-label="Menu" title="Menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-    </button>
-
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -964,6 +875,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         </button>
       </div>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
@@ -1013,6 +925,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         </button>
       </div>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
@@ -1025,6 +938,7 @@
   <div id="group-overall" class="group">
     <div class="card">
       <h2>LMCL Rankings</h2>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
         <table class="standings standings-overall">
           <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
@@ -1034,88 +948,13 @@
     </div>
   </div>
 
-  <!-- GIAO DIỆN MEMBERS: Bảng danh sách thành viên -->
-  <div id="group-members" class="group">
-    <div class="card">
-      <h2>Tournament Members</h2>
-      <p class="sub">Danh sách toàn bộ các thành viên tham gia giải đấu</p>
-      <div class="table-scroll">
-        <table class="standings" style="table-layout: auto;">
-          <thead>
-            <tr>
-              <th style="width: 15%;">#</th>
-              <th style="text-align: left; padding-left: 10px;">Họ và Tên</th>
-              <th style="width: 30%;">Nội dung</th>
-            </tr>
-          </thead>
-          <tbody id="members-table-body">
-            <!-- Được render tự động qua JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
   <p class="foot-note">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
-</div>
-
-<!-- MENU HAMBURGER DRAWER -->
-<div class="modal-overlay" id="hamburger-modal" style="justify-content: flex-start; padding: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);">
-  <div class="hamburger-drawer">
-    <div class="drawer-header">
-      <div class="drawer-title">LMCL MENU</div>
-      <button type="button" class="icon-btn" id="hamburger-close-btn" aria-label="Đóng Menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-    </div>
-    
-    <div class="drawer-body">
-      <!-- Mục 1: Tour (Về giao diện chính All Matches) -->
-      <button type="button" class="drawer-link" data-target-tab="all">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 16 16 16 12 8"></polygon></svg>
-        Tour
-      </button>
-
-      <!-- Mục 2: Rankings (Hiện pop-up cập nhật) -->
-      <button type="button" class="drawer-link" id="menu-rankings-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-        Rankings
-      </button>
-
-      <!-- Mục 3: Members (Hiển thị bảng thành viên) -->
-      <button type="button" class="drawer-link" data-target-tab="members">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        Members
-      </button>
-
-      <!-- Mục 4: Đăng nhập -->
-      <button type="button" class="drawer-link" id="drawer-auth-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-        <span id="drawer-auth-text">Đăng nhập (Admin)</span>
-      </button>
-    </div>
-
-    <div class="drawer-footer">
-      <span>LMCL ALLSTARS © 2026</span>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL THÔNG BÁO TÍNH NĂNG ĐANG CẬP NHẬT (CHO RANKINGS) -->
-<div class="modal-overlay" id="feature-updating-modal">
-  <div class="modal-box">
-    <h3>Thông báo</h3>
-    <p>Tính năng đang được cập nhật...</p>
-    <div class="modal-actions">
-      <button type="button" class="btn-submit" id="feature-updating-close-btn" style="flex:1;">Đóng</button>
-    </div>
-  </div>
 </div>
 
 <!-- MODAL XÁC THỰC MÃ PIN -->
 <div class="modal-overlay" id="pin-modal">
   <div class="modal-box">
-    <h3>Đăng nhập Admin (BTC)</h3>
+    <h3>Xác nhận quyền BTC</h3>
     <p>Vui lòng nhập mã PIN để kích hoạt quyền cập nhật điểm số</p>
     <input type="password" id="pin-input" placeholder="Mã PIN" autocomplete="off">
     <div class="pin-error" id="pin-error">Mã PIN không chính xác!</div>
@@ -1200,6 +1039,10 @@ function showConnBanner(msg){
 }
 function hideConnBanner(){
   document.getElementById('conn-banner').style.display = 'none';
+}
+
+if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOUR_PROJECT'){
+  showConnBanner('⚠️ Chưa cấu hình Firebase...');
 }
 
 let scores = {};
@@ -1307,6 +1150,7 @@ scoresRef.on('value', snapshot => {
   ['nam','nu','overall'].forEach(refreshStandings);
 }, error => {
   showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
+  console.error('Firebase error:', error);
 });
 
 function escapeHtml(str){
@@ -1318,11 +1162,23 @@ function escapeHtml(str){
 const WIN_SCORE = 15;
 
 function matchState(v1, v2){
-  if(v1 === null && v2 === null) return { state: 'empty' };
-  if(v1 === null || v2 === null || v1 < 0 || v2 < 0) return { state: 'invalid' };
+  if(v1 === null && v2 === null){
+    return { state: 'empty' };
+  }
+  if(v1 === null || v2 === null){
+    return { state: 'invalid' };
+  }
+  if(v1 < 0 || v2 < 0){
+    return { state: 'invalid' };
+  }
+  
   const hi = Math.max(v1, v2);
   const diff = Math.abs(v1 - v2);
-  if(diff < 2 || hi < WIN_SCORE) return { state: 'invalid' };
+  
+  if(diff < 2 || hi < WIN_SCORE){
+    return { state: 'invalid' };
+  }
+  
   return { state: 'finished' };
 }
 
@@ -1357,7 +1213,8 @@ function renderAllFixtures(){
   const container = document.getElementById('fixtures-all');
   if(!container) return;
   const playedCount = ALL_FIXTURES.filter(f => scores[f.id] && scores[f.id].played).length;
-  document.getElementById('progress-all').textContent = `Đã hoàn thành ${playedCount}/${ALL_FIXTURES.length} trận`;
+  document.getElementById('progress-all').textContent =
+    `Đã hoàn thành ${playedCount}/${ALL_FIXTURES.length} trận`;
 
   const STATUS_LABEL = {
     finished: { text:'Đã đấu', cls:'done' },
@@ -1365,6 +1222,7 @@ function renderAllFixtures(){
   };
 
   const visible = getFilteredAllFixtures();
+
   if(visible.length === 0){
     container.innerHTML = '<div class="no-results">Không tìm thấy trận đấu phù hợp</div>';
     return;
@@ -1406,8 +1264,10 @@ function renderAllFixtures(){
     function updateWinnerHighlight(){
       const v1 = s1input.value === '' ? NaN : parseInt(s1input.value, 10);
       const v2 = s2input.value === '' ? NaN : parseInt(s2input.value, 10);
+
       s1input.classList.remove('winner');
       s2input.classList.remove('winner');
+
       if(!isNaN(v1) && !isNaN(v2) && v1 !== v2){
         if(v1 > v2) s1input.classList.add('winner');
         else s2input.classList.add('winner');
@@ -1421,7 +1281,17 @@ function renderAllFixtures(){
       
       if(result.state === 'invalid'){
         errEl.textContent = 'Tỷ số không hợp lệ';
-        [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
+        
+        if(v1 !== null && v2 !== null){
+          [s1input, s2input].forEach(inp => inp.classList.add('invalid'));
+        } else {
+          if(v1 === null || isNaN(v1)) s1input.classList.add('invalid');
+          else s1input.classList.remove('invalid');
+
+          if(v2 === null || isNaN(v2)) s2input.classList.add('invalid');
+          else s2input.classList.remove('invalid');
+        }
+
         [s1input, s2input].forEach(inp => {
           inp.classList.remove('shake');
           void inp.offsetWidth;
@@ -1431,13 +1301,17 @@ function renderAllFixtures(){
         errEl.textContent = '';
         [s1input, s2input].forEach(inp => inp.classList.remove('invalid'));
       }
+
       updateWinnerHighlight();
     }
 
     [s1input, s2input].forEach(inp => {
       inp.addEventListener('animationend', () => inp.classList.remove('shake'));
+      
       inp.addEventListener('focus', () => {
-        setTimeout(() => inp.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+        setTimeout(() => {
+          inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
       });
     });
 
@@ -1451,13 +1325,37 @@ function renderAllFixtures(){
         const result = matchState(v1, v2);
         writeOp = scoresRef.child(id).set({ s1: v1, s2: v2, played: result.state === 'finished', note: result.state });
       }
-      writeOp.catch(error => showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + ').'));
+      writeOp.catch(error => {
+        showConnBanner('⚠️ Lưu điểm thất bại (' + error.message + ').');
+        console.error('Firebase write error:', error);
+      });
     }
 
     s1input.addEventListener('input', validateLive);
     s2input.addEventListener('input', validateLive);
-    s1input.addEventListener('change', () => { commit(); if(document.activeElement !== s2input){ s2input.focus(); s2input.select(); } });
+
+    s1input.addEventListener('change', () => {
+      commit();
+      if(document.activeElement !== s2input){
+        s2input.focus();
+        s2input.select();
+      }
+    });
     s2input.addEventListener('change', commit);
+
+    s1input.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        s2input.focus();
+        s2input.select();
+      }
+    });
+    s2input.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        s2input.blur();
+      }
+    });
   });
 }
 
@@ -1467,7 +1365,9 @@ function renderReadonlyGroup(group){
   const fixtures = ALL_FIXTURES.filter(f => f.group === group);
   const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
   const progEl = document.getElementById('progress-view-' + group);
-  if(progEl) progEl.textContent = `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
+  if(progEl){
+    progEl.textContent = `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
+  }
 
   const STATUS_LABEL = {
     finished: { text:'Đã đấu', cls:'done' },
@@ -1554,7 +1454,8 @@ function computeOverall(){
   ['nam','nu'].forEach(group => {
     const fixtures = FIXTURES[group];
     const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
-    if(playedCount === fixtures.length){
+    const isComplete = playedCount === fixtures.length;
+    if(isComplete){
       computeStandings(group).forEach((r, i) => {
         medalMap[r.name] = medalPointsFor(i);
       });
@@ -1577,6 +1478,7 @@ function computeOverall(){
     r.newRank = i + 1;
     r.change = r.oldRank - r.newRank;
   });
+
   return ranked;
 }
 
@@ -1638,6 +1540,7 @@ function paintTable(group, rows, opts){
   }
 
   tbody.innerHTML = rows.map((r, i) => buildStandingsRowHtml(group, r, i)).join('');
+
   const newSnapshot = { order: rows.map(r => r.name), scoreByName: {} };
   rows.forEach(r => { newSnapshot.scoreByName[r.name] = rowScoreValue(group, r); });
 
@@ -1662,6 +1565,7 @@ function paintTable(group, rows, opts){
     const needsEntrance = forceEntrance || !prev;
 
     if(!needsEntrance && !hasMoved && !scoreIncreased) return;
+
     const delay = needsEntrance ? newIdx * STAGGER_MS : 0;
     let ty = 0;
     if(hasMoved) ty += (oldIdx - newIdx) * rowHeight;
@@ -1670,16 +1574,44 @@ function paintTable(group, rows, opts){
     tr.style.transition = 'none';
     tr.style.transform = ty !== 0 ? `translateY(${ty}px)` : '';
     tr.style.opacity = needsEntrance ? '0' : '1';
+
     items.push({ tr, oldIdx, newIdx, hasMoved, scoreIncreased, oldScoreVal, newScore, delay });
   });
 
   void tbody.offsetHeight;
+
   requestAnimationFrame(() => {
     items.forEach(item => {
-      item.tr.style.transition = `transform ${ROW_ANIM_MS}ms ease ${item.delay}ms, opacity ${ROW_ANIM_MS}ms ease ${item.delay}ms`;
+      item.tr.style.transition =
+        `transform ${ROW_ANIM_MS}ms ease ${item.delay}ms, opacity ${ROW_ANIM_MS}ms ease ${item.delay}ms`;
       item.tr.style.transform = '';
       item.tr.style.opacity = '1';
     });
+  });
+
+  items.forEach(item => {
+    if(!item.hasMoved) return;
+    setTimeout(() => {
+      item.tr.classList.add('rk-glow');
+    }, item.delay);
+  });
+
+  items.forEach(item => {
+    if(!item.scoreIncreased) return;
+    const target = item.tr.querySelector('.count-val');
+    if(!target) return;
+    const start = item.oldScoreVal;
+    const end = item.newScore;
+    const startTime = performance.now() + item.delay;
+    function tick(now){
+      if(now < startTime){ requestAnimationFrame(tick); return; }
+      const p = Math.min(1, (now - startTime) / COUNT_MS);
+      const eased = 1 - Math.pow(1 - p, 2);
+      target.textContent = Math.round(start + (end - start) * eased);
+      if(p < 1) requestAnimationFrame(tick);
+      else target.textContent = end;
+    }
+    requestAnimationFrame(tick);
   });
 
   paintedStandings[group] = newSnapshot;
@@ -1694,36 +1626,7 @@ function openStandingsTab(group){
   paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
 
-// Render Members Table
-function renderMembersTable(){
-  const tbody = document.getElementById('members-table-body');
-  if(!tbody) return;
-  
-  let html = '';
-  let count = 1;
-  
-  // Đơn Nam
-  ROSTERS.nam.forEach(name => {
-    html += `<tr>
-      <td><span class="rank-badge">${count++}</span></td>
-      <td>${escapeHtml(name)}</td>
-      <td style="color: var(--blue); font-weight: 600;">Đơn Nam</td>
-    </tr>`;
-  });
-  
-  // Đơn Nữ
-  ROSTERS.nu.forEach(name => {
-    html += `<tr>
-      <td><span class="rank-badge">${count++}</span></td>
-      <td>${escapeHtml(name)}</td>
-      <td style="color: var(--pink); font-weight: 600;">Đơn Nữ</td>
-    </tr>`;
-  });
-  
-  tbody.innerHTML = html;
-}
-
-// Event Listeners for Filters & Search
+// Event Listeners
 (() => {
   const searchBtnAll = document.getElementById('search-toggle-all');
   const searchWrapAll = document.getElementById('search-wrap-all');
@@ -1768,9 +1671,68 @@ function renderMembersTable(){
       });
     });
   }
+
+  ['nam', 'nu'].forEach(group => {
+    const searchBtn = document.getElementById('search-toggle-view-' + group);
+    const searchWrap = document.getElementById('search-wrap-view-' + group);
+    const searchInput = document.getElementById('search-view-' + group);
+
+    if (searchBtn && searchWrap && searchInput) {
+      searchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = searchWrap.classList.toggle('open');
+        searchBtn.classList.toggle('active', isOpen);
+        if (isOpen) searchInput.focus();
+      });
+      searchInput.addEventListener('input', () => {
+        uiStateView[group].search = searchInput.value.trim();
+        renderReadonlyGroup(group);
+      });
+    }
+
+    const filterBtn = document.getElementById('filter-toggle-view-' + group);
+    const filterMenu = document.getElementById('filter-menu-view-' + group);
+
+    if (filterBtn && filterMenu) {
+      filterBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = filterMenu.classList.toggle('open');
+        filterBtn.classList.toggle('active', isOpen);
+      });
+
+      filterMenu.querySelectorAll('button[data-filter]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const dim = btn.getAttribute('data-filter');
+          const val = btn.getAttribute('data-value');
+          uiStateView[group][dim] = val;
+
+          filterMenu.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const hasFilter = uiStateView[group].status !== 'all' || uiStateView[group].day !== 'all';
+          filterBtn.classList.toggle('has-filter', hasFilter);
+
+          filterMenu.classList.remove('open');
+          filterBtn.classList.remove('active');
+          renderReadonlyGroup(group);
+        });
+      });
+    }
+  });
 })();
 
-// Admin & Modal controllers
+document.addEventListener('click', () => {
+  ['all', 'view-nam', 'view-nu'].forEach(id => {
+    const filterMenu = document.getElementById('filter-menu-' + id);
+    const filterBtn = document.getElementById('filter-toggle-' + id);
+    if (filterMenu && filterMenu.classList.contains('open')) {
+      filterMenu.classList.remove('open');
+      if (filterBtn) filterBtn.classList.remove('active');
+    }
+  });
+});
+
 const authToggleBtn = document.getElementById('auth-toggle-btn');
 const pinModal = document.getElementById('pin-modal');
 const pinInput = document.getElementById('pin-input');
@@ -1803,19 +1765,28 @@ authToggleBtn.addEventListener('click', () => {
   }
 });
 
-pinCancelBtn.addEventListener('click', () => pinModal.classList.remove('open'));
+pinCancelBtn.addEventListener('click', () => {
+  pinModal.classList.remove('open');
+});
 
 const infoModal = document.getElementById('info-modal');
 const infoCloseBtn = document.getElementById('info-close-btn');
 const infoToggleNam = document.getElementById('info-toggle-nam');
 const infoToggleNu = document.getElementById('info-toggle-nu');
 
-function openInfoModal(){ infoModal.classList.add('open'); }
-function closeInfoModal(){ infoModal.classList.remove('open'); }
+function openInfoModal(){
+  infoModal.classList.add('open');
+}
+function closeInfoModal(){
+  infoModal.classList.remove('open');
+}
 
 if (infoToggleNam) infoToggleNam.addEventListener('click', openInfoModal);
 if (infoToggleNu) infoToggleNu.addEventListener('click', openInfoModal);
 infoCloseBtn.addEventListener('click', closeInfoModal);
+infoModal.addEventListener('click', (e) => {
+  if (e.target === infoModal) closeInfoModal();
+});
 
 function verifyPin() {
   if (pinInput.value === SECRET_PIN) {
@@ -1830,96 +1801,10 @@ function verifyPin() {
 }
 
 pinSubmitBtn.addEventListener('click', verifyPin);
-pinInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyPin(); });
-
-// HAMBURGER DRAWER LOGIC
-const hamburgerToggleBtn = document.getElementById('hamburger-toggle-btn');
-const hamburgerModal = document.getElementById('hamburger-modal');
-const hamburgerCloseBtn = document.getElementById('hamburger-close-btn');
-const menuRankingsBtn = document.getElementById('menu-rankings-btn');
-const featureUpdatingModal = document.getElementById('feature-updating-modal');
-const featureUpdatingCloseBtn = document.getElementById('feature-updating-close-btn');
-
-function openHamburgerMenu() {
-  const drawerAuthText = document.getElementById('drawer-auth-text');
-  if (drawerAuthText) {
-    drawerAuthText.textContent = isAdmin ? 'Thoát Admin' : 'Đăng nhập (Admin)';
-  }
-  hamburgerModal.classList.add('open');
-}
-
-function closeHamburgerMenu() {
-  hamburgerModal.classList.remove('open');
-}
-
-if (hamburgerToggleBtn) hamburgerToggleBtn.addEventListener('click', openHamburgerMenu);
-if (hamburgerCloseBtn) hamburgerCloseBtn.addEventListener('click', closeHamburgerMenu);
-
-hamburgerModal.addEventListener('click', (e) => {
-  if (e.target === hamburgerModal) closeHamburgerMenu();
+pinInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') verifyPin();
 });
 
-// Xử lý nút Rankings trong Menu -> Pop-up thông báo đang cập nhật
-if (menuRankingsBtn) {
-  menuRankingsBtn.addEventListener('click', () => {
-    closeHamburgerMenu();
-    featureUpdatingModal.classList.add('open');
-  });
-}
-
-if (featureUpdatingCloseBtn) {
-  featureUpdatingCloseBtn.addEventListener('click', () => {
-    featureUpdatingModal.classList.remove('open');
-  });
-}
-
-featureUpdatingModal.addEventListener('click', (e) => {
-  if (e.target === featureUpdatingModal) featureUpdatingModal.classList.remove('open');
-});
-
-// Chuyển Tab từ Menu Drawer
-document.querySelectorAll('.drawer-link[data-target-tab]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const targetGroup = btn.getAttribute('data-target-tab');
-    
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
-    
-    const targetGroupEl = document.getElementById('group-' + targetGroup);
-    if (targetGroupEl) {
-      targetGroupEl.classList.add('active');
-      document.body.setAttribute('data-theme', 'allmatches');
-      
-      // LOGIC MỚI: Ẩn/Hiện thẻ Tabs tùy thuộc vào màn hình được chọn
-      const tabsEl = document.querySelector('.tabs');
-      if (targetGroup === 'members') {
-        tabsEl.style.display = 'none'; // Ẩn tab
-      } else {
-        tabsEl.style.display = 'flex'; // Hiện lại tab nếu chuyển về Tour
-      }
-
-      // Nếu bấm vào Tour -> kích hoạt lại tab 'all' trên thanh navigation chính
-      if (targetGroup === 'all') {
-        const allTabBtn = document.querySelector('.tab-btn[data-group="all"]');
-        if (allTabBtn) allTabBtn.classList.add('active');
-        activeGroupTab = 'all'; // Đảm bảo gán đúng biến hệ thống
-      } else {
-        activeGroupTab = targetGroup;
-      }
-    }
-    closeHamburgerMenu();
-  });
-});
-
-const drawerAuthBtn = document.getElementById('drawer-auth-btn');
-if (drawerAuthBtn) {
-  drawerAuthBtn.addEventListener('click', () => {
-    closeHamburgerMenu();
-    authToggleBtn.click();
-  });
-}
-
-// Xử lý bấm các Tab chính
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const grp = btn.getAttribute('data-group');
@@ -1936,6 +1821,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     else if(grp === 'overall') themeAttr = 'rankings';
     
     document.body.setAttribute('data-theme', themeAttr);
+
     activeGroupTab = grp;
 
     if(grp === 'nam' || grp === 'nu' || grp === 'overall'){
@@ -1945,17 +1831,17 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
       renderReadonlyGroup(grp);
     }
 
-    requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
   });
 });
 
-// Khởi chạy ban đầu
 updateAuthUI();
 renderAll();
 renderReadonlyGroup('nam');
 renderReadonlyGroup('nu');
 openStandingsTab('nam');
-renderMembersTable();
 </script>
 </body>
 </html>
