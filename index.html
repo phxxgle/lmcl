@@ -22,20 +22,24 @@
     --gold:#FFD166;
     --pink:#FF6584;
     --blue:#38BDF8;
-    --accent:var(--gold);
-    --on-accent:#1C1300;
+    --accent:var(--blue);
+    --on-accent:#031B2A;
     --silver:#CBD5E1;
     --bronze:#E59866;
     --green-ok:#4ADE80;
     --red:#F87171;
   }
+  body[data-theme="men"]{
+    --accent:var(--blue);
+    --on-accent:#031B2A;
+  }
   body[data-theme="women"]{
     --accent:var(--pink);
     --on-accent:#2D0310;
   }
-  body[data-theme="overall"]{
-    --accent:var(--blue);
-    --on-accent:#031B2A;
+  body[data-theme="rankings"]{
+    --accent:var(--gold);
+    --on-accent:#1C1300;
   }
   body[data-theme="allmatches"]{
     --accent:#c1ff72;
@@ -308,7 +312,7 @@
   }
   #search-toggle-view-nam,
   #filter-toggle-view-nam{
-    border-color: var(--gold);
+    border-color: var(--blue);
   }
   #search-toggle-view-nu,
   #filter-toggle-view-nu{
@@ -317,7 +321,7 @@
   #info-toggle-nam{
     border: none;
     background: transparent;
-    color: var(--gold);
+    color: var(--blue);
   }
   #info-toggle-nu{
     border: none;
@@ -327,7 +331,7 @@
   #info-toggle-nam:hover{
     border: none;
     background: rgba(255,255,255,0.06);
-    color: var(--gold);
+    color: var(--blue);
   }
   #info-toggle-nu:hover{
     border: none;
@@ -467,14 +471,20 @@
   input[type=number]:focus{outline:none;border-color:var(--accent);box-shadow: 0 0 8px rgba(255, 209, 102, 0.35);}
 
   input[type=number].winner{
-    background: var(--gold) !important;
-    color: var(--green-bg) !important;
-    border-color: var(--gold) !important;
+    background: var(--accent) !important;
+    color: var(--on-accent) !important;
+    border-color: var(--accent) !important;
     box-shadow: none;
   }
 
   .fixture-row.row-nam{
-    border-left: 3px solid var(--gold);
+    border-left: 3px solid var(--blue);
+  }
+  .fixture-row.row-nam input[type=number].winner,
+  .fixture-row.row-nam .score-display.winner {
+    background: var(--blue) !important;
+    color: #031B2A !important;
+    border-color: var(--blue) !important;
   }
   .fixture-row.row-nu{
     border-left: 3px solid var(--pink);
@@ -482,7 +492,7 @@
   .fixture-row.row-nu input[type=number].winner,
   .fixture-row.row-nu .score-display.winner {
     background: var(--pink) !important;
-    color: var(--on-accent) !important;
+    color: #2D0310 !important;
     border-color: var(--pink) !important;
   }
   .filter-section-label{
@@ -513,13 +523,18 @@
     display: inline-block;
   }
   .score-display.winner{
-    background: var(--gold) !important;
-    color: var(--green-bg) !important;
-    border-color: var(--gold) !important;
+    background: var(--accent) !important;
+    color: var(--on-accent) !important;
+    border-color: var(--accent) !important;
+  }
+  #fixtures-view-nam .score-display.winner{
+    background: var(--blue) !important;
+    color: #031B2A !important;
+    border-color: var(--blue) !important;
   }
   #fixtures-view-nu .score-display.winner{
     background: var(--pink) !important;
-    color: var(--on-accent) !important;
+    color: #2D0310 !important;
     border-color: var(--pink) !important;
   }
   .score-display.invalid{
@@ -789,7 +804,7 @@
     <button class="tab-btn active" data-group="all">All Matches</button>
     <button class="tab-btn" data-group="nam">MS</button>
     <button class="tab-btn" data-group="nu">WS</button>
-    <button class="tab-btn" data-group="overall">Overall</button>
+    <button class="tab-btn" data-group="overall">Rankings</button>
   </div>
 
   <div id="conn-banner" style="display:none;background:rgba(248,113,113,0.18);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
@@ -931,7 +946,7 @@
 
   <div id="group-overall" class="group">
     <div class="card">
-      <h2>Overall Ranking</h2>
+      <h2>LMCL Rankings</h2>
       <div class="table-scroll">
         <table class="standings standings-overall">
           <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
@@ -1809,9 +1824,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('group-' + grp).classList.add('active');
-    document.body.setAttribute('data-theme',
-      grp === 'nu' ? 'women' : (grp === 'overall' ? 'overall' : (grp === 'all' ? 'allmatches' : 'men'))
-    );
+    
+    let themeAttr = 'allmatches';
+    if(grp === 'nam') themeAttr = 'men';
+    else if(grp === 'nu') themeAttr = 'women';
+    else if(grp === 'overall') themeAttr = 'rankings';
+    
+    document.body.setAttribute('data-theme', themeAttr);
 
     activeGroupTab = grp;
 
