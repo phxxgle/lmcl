@@ -1538,6 +1538,14 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
     activeGroupTab = grp;
     openStandingsTab(grp);
+
+    // Fix: on some mobile browsers (notably iOS Safari), switching tabs while
+    // scrolled down leaves the newly shown content unpainted until the next
+    // touch/scroll. Forcing a scroll here both resets the view to the top of
+    // the new tab and forces an immediate repaint.
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
   });
 });
 
