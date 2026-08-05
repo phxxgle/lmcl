@@ -541,11 +541,6 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  
-  table.standings thead th:not(:last-child),
-  table.standings tbody td:not(:last-child) {
-    border-right: 1px solid var(--line);
-  }
 
   table.standings tbody td:nth-child(2){
     text-align:left;
@@ -553,6 +548,11 @@
     font-weight:600;
     padding-left: 6px;
     padding-right: 6px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+    line-height: 1.25;
   }
   table.standings thead th:nth-child(2){
     text-align:center;
@@ -560,32 +560,32 @@
 
   /* Cấu hình chiều rộng chuẩn cho bảng Overall (Đã bỏ cột Territory, còn lại 4 cột) */
   table.standings-overall th:nth-child(1),
-  table.standings-overall td:nth-child(1){width:15%;}
+  table.standings-overall td:nth-child(1){width:12%;}
   table.standings-overall th:nth-child(2),
-  table.standings-overall td:nth-child(2){width:45%;}
+  table.standings-overall td:nth-child(2){width:48%;}
   table.standings-overall th:nth-child(3),
-  table.standings-overall td:nth-child(3){width:20%;}
+  table.standings-overall td:nth-child(3){width:18%;}
   table.standings-overall th:nth-child(4),
-  table.standings-overall td:nth-child(4){width:20%;}
+  table.standings-overall td:nth-child(4){width:22%;}
 
   table.standings tbody tr:last-child td{border-bottom:none;}
 
   table.standings-full th:nth-child(1),
-  table.standings-full td:nth-child(1){width:8%;}
+  table.standings-full td:nth-child(1){width:6%;}
   table.standings-full th:nth-child(2),
-  table.standings-full td:nth-child(2){width:34%;}
+  table.standings-full td:nth-child(2){width:36%;}
   table.standings-full th:nth-child(3),
   table.standings-full td:nth-child(3),
   table.standings-full th:nth-child(4),
   table.standings-full td:nth-child(4),
   table.standings-full th:nth-child(5),
-  table.standings-full td:nth-child(5),
+  table.standings-full td:nth-child(5){width:8%;}
   table.standings-full th:nth-child(6),
   table.standings-full td:nth-child(6),
   table.standings-full th:nth-child(7),
-  table.standings-full td:nth-child(7),
+  table.standings-full td:nth-child(7){width:11%;}
   table.standings-full th:nth-child(8),
-  table.standings-full td:nth-child(8){width:11.4%;}
+  table.standings-full td:nth-child(8){width:12%;}
 
   .rank-badge{
     display:inline-flex;align-items:center;justify-content:center;
