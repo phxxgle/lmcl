@@ -1012,12 +1012,7 @@
     <div class="brand-container">
       <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
       <span class="brand-divider">|</span>
-      <h1>
-        LMCL<br>
-        ALLSTARS<br>
-        RANKINGS<br>
-        <span class="badge-date">AUGUST 2026</span>
-      </h1>
+      <h1 id="header-title"></h1>
     </div>
   </header>
 
@@ -1320,12 +1315,23 @@ const OVERALL_DATA = [
 // Dữ liệu các mùa giải cho mục "Tour". Giải hiện tại (đang diễn ra) trỏ về Live Match.
 // Thêm giải đã kết thúc bằng cách thêm object vào mảng tournaments của năm tương ứng,
 // kèm standings [{name, points}] để hiển thị bảng điểm cuối giải.
+// titleLines + badge = phần chữ hiển thị cạnh logo khi xem giải đó (tên giải, không phải tên đội).
 const TOUR_DATA = {
   2026: [
-    { id: "lmcl-aug-2026", name: "LMCL Allstars — August 2026", status: "live", note: "Đang diễn ra" }
+    {
+      id: "lmcl-aug-2026",
+      name: "LMCL Allstars — August 2026",
+      titleLines: ["LMCL", "ALLSTARS", "RANKINGS"],
+      badge: "AUGUST 2026",
+      status: "live",
+      note: "Đang diễn ra"
+    }
   ],
   2025: []
 };
+
+// Giải đang diễn ra — quyết định phần chữ hiển thị ở mục Live Match.
+const CURRENT_TOURNAMENT = TOUR_DATA[2026][0];
 
 // Dữ liệu hồ sơ vận động viên cho mục "Members". Chỉnh sửa các trường bên dưới
 // (year: năm sinh, hometown: quê quán, achievements: thành tích, photo: URL ảnh) cho từng người.
@@ -2224,11 +2230,15 @@ function renderTourSubmenu(){
   });
   submenu.querySelectorAll('.drawer-tour-item[data-tour-id]').forEach(btn => {
     btn.addEventListener('click', () => {
-      renderTourList(btn.getAttribute('data-year'));
+      const year = btn.getAttribute('data-year');
+      const id = btn.getAttribute('data-tour-id');
+      renderTourList(year);
       if(btn.getAttribute('data-status') === 'live'){
         switchView('livematch');
       } else {
         switchView('tour');
+        const t = (TOUR_DATA[year] || []).find(x => x.id === id);
+        if(t && t.titleLines) setHeader(t.titleLines, t.badge);
       }
       closeDrawer();
     });
@@ -2238,10 +2248,28 @@ function renderTourSubmenu(){
 /* =========================================
    VIEW SWITCHING + DRAWER
    ========================================= */
+// Logo là nhận diện của đội và luôn cố định. Phần chữ bên cạnh logo là tên
+// của giải/mục đang xem, nên được đổi theo từng view.
+function setHeader(lines, badge){
+  const el = document.getElementById('header-title');
+  if(!el) return;
+  el.innerHTML = lines.map(l => escapeHtml(l)).join('<br>') +
+    (badge ? '<br><span class="badge-date">' + escapeHtml(badge) + '</span>' : '');
+  document.title = lines.join(' ') + (badge ? ' – ' + badge : '');
+}
+
 function switchView(view){
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById('view-' + view);
   if(target) target.classList.add('active');
+
+  if(view === 'livematch'){
+    setHeader(CURRENT_TOURNAMENT.titleLines, CURRENT_TOURNAMENT.badge);
+  } else if(view === 'members'){
+    setHeader(['LMCL', 'MEMBERS'], 'ĐỘI HÌNH');
+  } else if(view === 'tour'){
+    setHeader(['LMCL', 'TOUR'], currentTourYear);
+  }
 
   document.querySelectorAll('.drawer-item[data-view]').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-view') === view);
@@ -2336,6 +2364,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
+setHeader(CURRENT_TOURNAMENT.titleLines, CURRENT_TOURNAMENT.badge);
 updateAuthUI();
 renderAll();
 renderReadonlyGroup('nam');
