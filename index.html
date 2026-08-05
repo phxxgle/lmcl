@@ -303,11 +303,13 @@
   #info-toggle-nu{
     border: none;
     background: transparent;
+    color: var(--gold);
   }
   #info-toggle-nam:hover,
   #info-toggle-nu:hover{
     border: none;
     background: rgba(255,255,255,0.06);
+    color: var(--gold);
   }
   .icon-btn.has-filter::after{
     content:'';
@@ -486,15 +488,15 @@
   .fixture-status.error{color:var(--red);}
   .fixture-status:empty{display:none;}
 
-  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px;}
-  table.standings{width:100%;min-width:400px;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  .table-scroll{overflow-x:visible;margin:0;padding:0;}
+  table.standings{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;table-layout:auto;}
   table.standings thead th{
     text-align:center;
-    font-size:10px;
+    font-size:9.5px;
     text-transform:uppercase;
-    letter-spacing:0.5px;
+    letter-spacing:0.3px;
     color:var(--chalk-dim);
-    padding:0 4px 8px;
+    padding:0 2px 8px;
     border-bottom:1px solid var(--line);
     font-weight:600;
     white-space:nowrap;
@@ -502,12 +504,31 @@
   table.standings thead th:nth-child(2){text-align:center;}
   table.standings tbody td{
     text-align:center;
-    padding:9px 4px;
+    padding:8px 2px;
     border-bottom:1px solid var(--line);
     font-family:'Space Mono',monospace;
   }
-  table.standings tbody td:nth-child(2){text-align:center;font-family:'Inter',sans-serif;font-weight:600;white-space:nowrap;}
+  table.standings tbody td:nth-child(2){text-align:center;font-family:'Inter',sans-serif;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:0;}
   table.standings tbody tr:last-child td{border-bottom:none;}
+
+  /* Bảng Standings 8 cột (P/W/L/PF/PA/Diff): ép các cột số liệu hẹp lại, dồn khoảng trống còn lại cho cột Player */
+  table.standings-full{table-layout:fixed;}
+  table.standings-full th:nth-child(1),
+  table.standings-full td:nth-child(1){width:20px;}
+  table.standings-full th:nth-child(3),
+  table.standings-full td:nth-child(3),
+  table.standings-full th:nth-child(4),
+  table.standings-full td:nth-child(4),
+  table.standings-full th:nth-child(5),
+  table.standings-full td:nth-child(5){width:20px;}
+  table.standings-full th:nth-child(6),
+  table.standings-full td:nth-child(6),
+  table.standings-full th:nth-child(7),
+  table.standings-full td:nth-child(7){width:27px;}
+  table.standings-full th:nth-child(8),
+  table.standings-full td:nth-child(8){width:30px;}
+  table.standings-full td:nth-child(2){padding-left:2px;padding-right:2px;}
+
   .rank-badge{
     display:inline-flex;align-items:center;justify-content:center;
     width:22px;height:22px;border-radius:50%;
@@ -653,7 +674,7 @@
         </button>
       </div>
       <div class="table-scroll">
-        <table class="standings">
+        <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
           <tbody id="standings-nam"></tbody>
         </table>
@@ -695,7 +716,7 @@
         </button>
       </div>
       <div class="table-scroll">
-        <table class="standings">
+        <table class="standings standings-full">
           <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
           <tbody id="standings-nu"></tbody>
         </table>
