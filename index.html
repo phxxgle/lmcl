@@ -820,6 +820,28 @@
     body.admin-mode .score-input:not(:disabled):placeholder-shown { animation: none; }
   }
 
+  .rank-select {
+    flex-shrink: 0;
+    max-width: 60%;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 28px 8px 10px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A1C1B0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 14px;
+  }
+  .rank-select:focus { outline: none; border-color: var(--accent); }
+  .rank-select option { background: var(--card-bg); color: var(--chalk); }
+
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
@@ -1284,7 +1306,10 @@
 
   <div id="view-rankings" class="app-view">
     <div class="card">
-      <h2>LMCL Rankings</h2>
+      <div class="card-header">
+        <h2>LMCL Rankings</h2>
+        <select id="rankings-select" class="rank-select" aria-label="Chọn bảng xếp hạng"></select>
+      </div>
       <p class="sub" id="rankings-sub"></p>
       <div class="table-scroll">
         <table class="standings standings-overall">
@@ -2083,7 +2108,7 @@ function paintTable(group, rows, opts){
 
 function refreshStandings(group){
   if(group === 'rankings'){
-    if(currentView !== 'rankings') return;
+    if(currentView !== 'rankings' || rankingsSelection !== 'live') return;
     paintTable('rankings', getRowsFor('rankings'), { forceEntrance: false });
     return;
   }
@@ -2330,6 +2355,33 @@ function renderMembers(group){
    ========================================= */
 let currentTourYear = Object.keys(TOUR_DATA).sort((a,b) => b - a)[0];
 
+// Markup của một bảng xếp hạng đã chốt (điểm và thay đổi hạng lấy từ dữ liệu giải).
+function staticRankingRowsHtml(standings){
+  return standings.map((r, i) => {
+    let changeCls = 'rank-same';
+    let changeText = '–';
+    if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
+    else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
+    return `<tr>
+      <td>${getRankBadgeHtml(i + 1)}</td>
+      <td>${escapeHtml(r.name)}</td>
+      <td class="total-pts">${r.points}</td>
+      <td class="rank-change ${changeCls}">${changeText}</td>
+    </tr>`;
+  }).join('');
+}
+
+// Danh sách các giải đã chốt bảng xếp hạng, mới nhất trước.
+function finishedTournaments(){
+  const out = [];
+  Object.keys(TOUR_DATA).sort((a, b) => b - a).forEach(year => {
+    (TOUR_DATA[year] || []).forEach(t => {
+      if(t.status === 'finished' && t.standings) out.push(t);
+    });
+  });
+  return out;
+}
+
 function findTournament(id){
   for(const year of Object.keys(TOUR_DATA)){
     const t = (TOUR_DATA[year] || []).find(x => x.id === id);
@@ -2348,18 +2400,7 @@ function renderTournamentDetail(t){
   document.getElementById('tour-detail-sub').textContent =
     'Bảng xếp hạng chung cuộc — ' + t.standings.length + ' vận động viên.';
 
-  body.innerHTML = t.standings.map((r, i) => {
-    let changeCls = 'rank-same';
-    let changeText = '–';
-    if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
-    else if(r.change < 0){ changeCls = 'rank-down'; changeText = '▼ ' + r.change; }
-    return `<tr>
-      <td>${getRankBadgeHtml(i + 1)}</td>
-      <td>${escapeHtml(r.name)}</td>
-      <td class="total-pts">${r.points}</td>
-      <td class="rank-change ${changeCls}">${changeText}</td>
-    </tr>`;
-  }).join('');
+  body.innerHTML = staticRankingRowsHtml(t.standings);
 
   card.style.display = '';
   if(t.titleLines) setHeader(t.titleLines, t.badge);
@@ -2458,13 +2499,42 @@ function setHeader(lines, badge){
 
 let currentView = 'livematch';
 
+let rankingsSelection = 'live';
+
+function buildRankingsSelect(){
+  const sel = document.getElementById('rankings-select');
+  if(!sel) return;
+  const opts = ['<option value="live">' + escapeHtml(CURRENT_TOURNAMENT.badge) + ' (đang diễn ra)</option>']
+    .concat(finishedTournaments().map(t =>
+      `<option value="${escapeHtml(t.id)}">${escapeHtml(t.badge || t.name)}</option>`));
+  sel.innerHTML = opts.join('');
+  sel.value = rankingsSelection;
+  sel.addEventListener('change', () => {
+    rankingsSelection = sel.value;
+    renderRankingsView();
+  });
+}
+
 function renderRankingsView(){
   const sub = document.getElementById('rankings-sub');
-  if(sub){
-    sub.textContent = 'Bảng xếp hạng tích luỹ qua các giải, cập nhật theo kết quả của '
-      + CURRENT_TOURNAMENT.name + '.';
+  const sel = document.getElementById('rankings-select');
+  if(sel) sel.value = rankingsSelection;
+
+  if(rankingsSelection === 'live'){
+    if(sub){
+      sub.textContent = 'Bảng xếp hạng tích luỹ, cập nhật trực tiếp theo kết quả của '
+        + CURRENT_TOURNAMENT.name + '.';
+    }
+    paintTable('rankings', getRowsFor('rankings'), { forceEntrance: true });
+    return;
   }
-  paintTable('rankings', getRowsFor('rankings'), { forceEntrance: true });
+
+  const t = findTournament(rankingsSelection);
+  const body = document.getElementById('standings-rankings');
+  if(!t || !body) return;
+  if(sub) sub.textContent = 'Bảng xếp hạng chung cuộc — ' + t.name + '.';
+  body.innerHTML = staticRankingRowsHtml(t.standings);
+  paintedStandings.rankings = null;
 }
 
 function switchView(view){
@@ -2561,6 +2631,7 @@ document.getElementById('nav-login').addEventListener('click', () => {
 });
 
 renderTourSubmenu();
+buildRankingsSelect();
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
