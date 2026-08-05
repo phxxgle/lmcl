@@ -34,6 +34,8 @@
     --blue: #38BDF8;
     --accent: #c1ff72;
     --on-accent: #1A2E05;
+    --menu-accent: #c1ff72;
+    --on-menu-accent: #1A2E05;
     --green-ok: #4ADE80;
     --red: #F87171;
   }
@@ -866,7 +868,7 @@
     transition: background 0.2s ease;
   }
   .drawer-item:hover { background: rgba(255,255,255,0.06); }
-  .drawer-item.active { background: var(--accent); color: var(--on-accent); }
+  .drawer-item.active { background: var(--menu-accent); color: var(--on-menu-accent); }
   .drawer-item svg { width: 17px; height: 17px; flex-shrink: 0; }
 
   .drawer-item.parent { justify-content: space-between; }
@@ -896,7 +898,7 @@
     cursor: pointer;
     border-left: 2px solid var(--line);
   }
-  .drawer-year-btn:hover, .drawer-year-btn.active { color: var(--accent); border-left-color: var(--accent); }
+  .drawer-year-btn:hover, .drawer-year-btn.active { color: var(--menu-accent); border-left-color: var(--menu-accent); }
 
   .drawer-tour-item {
     display: block;
