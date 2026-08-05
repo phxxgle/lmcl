@@ -938,6 +938,7 @@
   .drawer-item.parent .di-left { display: flex; align-items: center; gap: 12px; }
   .drawer-item.parent .chev { width: 14px; height: 14px; transition: transform 0.2s ease; color: var(--chalk-dim); }
   .drawer-item.parent.expanded .chev { transform: rotate(90deg); }
+  .drawer-item.parent.active .chev { color: var(--on-menu-accent); }
 
   .drawer-submenu {
     max-height: 0;
@@ -2470,6 +2471,9 @@ const navTourSubmenu = document.getElementById('nav-tour-submenu');
 navTourToggle.addEventListener('click', () => {
   const isOpen = navTourSubmenu.classList.toggle('open');
   navTourToggle.classList.toggle('expanded', isOpen);
+  // Bấm vào Tournament vừa mở danh sách năm, vừa chuyển sang trang Tournament
+  // để mục này sáng lên như Live Match / Members. Drawer vẫn mở để chọn năm tiếp.
+  switchView('tour');
 });
 
 document.getElementById('nav-login').addEventListener('click', () => {
