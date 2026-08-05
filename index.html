@@ -757,6 +757,64 @@
   .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
   
+  /* =========================================
+     CHẾ ĐỘ BTC: chỉ ra rõ nơi được nhập tỷ số
+     ========================================= */
+  .admin-banner, .readonly-note {
+    display: none;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    border-radius: 10px;
+    padding: 9px 11px;
+    margin: 10px 0 2px;
+  }
+  body.admin-mode .admin-banner,
+  body.admin-mode .readonly-note { display: flex; }
+
+  .admin-banner {
+    background: rgba(193, 255, 114, 0.1);
+    border: 1px solid rgba(193, 255, 114, 0.35);
+    color: var(--menu-accent);
+  }
+  .readonly-note {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    color: var(--chalk-dim);
+  }
+  .admin-banner svg, .readonly-note svg {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Ô nhập đang mở khoá cho BTC */
+  body.admin-mode .score-input:not(:disabled) {
+    border-color: rgba(193, 255, 114, 0.5);
+    background: rgba(193, 255, 114, 0.07);
+    cursor: text;
+  }
+  /* Ô còn trống = việc cần làm, nhấn mạnh bằng viền đứt + nhịp sáng nhẹ */
+  body.admin-mode .score-input:not(:disabled):placeholder-shown {
+    border-style: dashed;
+    border-color: var(--menu-accent);
+    animation: editReady 2.4s ease-in-out infinite;
+  }
+  body.admin-mode .score-input:not(:disabled):focus {
+    border-style: solid;
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(193, 255, 114, 0.28);
+  }
+
+  @keyframes editReady {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(193, 255, 114, 0); }
+    50%      { box-shadow: 0 0 0 3px rgba(193, 255, 114, 0.16); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body.admin-mode .score-input:not(:disabled):placeholder-shown { animation: none; }
+  }
+
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
@@ -1060,6 +1118,10 @@
           </div>
         </div>
       </div>
+      <div class="admin-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+        <span>Quyền BTC đang bật. Nhập tỷ số vào các ô viền đứt ngay tại tab này — đây là nơi duy nhất lưu được điểm.</span>
+      </div>
       <p class="sub" id="progress-all"></p>
       <div class="search-wrap" id="search-wrap-all">
         <input type="text" class="search-input" id="search-all" placeholder="Tìm theo tên vận động viên...">
@@ -1093,6 +1155,10 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="readonly-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>Chỉ xem. Để sửa tỷ số, quay lại tab <strong>All Matches</strong>.</span>
       </div>
       <p class="sub" id="progress-view-nam"></p>
       <div class="search-wrap" id="search-wrap-view-nam">
@@ -1143,6 +1209,10 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="readonly-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>Chỉ xem. Để sửa tỷ số, quay lại tab <strong>All Matches</strong>.</span>
       </div>
       <p class="sub" id="progress-view-nu"></p>
       <div class="search-wrap" id="search-wrap-view-nu">
@@ -2078,6 +2148,7 @@ const pinSubmitBtn = document.getElementById('pin-submit-btn');
 
 function updateAuthUI() {
   const navLoginLabel = document.getElementById('nav-login-label');
+  document.body.classList.toggle('admin-mode', isAdmin);
   if (isAdmin) {
     authToggleBtn.classList.add('is-admin');
     authToggleBtn.setAttribute('title', 'Đang ở quyền BTC (Bấm để thoát)');
