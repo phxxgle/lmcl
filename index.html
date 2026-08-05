@@ -17,7 +17,7 @@
     --card-bg: #0a3320;
     --card-border: rgba(255, 255, 255, 0.08);
     
-    /* Glassmorphism Variables */
+    /* Glassmorphism Variables (chỉ dùng cho Tabs và Bảng) */
     --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-bg-hover: rgba(255, 255, 255, 0.12);
     --glass-table-bg: rgba(10, 45, 28, 0.55);
@@ -50,10 +50,6 @@
     --accent: var(--gold);
     --on-accent: #1C1300;
   }
-  body[data-theme="members"] {
-    --accent: var(--blue);
-    --on-accent: #031B2A;
-  }
   body[data-theme="allmatches"] {
     --accent: #c1ff72;
     --on-accent: #1A2E05;
@@ -76,53 +72,6 @@
     position: relative;
     overflow-x: hidden;
     margin: 0;
-  }
-
-  /* TOP NAVIGATION BAR */
-  .top-navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background: rgba(6, 38, 23, 0.85);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border-bottom: 1px solid var(--glass-border);
-    position: sticky;
-    top: 0;
-    z-index: 30;
-  }
-
-  .nav-brand {
-    font-family: 'Tomorrow', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 1px;
-    color: var(--chalk);
-    text-decoration: none;
-  }
-
-  .nav-menu {
-    display: flex;
-    gap: 16px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .nav-menu li a {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--chalk-dim);
-    text-decoration: none;
-    transition: color 0.2s ease;
-    cursor: pointer;
-  }
-
-  .nav-menu li a:hover,
-  .nav-menu li a.active {
-    color: var(--accent);
   }
 
   .wrap { max-width: 440px; margin: 0 auto; padding: 0 12px; position: relative; z-index: 1; }
@@ -200,6 +149,28 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
+  /* Nút Hamburger ở góc trên bên trái */
+  .hamburger-btn {
+    position: absolute;
+    top: 18px;
+    left: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--chalk-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+    z-index: 2;
+  }
+  .hamburger-btn svg { width: 18px; height: 18px; }
+  .hamburger-btn:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+
   .admin-icon-btn {
     position: absolute;
     top: 18px;
@@ -227,14 +198,100 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.3);
   }
 
-  /* TABS NAVIGATION */
+  /* =========================================
+     MENU OVERLAY (HAMBURGER MENU)
+     ========================================= */
+  .menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--green-bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .menu-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+  .menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .menu-close-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--card-border);
+    color: var(--chalk);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: auto;
+  }
+  .menu-close-btn:hover { background: rgba(255, 255, 255, 0.15); }
+  .menu-close-btn svg { width: 20px; height: 20px; }
+
+  .menu-search-box {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .menu-search-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .menu-search-input:focus { border-color: var(--accent); }
+  .menu-search-input::placeholder { color: var(--chalk-dim); }
+
+  .menu-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .menu-nav-item a {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--chalk-dim);
+    text-decoration: none;
+    padding: 8px 0;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .menu-nav-item a:hover {
+    color: var(--accent);
+    transform: translateX(6px);
+  }
+
+  /* =========================================
+     GLASSMORPHISM: TABS NAVIGATION
+     ========================================= */
   .tabs {
     display: flex;
     gap: 8px;
     padding: 10px 12px;
     margin: 0 -12px;
     position: sticky;
-    top: 49px;
+    top: 0;
     background: rgba(6, 38, 23, 0.6);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
@@ -321,6 +378,7 @@
     transform: translateY(0);
   }
 
+  /* Standard Card (Flat) */
   .card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -614,7 +672,9 @@
   .fixture-status.error { color: var(--red); }
   .fixture-status:empty { display: none; }
 
-  /* STANDINGS TABLES & MEMBERS TABLE */
+  /* =========================================
+     GLASSMORPHISM: STANDINGS TABLES
+     ========================================= */
   .table-scroll { 
     overflow-x: visible; 
     margin: 12px 0 0; 
@@ -693,11 +753,6 @@
   table.standings-full th:nth-child(6), table.standings-full td:nth-child(6),
   table.standings-full th:nth-child(7), table.standings-full td:nth-child(7) { width: 11%; }
   table.standings-full th:nth-child(8), table.standings-full td:nth-child(8) { width: 12%; }
-
-  table.members-table th:nth-child(1), table.members-table td:nth-child(1) { width: 12%; }
-  table.members-table th:nth-child(2), table.members-table td:nth-child(2) { width: 60%; }
-  table.members-table th:nth-child(3), table.members-table td:nth-child(3) { width: 28%; }
-  table.members-table tbody td:nth-child(3) { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--chalk-dim); }
 
   .rank-badge {
     display: inline-flex; align-items: center; justify-content: center;
@@ -817,17 +872,38 @@
 </head>
 <body data-theme="allmatches">
 
-  <!-- THANH MENU TRÊN CÙNG -->
-  <nav class="top-navbar">
-    <a href="#" class="nav-brand" id="nav-brand-home">LMCL</a>
-    <ul class="nav-menu">
-      <li><a href="#" id="menu-tour" class="active">Tour</a></li>
-      <li><a href="#" id="menu-members">Members</a></li>
-    </ul>
-  </nav>
+<!-- MENU OVERLAY (HAMBURGER MENU) -->
+<div class="menu-overlay" id="hamburger-menu">
+  <div class="menu-header">
+    <button type="button" class="menu-close-btn" id="menu-close-btn" aria-label="Đóng menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+  <div class="menu-search-box">
+    <input type="text" class="menu-search-input" id="menu-search-input" placeholder="Tìm kiếm nhanh nội dung...">
+  </div>
+  <ul class="menu-nav-list">
+    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="all">Tour</a></li>
+    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="overall">Rankings</a></li>
+    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="nam">Member (MS)</a></li>
+    <li class="menu-nav-item"><a href="#" class="menu-link" data-target="nu">Member (WS)</a></li>
+  </ul>
+</div>
 
 <div class="wrap">
   <header>
+    <!-- Nút Hamburger 3 gạch ở góc trên cùng bên trái -->
+    <button type="button" class="hamburger-btn" id="hamburger-toggle-btn" aria-label="Mở menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -837,7 +913,7 @@
     <div class="brand-container">
       <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
       <span class="brand-divider">|</span>
-      <h1 id="header-title">
+      <h1>
         LMCL<br>
         ALLSTARS<br>
         RANKINGS<br>
@@ -846,192 +922,163 @@
     </div>
   </header>
 
-  <!-- PHẦN GIAO DIỆN TOUR (CHỨA CÁC TAB NHỎ) -->
-  <div id="view-tour-container">
-    <!-- GLASSMORPHISM TABS -->
-    <div class="tabs">
-      <button class="tab-btn active" data-group="all">All Matches</button>
-      <button class="tab-btn" data-group="nam">MS</button>
-      <button class="tab-btn" data-group="nu">WS</button>
-      <button class="tab-btn" data-group="overall">Rankings</button>
-    </div>
+  <!-- GLASSMORPHISM TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-group="all">All Matches</button>
+    <button class="tab-btn" data-group="nam">MS</button>
+    <button class="tab-btn" data-group="nu">WS</button>
+    <button class="tab-btn" data-group="overall">Rankings</button>
+  </div>
 
-    <div id="conn-banner" style="display:none;background:rgba(248,113,113,0.18);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
+  <div id="conn-banner" style="display:none;background:rgba(248,113,113,0.18);border:1px solid var(--red);color:var(--red);font-size:12px;line-height:1.6;border-radius:8px;padding:10px 12px;margin-top:16px;"></div>
 
-    <div id="group-all" class="group active">
-      <div class="card">
-        <div class="card-header">
-          <h2>Schedule — All Matches</h2>
-          <div class="header-icons">
-            <button type="button" class="icon-btn" id="search-toggle-all" aria-label="Tìm kiếm">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </button>
-            <div class="filter-menu-wrap">
-              <button type="button" class="icon-btn" id="filter-toggle-all" aria-label="Lọc trạng thái">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
-              </button>
-              <div class="filter-menu" id="filter-menu-all">
-                <div class="filter-section-label">Ngày</div>
-                <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
-                <button type="button" data-filter="day" data-value="1">Ngày 1</button>
-                <button type="button" data-filter="day" data-value="2">Ngày 2</button>
-                <div class="filter-divider"></div>
-                <div class="filter-section-label">Trạng thái</div>
-                <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
-                <button type="button" data-filter="status" data-value="played">Đã đấu</button>
-                <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
-                <div class="filter-divider"></div>
-                <div class="filter-section-label">Nội dung</div>
-                <button type="button" data-filter="gender" data-value="all" class="active">Tất cả</button>
-                <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
-                <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="sub" id="progress-all"></p>
-        <div class="search-wrap" id="search-wrap-all">
-          <input type="text" class="search-input" id="search-all" placeholder="Tìm theo tên vận động viên...">
-        </div>
-        <div class="fixtures" id="fixtures-all"></div>
-      </div>
-    </div>
-
-    <div id="group-nam" class="group">
-      <div class="card">
-        <div class="card-header">
-          <h2>Results — Men's Singles</h2>
-          <div class="header-icons">
-            <button type="button" class="icon-btn" id="search-toggle-view-nam" aria-label="Tìm kiếm">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </button>
-            <div class="filter-menu-wrap">
-              <button type="button" class="icon-btn" id="filter-toggle-view-nam" aria-label="Lọc trạng thái">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
-              </button>
-              <div class="filter-menu" id="filter-menu-view-nam">
-                <div class="filter-section-label">Ngày</div>
-                <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
-                <button type="button" data-filter="day" data-value="1">Ngày 1</button>
-                <button type="button" data-filter="day" data-value="2">Ngày 2</button>
-                <div class="filter-divider"></div>
-                <div class="filter-section-label">Trạng thái</div>
-                <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
-                <button type="button" data-filter="status" data-value="played">Đã đấu</button>
-                <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="sub" id="progress-view-nam"></p>
-        <div class="search-wrap" id="search-wrap-view-nam">
-          <input type="text" class="search-input" id="search-view-nam" placeholder="Tìm theo tên vận động viên...">
-        </div>
-        <div class="fixtures" id="fixtures-view-nam"></div>
-      </div>
-      
-      <div class="card">
-        <div class="card-header">
-          <h2>Standings — Men's Singles</h2>
-          <button type="button" class="icon-btn" id="info-toggle-nam" aria-label="Chú thích">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+  <div id="group-all" class="group active">
+    <div class="card">
+      <div class="card-header">
+        <h2>Schedule — All Matches</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-all" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </button>
-        </div>
-        <div class="table-scroll">
-          <table class="standings standings-full">
-            <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
-            <tbody id="standings-nam"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div id="group-nu" class="group">
-      <div class="card">
-        <div class="card-header">
-          <h2>Results — Women's Singles</h2>
-          <div class="header-icons">
-            <button type="button" class="icon-btn" id="search-toggle-view-nu" aria-label="Tìm kiếm">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-all" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
             </button>
-            <div class="filter-menu-wrap">
-              <button type="button" class="icon-btn" id="filter-toggle-view-nu" aria-label="Lọc trạng thái">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
-              </button>
-              <div class="filter-menu" id="filter-menu-view-nu">
-                <div class="filter-section-label">Ngày</div>
-                <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
-                <button type="button" data-filter="day" data-value="1">Ngày 1</button>
-                <button type="button" data-filter="day" data-value="2">Ngày 2</button>
-                <div class="filter-divider"></div>
-                <div class="filter-section-label">Trạng thái</div>
-                <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
-                <button type="button" data-filter="status" data-value="played">Đã đấu</button>
-                <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
-              </div>
+            <div class="filter-menu" id="filter-menu-all">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Nội dung</div>
+              <button type="button" data-filter="gender" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
+              <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
             </div>
           </div>
         </div>
-        <p class="sub" id="progress-view-nu"></p>
-        <div class="search-wrap" id="search-wrap-view-nu">
-          <input type="text" class="search-input" id="search-view-nu" placeholder="Tìm theo tên vận động viên...">
-        </div>
-        <div class="fixtures" id="fixtures-view-nu"></div>
       </div>
-      
-      <div class="card">
-        <div class="card-header">
-          <h2>Standings — Women's Singles</h2>
-          <button type="button" class="icon-btn" id="info-toggle-nu" aria-label="Chú thích">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-          </button>
-        </div>
-        <div class="table-scroll">
-          <table class="standings standings-full">
-            <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
-            <tbody id="standings-nu"></tbody>
-          </table>
-        </div>
+      <p class="sub" id="progress-all"></p>
+      <div class="search-wrap" id="search-wrap-all">
+        <input type="text" class="search-input" id="search-all" placeholder="Tìm theo tên vận động viên...">
       </div>
+      <div class="fixtures" id="fixtures-all"></div>
     </div>
+  </div>
 
-    <div id="group-overall" class="group">
-      <div class="card">
-        <h2>LMCL Rankings</h2>
-        <div class="table-scroll">
-          <table class="standings standings-overall">
-            <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
-            <tbody id="standings-overall"></tbody>
-          </table>
+  <div id="group-nam" class="group">
+    <div class="card">
+      <div class="card-header">
+        <h2>Results — Men's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-view-nam" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-view-nam" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-view-nam">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
         </div>
+      </div>
+      <p class="sub" id="progress-view-nam"></p>
+      <div class="search-wrap" id="search-wrap-view-nam">
+        <input type="text" class="search-input" id="search-view-nam" placeholder="Tìm theo tên vận động viên...">
+      </div>
+      <div class="fixtures" id="fixtures-view-nam"></div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h2>Standings — Men's Singles</h2>
+        <button type="button" class="icon-btn" id="info-toggle-nam" aria-label="Chú thích">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </button>
+      </div>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
+      <div class="table-scroll">
+        <table class="standings standings-full">
+          <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
+          <tbody id="standings-nam"></tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <!-- PHẦN GIAO DIỆN MEMBERS (HIỆN KHI BẤM VÀO NÚT MEMBERS TRÊN MENU) -->
-  <div id="view-members-container" style="display: none;">
-    <div class="tabs" style="margin-bottom: 12px;">
-      <button class="tab-btn members-tab-btn active" data-membercat="all">Tất cả</button>
-      <button class="tab-btn members-tab-btn" data-membercat="nam">Đơn Nam</button>
-      <button class="tab-btn members-tab-btn" data-membercat="nu">Đơn Nữ</button>
-    </div>
+  <div id="group-nu" class="group">
     <div class="card">
       <div class="card-header">
-        <h2 id="members-heading">Danh Sách Thành Viên</h2>
+        <h2>Results — Women's Singles</h2>
+        <div class="header-icons">
+          <button type="button" class="icon-btn" id="search-toggle-view-nu" aria-label="Tìm kiếm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <div class="filter-menu-wrap">
+            <button type="button" class="icon-btn" id="filter-toggle-view-nu" aria-label="Lọc trạng thái">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+            </button>
+            <div class="filter-menu" id="filter-menu-view-nu">
+              <div class="filter-section-label">Ngày</div>
+              <button type="button" data-filter="day" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="day" data-value="1">Ngày 1</button>
+              <button type="button" data-filter="day" data-value="2">Ngày 2</button>
+              <div class="filter-divider"></div>
+              <div class="filter-section-label">Trạng thái</div>
+              <button type="button" data-filter="status" data-value="all" class="active">Tất cả</button>
+              <button type="button" data-filter="status" data-value="played">Đã đấu</button>
+              <button type="button" data-filter="status" data-value="unplayed">Chưa đấu</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="sub" id="members-sub">Tổng số: 12 vận động viên</p>
+      <p class="sub" id="progress-view-nu"></p>
+      <div class="search-wrap" id="search-wrap-view-nu">
+        <input type="text" class="search-input" id="search-view-nu" placeholder="Tìm theo tên vận động viên...">
+      </div>
+      <div class="fixtures" id="fixtures-view-nu"></div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h2>Standings — Women's Singles</h2>
+        <button type="button" class="icon-btn" id="info-toggle-nu" aria-label="Chú thích">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </button>
+      </div>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
       <div class="table-scroll">
-        <table class="standings members-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Player Name</th>
-              <th>Category</th>
-            </tr>
-          </thead>
-          <tbody id="members-tbody">
-            <!-- Render bằng JS -->
-          </tbody>
+        <table class="standings standings-full">
+          <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
+          <tbody id="standings-nu"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="group-overall" class="group">
+    <div class="card">
+      <h2>LMCL Rankings</h2>
+      <!-- GLASSMORPHISM TABLE CONTAINER -->
+      <div class="table-scroll">
+        <table class="standings standings-overall">
+          <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
+          <tbody id="standings-overall"></tbody>
         </table>
       </div>
     </div>
@@ -1148,9 +1195,6 @@ const uiStateView = {
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let activeGroupTab = 'all';
-let currentMainView = 'tour'; // 'tour' hoặc 'members'
-let activeMemberCategory = 'all';
-
 const paintedStandings = { nam: null, nu: null, overall: null };
 const ROW_ANIM_MS = 260;   
 const STAGGER_MS = 65;     
@@ -1718,97 +1762,49 @@ function openStandingsTab(group){
   paintTable(group, getRowsFor(group), { forceEntrance: true });
 }
 
-// Render danh sách Members
-function renderMembersList() {
-  const tbody = document.getElementById('members-tbody');
-  const subEl = document.getElementById('members-sub');
-  if(!tbody) return;
+// Xử lý sự kiện Menu Hamburger
+const hamburgerToggleBtn = document.getElementById('hamburger-toggle-btn');
+const hamburgerMenu = document.getElementById('hamburger-menu');
+const menuCloseBtn = document.getElementById('menu-close-btn');
+const menuSearchInput = document.getElementById('menu-search-input');
 
-  let list = [];
-  if(activeMemberCategory === 'all'){
-    ROSTERS.nam.forEach(name => list.push({ name, cat: 'Đơn Nam' }));
-    ROSTERS.nu.forEach(name => list.push({ name, cat: 'Đơn Nữ' }));
-  } else if(activeMemberCategory === 'nam'){
-    list = ROSTERS.nam.map(name => ({ name, cat: 'Đơn Nam' }));
-  } else if(activeMemberCategory === 'nu'){
-    list = ROSTERS.nu.map(name => ({ name, cat: 'Đơn Nữ' }));
-  }
-
-  subEl.textContent = `Tổng số: ${list.length} vận động viên`;
-
-  tbody.innerHTML = list.map((item, idx) => `
-    <tr>
-      <td><span class="rank-badge">${idx + 1}</span></td>
-      <td>${escapeHtml(item.name)}</td>
-      <td>${escapeHtml(item.cat)}</td>
-    </tr>
-  `).join('');
+function openHamburgerMenu() {
+  hamburgerMenu.classList.add('open');
+  if (menuSearchInput) menuSearchInput.focus();
 }
 
-// Chuyển đổi giữa Tour và Members
-function switchMainView(viewName){
-  currentMainView = viewName;
-  const tourContainer = document.getElementById('view-tour-container');
-  const membersContainer = document.getElementById('view-members-container');
-  const menuTour = document.getElementById('menu-tour');
-  const menuMembers = document.getElementById('menu-members');
-  const headerTitle = document.getElementById('header-title');
-
-  if(viewName === 'tour'){
-    tourContainer.style.display = 'block';
-    membersContainer.style.display = 'none';
-    menuTour.classList.add('active');
-    menuMembers.classList.remove('active');
-    document.body.setAttribute('data-theme', activeGroupTab === 'nam' ? 'men' : (activeGroupTab === 'nu' ? 'women' : (activeGroupTab === 'overall' ? 'rankings' : 'allmatches')));
-    headerTitle.innerHTML = `
-      LMCL<br>
-      ALLSTARS<br>
-      RANKINGS<br>
-      <span class="badge-date">AUGUST 2026</span>
-    `;
-  } else if(viewName === 'members'){
-    tourContainer.style.display = 'none';
-    membersContainer.style.display = 'block';
-    menuTour.classList.remove('active');
-    menuMembers.classList.add('active');
-    document.body.setAttribute('data-theme', 'members');
-    headerTitle.innerHTML = `
-      LMCL<br>
-      ALLSTARS<br>
-      MEMBERS<br>
-      <span class="badge-date">DIRECTORY</span>
-    `;
-    renderMembersList();
-  }
-
-  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+function closeHamburgerMenu() {
+  hamburgerMenu.classList.remove('open');
 }
 
-// Event Listeners cho menu chính
-document.getElementById('menu-tour').addEventListener('click', (e) => {
-  e.preventDefault();
-  switchMainView('tour');
-});
-document.getElementById('menu-members').addEventListener('click', (e) => {
-  e.preventDefault();
-  switchMainView('members');
-});
-document.getElementById('nav-brand-home').addEventListener('click', (e) => {
-  e.preventDefault();
-  switchMainView('tour');
-});
+if (hamburgerToggleBtn) {
+  hamburgerToggleBtn.addEventListener('click', openHamburgerMenu);
+}
+if (menuCloseBtn) {
+  menuCloseBtn.addEventListener('click', closeHamburgerMenu);
+}
 
-// Event Listeners cho các tab bên trong mục Members
-document.querySelectorAll('.members-tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.members-tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeMemberCategory = btn.getAttribute('data-membercat');
-    renderMembersList();
+// Bấm ra ngoài (hoặc chọn mục) sẽ ẩn menu mượt mà
+document.querySelectorAll('.menu-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetGroup = link.getAttribute('data-target');
+    const tabBtn = document.querySelector(`.tab-btn[data-group="${targetGroup}"]`);
+    if (tabBtn) {
+      tabBtn.click();
+    }
+    closeHamburgerMenu();
   });
 });
 
-// Các sự kiện cũ (Search, Filter, Tab con trong Tour, Admin PIN, Modal...)
+if (menuSearchInput) {
+  menuSearchInput.addEventListener('input', (e) => {
+    const keyword = e.target.value.toLowerCase().trim();
+    // Bạn có thể mở rộng logic tìm kiếm toàn trang từ đây nếu muốn
+  });
+}
+
+// Event Listeners cho các tính năng khác
 (() => {
   const searchBtnAll = document.getElementById('search-toggle-all');
   const searchWrapAll = document.getElementById('search-wrap-all');
@@ -1987,13 +1983,13 @@ pinInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') verifyPin();
 });
 
-document.querySelectorAll('.tabs .tab-btn:not(.members-tab-btn)').forEach(btn => {
+document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const grp = btn.getAttribute('data-group');
     if(grp === activeGroupTab) return; 
 
-    document.querySelectorAll('.tabs .tab-btn:not(.members-tab-btn)').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('#view-tour-container .group').forEach(g => g.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.group').forEach(g => g.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('group-' + grp).classList.add('active');
     
