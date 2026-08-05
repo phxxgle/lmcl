@@ -55,73 +55,19 @@
     overflow-x: hidden;
     margin: 0;
   }
-
-  .wrap{
-    max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;
-    opacity: 1;
-    transition: opacity 0.55s ease;
-  }
-  body.page-loading .wrap{
-    opacity: 0;
+  body.page-loading{
+    overflow-y: hidden;
+    height: 100vh;
   }
 
-  .splash{
-    position: fixed;
-    inset: 0;
-    background: var(--green-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    padding: 0 24px;
-    transition: opacity 0.55s ease, transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-  .splash.splash-up{
-    transform: translateY(-70px);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .splash.splash-hidden{
-    display: none;
-  }
-  .splash-inner{
-    display: flex;
-    align-items: center;
-    gap: 18px;
-  }
-  .splash-logo{
-    height: 80px;
-    width: auto;
-    object-fit: contain;
-    flex-shrink: 0;
-    animation: logoIntro 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  }
-  .splash-divider{
-    font-family:'Tomorrow',sans-serif;
-    font-weight: 300;
-    font-size: 52px;
-    color: var(--chalk-dim);
-    line-height: 1;
-    opacity: 0;
-    animation: fadeInContent 0.5s ease forwards 1s;
-  }
-  .splash-text{
-    font-family:'Tomorrow',sans-serif;
-    font-weight:700;
-    font-size:20px;
-    letter-spacing:1px;
-    margin:0;
-    color:var(--chalk);
-    line-height:1.2;
-    text-align: left;
-    opacity: 0;
-    animation: fadeInContent 0.6s ease forwards 1.2s;
-  }
-  
+  .wrap{max-width:440px;margin:0 auto;padding:0 12px; position: relative; z-index: 1;}
+
   header{
     text-align:center;
     padding:24px 16px 8px;
     position:relative;
+    z-index: 30;
+    transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
   }
 
   .brand-container {
@@ -227,9 +173,29 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     z-index: 20;
-    opacity: 0;
-    animation: fadeInContent 0.6s ease forwards 1.4s;
   }
+
+  /* Reveal-after-intro: tabs, the active tab's cards, the connection banner
+     and the footer stay hidden while body has .page-loading, then fade/slide
+     in one after another once it's removed. */
+  .tabs,
+  .group.active .card,
+  #conn-banner,
+  .foot-note{
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  body.page-loading .tabs,
+  body.page-loading .group.active .card,
+  body.page-loading #conn-banner,
+  body.page-loading .foot-note{
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+  .tabs{ transition-delay: 0s; }
+  .group.active .card:nth-of-type(1){ transition-delay: 0.15s; }
+  .group.active .card:nth-of-type(2){ transition-delay: 0.3s; }
+  .foot-note{ transition-delay: 0.45s; }
   
   .tab-btn{
     position: relative;
@@ -771,19 +737,6 @@
 </head>
 <body data-theme="men" class="page-loading">
 
-<div class="splash" id="splash">
-  <div class="splash-inner">
-    <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="splash-logo">
-    <span class="splash-divider">|</span>
-    <div class="splash-text">
-      LMCL<br>
-      ALLSTARS<br>
-      RANKINGS<br>
-      <span class="badge-date">AUGUST 2026</span>
-    </div>
-  </div>
-</div>
-
 <div class="wrap">
   <header>
     <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
@@ -946,26 +899,46 @@
 
 <script>
 (function(){
-  var SPLASH_HOLD_MS = 1400; // thời gian giữ màn hình logo trước khi trượt lên
-  var SPLASH_TRANSITION_MS = 650;
+  var HOLD_MS = 2000;          // giữ logo/tên ở giữa màn hình trong 2 giây
+  var SLIDE_MS = 700;          // thời gian trượt lên (khớp với transition trong CSS)
+  var REVEAL_EXTRA_DELAY = 100; // khoảng nghỉ nhỏ trước khi bắt đầu hiện nội dung bên dưới
 
-  function startIntroTransition(){
-    var splash = document.getElementById('splash');
-    document.body.classList.remove('page-loading');
-    if(splash){
-      splash.classList.add('splash-up');
-      setTimeout(function(){
-        splash.classList.add('splash-hidden');
-      }, SPLASH_TRANSITION_MS);
-    }
+  function centerHeaderInstantly(){
+    var header = document.querySelector('header');
+    if(!header) return;
+    var rect = header.getBoundingClientRect();
+    var headerCenterY = rect.top + rect.height / 2;
+    var viewportCenterY = window.innerHeight / 2;
+    var offset = Math.max(0, viewportCenterY - headerCenterY);
+
+    header.style.transition = 'none';
+    header.style.transform = 'translateY(' + offset + 'px)';
+    // Ép trình duyệt tính lại layout ngay lập tức để phần transition ở dưới
+    // không bị áp dụng nhầm vào bước đặt vị trí ban đầu này.
+    header.getBoundingClientRect();
+    header.style.transition = '';
   }
 
-  window.addEventListener('load', function(){
-    setTimeout(startIntroTransition, SPLASH_HOLD_MS);
-  });
-  // Phòng trường hợp sự kiện 'load' không kích hoạt (ví dụ tài nguyên bị chặn),
-  // vẫn đảm bảo splash biến mất sau một khoảng thời gian tối đa.
-  setTimeout(startIntroTransition, SPLASH_HOLD_MS + 1500);
+  function slideHeaderUpAndReveal(){
+    var header = document.querySelector('header');
+    if(header){
+      header.style.transform = 'translateY(0)';
+    }
+    setTimeout(function(){
+      document.body.classList.remove('page-loading');
+    }, SLIDE_MS + REVEAL_EXTRA_DELAY);
+  }
+
+  function startIntro(){
+    centerHeaderInstantly();
+    setTimeout(slideHeaderUpAndReveal, HOLD_MS);
+  }
+
+  if(document.readyState === 'complete'){
+    startIntro();
+  } else {
+    window.addEventListener('load', startIntro);
+  }
 })();
 </script>
 <script>
