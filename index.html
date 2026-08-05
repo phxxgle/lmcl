@@ -156,7 +156,6 @@
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
 
-  /* TABS & HIỆU ỨNG ELEGANT GLOW RUNNING BORDER */
   .tabs{
     display: flex;
     gap: 8px;
@@ -511,7 +510,6 @@
 
   .table-scroll{overflow-x:visible;margin:0;padding:0;}
   
-  /* Cài đặt chung cho bảng & Đường kẻ giữa các cột */
   table.standings{
     width:100%;
     border-collapse:collapse;
@@ -544,13 +542,11 @@
     text-overflow:ellipsis;
   }
   
-  /* Thêm đường kẻ dọc ở giữa các cột (phân cách các cột trong bảng) */
   table.standings thead th:not(:last-child),
   table.standings tbody td:not(:last-child) {
     border-right: 1px solid var(--line);
   }
 
-  /* Cột Player căn trái chữ và có thêm khoảng đệm lề trái */
   table.standings tbody td:nth-child(2){
     text-align:left;
     font-family:'Inter',sans-serif;
@@ -562,21 +558,18 @@
     text-align:center;
   }
 
-  /* Cấu hình chiều rộng chuẩn cho bảng Overall để chữ luôn nằm gọn trên 1 dòng */
+  /* Cấu hình chiều rộng chuẩn cho bảng Overall (Đã bỏ cột Territory, còn lại 4 cột) */
   table.standings-overall th:nth-child(1),
-  table.standings-overall td:nth-child(1){width:11%;}
+  table.standings-overall td:nth-child(1){width:15%;}
   table.standings-overall th:nth-child(2),
-  table.standings-overall td:nth-child(2){width:33%;}
+  table.standings-overall td:nth-child(2){width:45%;}
   table.standings-overall th:nth-child(3),
   table.standings-overall td:nth-child(3){width:20%;}
   table.standings-overall th:nth-child(4),
-  table.standings-overall td:nth-child(4){width:14%;}
-  table.standings-overall th:nth-child(5),
-  table.standings-overall td:nth-child(5){width:22%;}
+  table.standings-overall td:nth-child(4){width:20%;}
 
   table.standings tbody tr:last-child td{border-bottom:none;}
 
-  /* Cấu hình chiều rộng chuẩn cho bảng Men's/Women's Singles để toàn bộ chữ nằm 1 dòng */
   table.standings-full th:nth-child(1),
   table.standings-full td:nth-child(1){width:8%;}
   table.standings-full th:nth-child(2),
@@ -825,7 +818,7 @@
       <h2>Overall Ranking</h2>
       <div class="table-scroll">
         <table class="standings standings-overall">
-          <thead><tr><th>#</th><th>Player</th><th>Territory</th><th>PTS</th><th>Change +/-</th></tr></thead>
+          <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
           <tbody id="standings-overall"></tbody>
         </table>
       </div>
@@ -902,21 +895,6 @@ const OVERALL_DATA = [
   { name: "Trần Trung Hiếu", points: 4 },
   { name: "Nguyễn Tiến Trung", points: 4 }
 ];
-
-const PLAYER_TERRITORIES = {
-  "Lê Thanh Phương": "Hà Nội",
-  "Nguyễn Đình Đạt": "Hà Nội",
-  "Nguyễn Đan Quyên": "Quảng Ninh",
-  "Trần Trung Hiếu": "Quảng Ninh",
-  "Vũ Ngọc Linh": "Quảng Ninh",
-  "Chu Văn Huynh": "Hưng Yên",
-  "Đặng Thị Nhung": "Hưng Yên",
-  "Phạm Minh Quân": "Vĩnh Phúc",
-  "Nguyễn Văn Thành": "Vĩnh Phúc",
-  "Bùi Huyền Trang": "Hòa Bình",
-  "Nguyễn Tiến Trung": "Thanh Hóa",
-  "Vương Mạnh Chuyền": "Tuyên Quang"
-};
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxF7hj25lOR8QGhPMW1ie9_ZU1RsoCVL0",
@@ -1237,7 +1215,6 @@ function computeOverall(){
 
   const withOldRank = OVERALL_DATA.map((r, i) => ({
     name: r.name,
-    territory: PLAYER_TERRITORIES[r.name] || '',
     oldPoints: r.points,
     oldRank: i + 1
   }));
@@ -1283,7 +1260,6 @@ function buildStandingsRowHtml(group, r, idx){
     return `<tr data-name="${escapeHtml(r.name)}">
       <td>${badgeHtml}</td>
       <td>${escapeHtml(r.name)}</td>
-      <td>${escapeHtml(r.territory)}</td>
       <td class="total-pts"><span class="count-val">${r.newTotal}</span></td>
       <td class="rank-change ${changeCls}">${changeText}</td>
     </tr>`;
