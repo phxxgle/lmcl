@@ -842,6 +842,60 @@
   .rank-select:focus { outline: none; border-color: var(--accent); }
   .rank-select option { background: var(--card-bg); color: var(--chalk); }
 
+  /* Tab phụ trong chi tiết giải đã kết thúc */
+  .sub-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 12px 0 4px;
+    flex-wrap: wrap;
+  }
+  .sub-tab-btn {
+    flex: 1;
+    min-width: 58px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--chalk-dim);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 8px 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .sub-tab-btn:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+  .sub-tab-btn.active {
+    background: var(--menu-accent);
+    color: var(--on-menu-accent);
+    border-color: var(--menu-accent);
+    font-weight: 700;
+  }
+
+  /* Tên cặp đôi cần hai dòng, khác với tên đơn */
+  .fixture-row .name.pair {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 10.5px;
+    line-height: 1.35;
+  }
+
+  .fixture-row.row-xd { border-left: 3px solid var(--gold); }
+  .fixture-row.row-xd .score-display.winner {
+    background: var(--gold) !important;
+    color: #1C1300 !important;
+    border-color: var(--gold) !important;
+  }
+
+  table.standings-teams th:nth-child(1), table.standings-teams td:nth-child(1) { width: 8%; }
+  table.standings-teams th:nth-child(2), table.standings-teams td:nth-child(2) { width: 40%; }
+  table.standings-teams th:nth-child(3), table.standings-teams td:nth-child(3),
+  table.standings-teams th:nth-child(4), table.standings-teams td:nth-child(4),
+  table.standings-teams th:nth-child(5), table.standings-teams td:nth-child(5) { width: 8%; }
+  table.standings-teams th:nth-child(6), table.standings-teams td:nth-child(6),
+  table.standings-teams th:nth-child(7), table.standings-teams td:nth-child(7) { width: 10%; }
+  table.standings-teams th:nth-child(8), table.standings-teams td:nth-child(8) { width: 8%; }
+
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
@@ -1295,12 +1349,8 @@
         </button>
       </div>
       <p class="sub" id="tour-detail-sub"></p>
-      <div class="table-scroll">
-        <table class="standings standings-overall">
-          <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
-          <tbody id="tour-detail-body"></tbody>
-        </table>
-      </div>
+      <div class="sub-tabs" id="tour-detail-tabs"></div>
+      <div id="tour-detail-content"></div>
     </div>
   </div>
 
@@ -1454,6 +1504,72 @@ const TOUR_DATA = {
       badge: "JUNE 2026",
       status: "finished",
       note: "Đã kết thúc — Tháng 6",
+      // Kết quả từng hạng mục. teams: các cặp đôi; matches: {a, b, sa, sb} với a/b là chỉ số đội.
+      events: {
+        md: {
+          label: "MD",
+          title: "Đôi Nam",
+          date: "5 – 12/06/2026",
+          rowClass: "row-nam",
+          teams: [
+            ["Trần Trung Hiếu", "Nguyễn Tiến Trung"],
+            ["Chu Văn Huynh", "Phạm Minh Quân"],
+            ["Vương Mạnh Chuyền", "Nguyễn Văn Thành"]
+          ],
+          matches: [
+            { a: 0, b: 1, sa: 12, sb: 21 },
+            { a: 2, b: 0, sa: 21, sb: 17 },
+            { a: 1, b: 2, sa: 22, sb: 20 }
+          ]
+        },
+        wd: {
+          label: "WD",
+          title: "Đôi Nữ",
+          date: "5 – 12/06/2026",
+          rowClass: "row-nu",
+          teams: [
+            ["Bùi Huyền Trang", "Đặng Thị Nhung"],
+            ["Lê Thanh Phương", "Nguyễn Đan Quyên"],
+            ["Vũ Ngọc Linh", "Nguyễn Đình Đạt"]
+          ],
+          matches: [
+            { a: 0, b: 1, sa: 17, sb: 21 },
+            { a: 2, b: 0, sa: 21, sb: 16 },
+            { a: 1, b: 2, sa: 21, sb: 17 }
+          ]
+        },
+        xd: {
+          label: "XD",
+          title: "Đôi Nam Nữ",
+          date: "5 – 12/06/2026",
+          rowClass: "row-xd",
+          teams: [
+            ["Bùi Huyền Trang", "Nguyễn Tiến Trung"],
+            ["Trần Trung Hiếu", "Đặng Thị Nhung"],
+            ["Phạm Minh Quân", "Nguyễn Đình Đạt"],
+            ["Nguyễn Văn Thành", "Nguyễn Đan Quyên"],
+            ["Chu Văn Huynh", "Vũ Ngọc Linh"],
+            ["Lê Thanh Phương", "Vương Mạnh Chuyền"]
+          ],
+          matches: [
+            { a: 0, b: 1, sa: 19, sb: 21 },
+            { a: 2, b: 3, sa: 21, sb: 18 },
+            { a: 4, b: 2, sa: 21, sb: 10 },
+            { a: 3, b: 0, sa: 21, sb: 13 },
+            { a: 5, b: 1, sa: 21, sb: 15 },
+            { a: 1, b: 3, sa: 15, sb: 21 },
+            { a: 5, b: 0, sa: 21, sb: 15 },
+            { a: 0, b: 2, sa: 17, sb: 21 },
+            { a: 5, b: 3, sa: 21, sb: 12 },
+            { a: 4, b: 0, sa: 21, sb: 14 },
+            { a: 5, b: 2, sa: 26, sb: 24 },
+            { a: 3, b: 4, sa: 16, sb: 21 },
+            { a: 0, b: 1, sa: 19, sb: 21 },
+            { a: 5, b: 4, sa: 24, sb: 22 },
+            { a: 1, b: 2, sa: 14, sb: 21 }
+          ]
+        }
+      },
       standings: [
         { name: "Nguyễn Đan Quyên",   points: 12, change:  0 },
         { name: "Vương Mạnh Chuyền",  points: 11, change:  0 },
@@ -2413,17 +2529,98 @@ function findTournament(id){
   return null;
 }
 
-// Bảng xếp hạng cuối giải của một giải đã kết thúc — cùng bố cục với bảng Rankings.
-function renderTournamentDetail(t){
+// Bảng xếp hạng của một hạng mục đôi, tính từ chính các trận trong dữ liệu giải.
+function computeEventStandings(ev){
+  const rows = ev.teams.map((pair, i) => ({
+    idx: i, pair, played: 0, win: 0, loss: 0, ptsFor: 0, ptsAgainst: 0
+  }));
+  ev.matches.forEach(m => {
+    const A = rows[m.a], B = rows[m.b];
+    if(!A || !B) return;
+    A.played++; B.played++;
+    A.ptsFor += m.sa; A.ptsAgainst += m.sb;
+    B.ptsFor += m.sb; B.ptsAgainst += m.sa;
+    if(m.sa > m.sb){ A.win++; B.loss++; } else { B.win++; A.loss++; }
+  });
+  return rows.map(r => ({ ...r, diff: r.ptsFor - r.ptsAgainst }))
+    .sort((x, y) => (y.win - x.win) || (y.diff - x.diff) || (y.ptsFor - x.ptsFor));
+}
+
+function pairHtml(pair){
+  return pair.map(n => escapeHtml(n)).join('<br>');
+}
+
+function eventContentHtml(ev){
+  const fixtures = ev.matches.map((m, i) => {
+    const t1 = ev.teams[m.a], t2 = ev.teams[m.b];
+    const w1 = m.sa > m.sb ? 'winner' : '';
+    const w2 = m.sb > m.sa ? 'winner' : '';
+    return `<div class="fixture-row played ${ev.rowClass || ''}">
+      <span class="fixture-num">${i + 1}</span>
+      <span class="name pair right">${pairHtml(t1)}</span>
+      <span class="score-display ${w1}">${m.sa}</span>
+      <span></span>
+      <span class="score-display ${w2}">${m.sb}</span>
+      <span class="name pair">${pairHtml(t2)}</span>
+    </div>`;
+  }).join('');
+
+  const standings = computeEventStandings(ev).map((r, i) => `<tr>
+    <td>${getRankBadgeHtml(i + 1)}</td>
+    <td>${pairHtml(r.pair)}</td>
+    <td>${r.played}</td>
+    <td>${r.win}</td>
+    <td>${r.loss}</td>
+    <td>${r.ptsFor}</td>
+    <td>${r.ptsAgainst}</td>
+    <td class="${r.diff > 0 ? 'diff-pos' : (r.diff < 0 ? 'diff-neg' : '')}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
+  </tr>`).join('');
+
+  return `<p class="sub">${escapeHtml(ev.title)} — ${ev.matches.length} trận${ev.date ? ' · ' + escapeHtml(ev.date) : ''}</p>
+    <div class="fixtures">${fixtures}</div>
+    <div class="table-scroll">
+      <table class="standings standings-teams">
+        <thead><tr><th>#</th><th>Đội</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
+        <tbody>${standings}</tbody>
+      </table>
+    </div>`;
+}
+
+function rankContentHtml(t){
+  return `<p class="sub">Bảng xếp hạng chung cuộc — ${t.standings.length} vận động viên.</p>
+    <div class="table-scroll">
+      <table class="standings standings-overall">
+        <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
+        <tbody>${staticRankingRowsHtml(t.standings)}</tbody>
+      </table>
+    </div>`;
+}
+
+// Bảng xếp hạng và kết quả từng hạng mục của một giải đã kết thúc.
+function renderTournamentDetail(t, tabKey){
   const card = document.getElementById('tour-detail');
-  const body = document.getElementById('tour-detail-body');
-  if(!card || !body || !t || !t.standings) return;
+  const tabsEl = document.getElementById('tour-detail-tabs');
+  const contentEl = document.getElementById('tour-detail-content');
+  if(!card || !tabsEl || !contentEl || !t) return;
+
+  const eventKeys = t.events ? Object.keys(t.events) : [];
+  const tabs = eventKeys.map(k => ({ key: k, label: t.events[k].label || k.toUpperCase() }));
+  if(t.standings) tabs.push({ key: 'rank', label: 'Rankings' });
+  if(tabs.length === 0) return;
+
+  const active = tabs.some(x => x.key === tabKey) ? tabKey : tabs[0].key;
 
   document.getElementById('tour-detail-title').textContent = t.name;
-  document.getElementById('tour-detail-sub').textContent =
-    'Bảng xếp hạng chung cuộc — ' + t.standings.length + ' vận động viên.';
+  document.getElementById('tour-detail-sub').textContent = t.note || '';
 
-  body.innerHTML = staticRankingRowsHtml(t.standings);
+  tabsEl.innerHTML = tabs.map(x =>
+    `<button type="button" class="sub-tab-btn ${x.key === active ? 'active' : ''}" data-tab="${x.key}">${escapeHtml(x.label)}</button>`
+  ).join('');
+  tabsEl.querySelectorAll('.sub-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => renderTournamentDetail(t, btn.getAttribute('data-tab')));
+  });
+
+  contentEl.innerHTML = active === 'rank' ? rankContentHtml(t) : eventContentHtml(t.events[active]);
 
   card.style.display = '';
   if(t.titleLines) setHeader(t.titleLines, t.badge);
