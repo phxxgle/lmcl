@@ -1266,6 +1266,19 @@
     </div>
   </div>
 
+  <div id="view-rankings" class="app-view">
+    <div class="card">
+      <h2>LMCL Rankings</h2>
+      <p class="sub" id="rankings-sub"></p>
+      <div class="table-scroll">
+        <table class="standings standings-overall">
+          <thead><tr><th>#</th><th>Player</th><th>PTS</th><th>Change +/-</th></tr></thead>
+          <tbody id="standings-rankings"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div id="view-members" class="app-view">
     <div class="card">
       <h2>Members — MS</h2>
@@ -1305,6 +1318,11 @@
       <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </button>
     <div class="drawer-submenu" id="nav-tour-submenu"></div>
+
+    <button type="button" class="drawer-item" id="nav-rankings" data-view="rankings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="13"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="18" y1="20" x2="18" y2="9"></line></svg>
+      Rankings
+    </button>
 
     <button type="button" class="drawer-item" id="nav-members" data-view="members">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
@@ -1470,7 +1488,7 @@ const uiStateView = {
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let activeGroupTab = 'all';
-const paintedStandings = { nam: null, nu: null, overall: null };
+const paintedStandings = { nam: null, nu: null, overall: null, rankings: null };
 const ROW_ANIM_MS = 260;   
 const STAGGER_MS = 65;     
 const COUNT_MS = 650;      
@@ -1558,7 +1576,7 @@ scoresRef.on('value', snapshot => {
   renderAll();
   renderReadonlyGroup('nam');
   renderReadonlyGroup('nu');
-  ['nam','nu','overall'].forEach(refreshStandings);
+  ['nam','nu','overall','rankings'].forEach(refreshStandings);
 }, error => {
   showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
   console.error('Firebase error:', error);
@@ -1893,12 +1911,18 @@ function computeOverall(){
   return ranked;
 }
 
+// Bảng Rankings ở menu dùng chung dữ liệu và bố cục với tab Rankings của Live Match,
+// chỉ khác phần tử DOM được vẽ vào, nên 'rankings' được quy về 'overall'.
+function normGroup(group){
+  return group === 'rankings' ? 'overall' : group;
+}
+
 function getRowsFor(group){
-  return group === 'overall' ? computeOverall() : computeStandings(group);
+  return normGroup(group) === 'overall' ? computeOverall() : computeStandings(group);
 }
 
 function rowScoreValue(group, r){
-  return group === 'overall' ? r.newTotal : r.ptsFor;
+  return normGroup(group) === 'overall' ? r.newTotal : r.ptsFor;
 }
 
 function getRankBadgeHtml(rank){
@@ -1909,10 +1933,11 @@ function getRankBadgeHtml(rank){
 }
 
 function buildStandingsRowHtml(group, r, idx){
-  const rank = group === 'overall' ? r.newRank : (idx + 1);
+  const kind = normGroup(group);
+  const rank = kind === 'overall' ? r.newRank : (idx + 1);
   const badgeHtml = getRankBadgeHtml(rank);
 
-  if(group === 'overall'){
+  if(kind === 'overall'){
     let changeCls = 'rank-same';
     let changeText = '–';
     if(r.change > 0){ changeCls = 'rank-up'; changeText = '▲ +' + r.change; }
@@ -2029,6 +2054,11 @@ function paintTable(group, rows, opts){
 }
 
 function refreshStandings(group){
+  if(group === 'rankings'){
+    if(currentView !== 'rankings') return;
+    paintTable('rankings', getRowsFor('rankings'), { forceEntrance: false });
+    return;
+  }
   if(activeGroupTab !== group) return;
   paintTable(group, getRowsFor(group), { forceEntrance: false });
 }
@@ -2354,7 +2384,19 @@ function setHeader(lines, badge){
   document.title = lines.join(' ') + (badge ? ' – ' + badge : '');
 }
 
+let currentView = 'livematch';
+
+function renderRankingsView(){
+  const sub = document.getElementById('rankings-sub');
+  if(sub){
+    sub.textContent = 'Bảng xếp hạng tích luỹ qua các giải, cập nhật theo kết quả của '
+      + CURRENT_TOURNAMENT.name + '.';
+  }
+  paintTable('rankings', getRowsFor('rankings'), { forceEntrance: true });
+}
+
 function switchView(view){
+  currentView = view;
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById('view-' + view);
   if(target) target.classList.add('active');
@@ -2363,6 +2405,8 @@ function switchView(view){
     setHeader(CURRENT_TOURNAMENT.titleLines, CURRENT_TOURNAMENT.badge);
   } else if(view === 'members'){
     setHeader(['LMCL', 'TEAM', 'MEMBERS'], '');
+  } else if(view === 'rankings'){
+    setHeader(['LMCL', 'RANKINGS'], '');
   } else if(view === 'tour'){
     setHeader(['LMCL', 'TOURNAMENT'], currentTourYear);
   }
@@ -2374,6 +2418,9 @@ function switchView(view){
   if(view === 'members'){
     renderMembers('nam');
     renderMembers('nu');
+  }
+  if(view === 'rankings'){
+    renderRankingsView();
   }
   if(view === 'tour'){
     renderTourList(currentTourYear);
@@ -2407,6 +2454,10 @@ drawerOverlay.addEventListener('click', closeDrawer);
 
 document.getElementById('nav-livematch').addEventListener('click', () => {
   switchView('livematch');
+  closeDrawer();
+});
+document.getElementById('nav-rankings').addEventListener('click', () => {
+  switchView('rankings');
   closeDrawer();
 });
 document.getElementById('nav-members').addEventListener('click', () => {
