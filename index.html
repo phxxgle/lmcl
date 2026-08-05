@@ -1549,6 +1549,10 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
+// Paint the schedule immediately with whatever data we have (default: empty
+// scores), so the full page renders in one go instead of the fixtures list
+// popping in later once Firebase responds.
+renderAll();
 openStandingsTab('nam');
 </script>
 </body>
