@@ -386,6 +386,37 @@
     padding: 18px 4px;
   }
 
+  /* Thanh tiến độ số trận đã đấu */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 6px 0 14px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.09);
+    overflow: hidden;
+  }
+  .progress-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--green-ok));
+    transition: width 0.5s cubic-bezier(0.3, 0.9, 0.4, 1);
+  }
+  .progress-num {
+    flex-shrink: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--chalk-dim);
+  }
+  .progress-num b { color: var(--chalk); }
+
   .fixtures { display: flex; flex-direction: column; gap: 8px; }
   .fixture-row {
     display: grid;
@@ -1006,9 +1037,8 @@
   .drawer-head {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 18px 16px;
-    border-bottom: 1px solid var(--line);
+    justify-content: flex-end;
+    padding: 14px 16px 10px;
   }
   .drawer-head span {
     font-family: 'Tomorrow', sans-serif;
@@ -1054,6 +1084,45 @@
   .drawer-item:hover { background: rgba(255,255,255,0.06); }
   .drawer-item.active { background: var(--menu-accent); color: var(--on-menu-accent); }
   .drawer-item svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+  /* Chấm tròn nhấp nháy báo mùa giải đang diễn ra */
+  .live-dot {
+    position: relative;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .live-dot::before {
+    content: '';
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--green-ok);
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+  }
+  .live-dot::after {
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--green-ok);
+    animation: livePulse 1.8s ease-out infinite;
+  }
+  .drawer-item.active .live-dot::before { background: var(--on-menu-accent); box-shadow: none; }
+  .drawer-item.active .live-dot::after { background: var(--on-menu-accent); }
+
+  @keyframes livePulse {
+    0%   { transform: scale(1); opacity: 0.7; }
+    70%  { transform: scale(2.4); opacity: 0; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live-dot::after { animation: none; display: none; }
+  }
 
   .drawer-item.parent { justify-content: space-between; }
   .drawer-item.parent .di-left { display: flex; align-items: center; gap: 12px; }
@@ -1548,6 +1617,57 @@
   .pm-ach li.bronze .pm-ico { color: #E08B4C; }
   .pm-ach li.rank .pm-ico   { color: var(--menu-accent); }
 
+  /* Danh sách kết quả gần nhất trong hồ sơ */
+  .pm-res-label {
+    margin: 0 0 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: var(--chalk-dim);
+  }
+  .pm-results { list-style: none; margin: 0; padding: 0; max-height: 200px; overflow-y: auto; }
+  .pm-results li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+  }
+  .pm-results li:first-child { border-top: none; }
+  .pm-res-tag {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+  }
+  .pm-results li.win  .pm-res-tag { background: rgba(74, 222, 128, 0.2); color: var(--green-ok); }
+  .pm-results li.loss .pm-res-tag { background: rgba(248, 113, 113, 0.18); color: var(--red); }
+  .pm-res-opp {
+    flex: 1;
+    min-width: 0;
+    color: var(--chalk);
+    line-height: 1.3;
+  }
+  .pm-res-opp i {
+    display: block;
+    font-style: normal;
+    font-size: 9.5px;
+    color: var(--chalk-dim);
+  }
+  .pm-res-score {
+    flex-shrink: 0;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--chalk);
+  }
+  .pm-res-score em { font-style: normal; color: var(--chalk-dim); margin: 0 2px; }
+
   .pm-none {
     margin: 0;
     font-size: 11.5px;
@@ -1670,7 +1790,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
         <span>Nhập tỷ số vào các ô bên dưới</span>
       </div>
-      <p class="sub" id="progress-all"></p>
+      <div class="progress-wrap" id="progress-all"></div>
       <div class="search-wrap" id="search-wrap-all">
         <input type="text" class="search-input" id="search-all" placeholder="Tìm theo tên vận động viên...">
       </div>
@@ -1708,7 +1828,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         <span>Chỉ xem. Để sửa tỷ số, quay lại tab <strong>All Matches</strong>.</span>
       </div>
-      <p class="sub" id="progress-view-nam"></p>
+      <div class="progress-wrap" id="progress-view-nam"></div>
       <div class="search-wrap" id="search-wrap-view-nam">
         <input type="text" class="search-input" id="search-view-nam" placeholder="Tìm theo tên vận động viên...">
       </div>
@@ -1762,7 +1882,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         <span>Chỉ xem. Để sửa tỷ số, quay lại tab <strong>All Matches</strong>.</span>
       </div>
-      <p class="sub" id="progress-view-nu"></p>
+      <div class="progress-wrap" id="progress-view-nu"></div>
       <div class="search-wrap" id="search-wrap-view-nu">
         <input type="text" class="search-input" id="search-view-nu" placeholder="Tìm theo tên vận động viên...">
       </div>
@@ -1863,15 +1983,13 @@
 <div class="drawer-overlay" id="drawer-overlay"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-head">
-    <span>LMCL MENU</span>
     <button type="button" class="drawer-close" id="drawer-close-btn" aria-label="Đóng menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
   </div>
   <nav class="drawer-nav">
     <button type="button" class="drawer-item active" id="nav-livematch" data-view="livematch">
-      <!-- Badminton racket icon -->
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11.5" cy="11.5" rx="6" ry="8" transform="rotate(-45 11.5 11.5)"/><line x1="15.5" y1="15.5" x2="21" y2="21"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="9" x2="9" y2="14"/><line x1="14" y1="9" x2="9" y2="14"/></svg>
+      <span class="live-dot" aria-hidden="true"></span>
       Current Season
     </button>
 
@@ -2048,7 +2166,7 @@ const TOUR_DATA = {
             { a: 4, b: 0, sa: 21, sb: 14 },
             { a: 5, b: 2, sa: 26, sb: 24 },
             { a: 3, b: 4, sa: 16, sb: 21 },
-            { a: 0, b: 1, sa: 19, sb: 21 },
+            { a: 1, b: 4, sa: 15, sb: 21 },
             { a: 5, b: 4, sa: 24, sb: 22 },
             { a: 1, b: 2, sa: 14, sb: 21 }
           ],
@@ -2472,6 +2590,16 @@ function getFilteredAllFixtures(){
   });
 }
 
+// Thanh tiến độ: phần đã đấu / tổng số trận
+function setProgress(id, done, total){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  el.innerHTML =
+    `<span class="progress-track"><span class="progress-fill" style="width:${pct}%"></span></span>` +
+    `<span class="progress-num"><b>${done}</b>/${total}</span>`;
+}
+
 function renderAll(){
   renderAllFixtures();
 }
@@ -2480,8 +2608,7 @@ function renderAllFixtures(){
   const container = document.getElementById('fixtures-all');
   if(!container) return;
   const playedCount = ALL_FIXTURES.filter(f => scores[f.id] && scores[f.id].played).length;
-  document.getElementById('progress-all').textContent =
-    `Đã hoàn thành ${playedCount}/${ALL_FIXTURES.length} trận`;
+  setProgress('progress-all', playedCount, ALL_FIXTURES.length);
 
   const STATUS_LABEL = {
     finished: { text:'Đã đấu', cls:'done' },
@@ -2631,10 +2758,7 @@ function renderReadonlyGroup(group){
   if(!container) return;
   const fixtures = ALL_FIXTURES.filter(f => f.group === group);
   const playedCount = fixtures.filter(f => scores[f.id] && scores[f.id].played).length;
-  const progEl = document.getElementById('progress-view-' + group);
-  if(progEl){
-    progEl.textContent = `Đã hoàn thành ${playedCount}/${fixtures.length} trận`;
-  }
+  setProgress('progress-view-' + group, playedCount, fixtures.length);
 
   const STATUS_LABEL = {
     finished: { text:'Đã đấu', cls:'done' },
@@ -3330,6 +3454,65 @@ function achievementsHtml(name){
     '</ul>';
 }
 
+/* ─── Kết quả các trận ở giải gần nhất ─────────────────────────────────── */
+// Ưu tiên giải đang diễn ra (có tỷ số realtime), nếu VĐV chưa đấu trận nào
+// thì lùi về giải đã kết thúc gần nhất có dữ liệu trận.
+function latestResults(name){
+  // 1) Giải đang diễn ra
+  const live = [];
+  ALL_FIXTURES.forEach(f => {
+    if(f.p1 !== name && f.p2 !== name) return;
+    const sc = scores[f.id];
+    if(!sc || !sc.played) return;
+    const isP1 = f.p1 === name;
+    const own = isP1 ? sc.s1 : sc.s2;
+    const opp = isP1 ? sc.s2 : sc.s1;
+    live.push({
+      opponent: isP1 ? f.p2 : f.p1,
+      own, opp,
+      win: own > opp,
+      event: f.group === 'nam' ? 'Đơn Nam' : 'Đơn Nữ'
+    });
+  });
+  if(live.length) return { label: CURRENT_TOURNAMENT.badge, items: live.reverse() };
+
+  // 2) Giải đã kết thúc gần nhất có kết quả của VĐV này
+  for(const year of Object.keys(TOUR_DATA).sort((a, b) => b - a)){
+    for(const t of (TOUR_DATA[year] || [])){
+      const items = [];
+      Object.keys(t.events || {}).forEach(key => {
+        const ev = t.events[key];
+        (ev.matches || []).forEach(m => {
+          const inA = ev.teams[m.a].includes(name);
+          const inB = ev.teams[m.b].includes(name);
+          if(!inA && !inB) return;
+          const own = inA ? m.sa : m.sb;
+          const opp = inA ? m.sb : m.sa;
+          items.push({
+            opponent: (inA ? ev.teams[m.b] : ev.teams[m.a]).join(' / '),
+            own, opp,
+            win: own > opp,
+            event: EVENT_VI[key] || key.toUpperCase()
+          });
+        });
+      });
+      if(items.length) return { label: t.badge || t.name, items: items.reverse() };
+    }
+  }
+  return null;
+}
+
+function latestResultsHtml(name){
+  const res = latestResults(name);
+  if(!res) return '<p class="pm-none">Chưa có trận nào được ghi nhận</p>';
+  const rows = res.items.slice(0, 8).map(r => `<li class="${r.win ? 'win' : 'loss'}">
+      <span class="pm-res-tag">${r.win ? 'T' : 'B'}</span>
+      <span class="pm-res-opp">${escapeHtml(r.opponent)}<i>${escapeHtml(r.event)}</i></span>
+      <span class="pm-res-score">${r.own}<em>-</em>${r.opp}</span>
+    </li>`).join('');
+  return `<p class="pm-res-label">${escapeHtml(res.label)}</p><ul class="pm-results">${rows}</ul>`;
+}
+
 /* ─── Hồ sơ đầy đủ của một VĐV ─────────────────────────────────────────── */
 function openPlayerModal(name){
   const row = directoryRows().find(r => r.name === name);
@@ -3349,7 +3532,7 @@ function openPlayerModal(name){
       <div>
         <h3>${escapeHtml(row.name)}</h3>
         <div class="pm-badges">
-          <span class="pm-badge">WORLD RANK ${rankTxt}</span>
+          <span class="pm-badge">RANK ${rankTxt}</span>
         </div>
       </div>
     </div>
@@ -3358,6 +3541,10 @@ function openPlayerModal(name){
       <div class="pm-row"><span class="k">Hometown</span><span class="v">${escapeHtml(info.hometown || '—')}</span></div>
       <div class="pm-row"><span class="k">Nation</span><span class="v">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span></div>
       <div class="pm-row"><span class="k">Ranking Points</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
+    </div>
+    <div class="pm-section">
+      <h4>Latest Results</h4>
+      ${latestResultsHtml(row.name)}
     </div>
     <div class="pm-section">
       <h4>Achievements</h4>
