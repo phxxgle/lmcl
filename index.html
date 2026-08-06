@@ -1494,12 +1494,17 @@
     border-color: transparent currentColor transparent transparent;
     opacity: 0.55;
   }
-  .pd-mvp b i {
-    font-style: normal;
-    display: inline-flex;
-    align-items: center;
+  /* Nhấp nháy nhẹ để huy hiệu bắt mắt hơn */
+  .pd-mvp b { animation: mvpBlink 1.8s ease-in-out infinite; }
+  .pd-mvp b:nth-child(2) { animation-delay: 0.6s; }
+
+  @keyframes mvpBlink {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50%      { opacity: 0.62; filter: brightness(1.35); }
   }
-  .pd-mvp b svg { width: 11px; height: 11px; }
+  @media (prefers-reduced-motion: reduce) {
+    .pd-mvp b { animation: none; }
+  }
 
   .pd-mvp .mvp-team {
     background: linear-gradient(135deg, #FFE87C 0%, #FFC64D 45%, #FF9A3D 100%);
@@ -1940,6 +1945,101 @@
   .rank-pts .rp.silver { background: linear-gradient(135deg, #E2E8F0, #94A3B8); color: #0F172A; }
   .rank-pts .rp.bronze { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; }
   .rank-pts b { color: var(--chalk); font-family: 'Space Mono', monospace; font-size: 12px; }
+
+  /* ── Lời nhắn cho vận động viên ── */
+  .cmt-form { margin-bottom: 14px; }
+  .cmt-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    padding: 9px 12px;
+    margin-bottom: 8px;
+    resize: none;
+  }
+  .cmt-input::placeholder { color: var(--chalk-dim); }
+  .cmt-input:focus { outline: none; border-color: var(--menu-accent); }
+  .cmt-area { line-height: 1.5; }
+
+  .cmt-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .cmt-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--chalk-dim);
+  }
+  .cmt-send {
+    background: var(--menu-accent);
+    color: var(--on-menu-accent);
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  .cmt-send:hover { opacity: 0.88; }
+  .cmt-send:disabled { opacity: 0.5; cursor: default; }
+
+  .cmt-error {
+    margin: 8px 0 0;
+    font-size: 11px;
+    color: var(--red);
+    min-height: 0;
+  }
+  .cmt-error:empty { display: none; }
+
+  .cmt-list { display: flex; flex-direction: column; gap: 8px; }
+  .cmt-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--menu-accent);
+    border-radius: 10px;
+    padding: 9px 11px;
+  }
+  .cmt-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .cmt-who {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--chalk);
+  }
+  .cmt-time {
+    flex-shrink: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 9.5px;
+    color: var(--chalk-dim);
+  }
+  .cmt-body {
+    margin: 0;
+    font-size: 12px;
+    color: var(--chalk-dim);
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .cmt-empty {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--chalk-dim);
+    font-style: italic;
+    text-align: center;
+    padding: 12px 0;
+  }
 
   .pm-none {
     margin: 0;
@@ -2715,6 +2815,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const scoresRef = firebase.database().ref('scores');
+const commentsRef = firebase.database().ref('comments');
 
 function showConnBanner(msg){
   const el = document.getElementById('conn-banner');
@@ -2743,6 +2844,7 @@ const uiStateView = {
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let activeGroupTab = 'all';
+let currentView = 'livematch';
 const paintedStandings = { nam: null, nu: null, overall: null, rankings: null };
 const ROW_ANIM_MS = 260;   
 const STAGGER_MS = 65;     
@@ -3537,9 +3639,6 @@ pinInput.addEventListener('keypress', (e) => {
 // Avatar mặc định khi VĐV chưa có ảnh
 const DEFAULT_AVATAR_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
 
-// Ngôi sao nhỏ trong huy hiệu MVP
-const MVP_STAR = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 16.4l-5.6 3.3 1.4-6.3L3 9.1l6.4-.6L12 2.6z"/></svg>`;
-
 let memberFilter = 'all';
 let memberProvince = 'all';
 let memberSearch = '';
@@ -3654,7 +3753,7 @@ function renderMembers(){
          <img src="${escapeHtml(info.photo)}" alt="${escapeHtml(r.name)}" loading="lazy">`
       : DEFAULT_AVATAR_SVG;
     return `<article class="pd-card" data-player="${escapeHtml(r.name)}" style="animation-delay:${i * 45}ms">
-      <div class="pd-photo">${photo}${(r.tags && r.tags.length) ? `<span class="pd-mvp">${r.tags.map(t => `<b class="mvp-${t.key}"><i>${MVP_STAR}</i>${t.label}</b>`).join('')}</span>` : ''}</div>
+      <div class="pd-photo">${photo}${(r.tags && r.tags.length) ? `<span class="pd-mvp">${r.tags.map(t => `<b class="mvp-${t.key}">${t.label}</b>`).join('')}</span>` : ''}</div>
       <div class="pd-body">
         <div class="pd-namerow">
           <div class="pd-namecol">
@@ -3889,10 +3988,116 @@ function openPlayerPage(name){
     <div class="card">
       <h2>Latest Results</h2>
       ${latestResultsHtml(row.name)}
+    </div>
+
+    <div class="card">
+      <h2>Lời nhắn</h2>
+      <p class="sub">Ai cũng có thể gửi và đọc lời nhắn cho vận động viên này.</p>
+      <div class="cmt-form">
+        <input type="text" id="cmt-name" class="cmt-input" maxlength="40" placeholder="Tên của bạn">
+        <textarea id="cmt-text" class="cmt-input cmt-area" maxlength="300" rows="3" placeholder="Viết lời nhắn..."></textarea>
+        <div class="cmt-actions">
+          <span class="cmt-count" id="cmt-count">0/300</span>
+          <button type="button" class="cmt-send" id="cmt-send">Gửi lời nhắn</button>
+        </div>
+        <p class="cmt-error" id="cmt-error"></p>
+      </div>
+      <div class="cmt-list" id="cmt-list"><p class="cmt-empty">Đang tải lời nhắn...</p></div>
     </div>`;
 
   switchView('player');
   setHeader(['LMCL', 'PLAYER', 'PROFILE'], '');
+  setupComments(row.name);
+}
+
+/* ─── Lời nhắn công khai cho vận động viên ─────────────────────────────── */
+// Khoá lưu trên Firebase: bỏ dấu tiếng Việt để tránh ký tự không hợp lệ
+function playerKey(name){
+  return name.normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .trim().toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+let activeCommentRef = null;
+
+function detachComments(){
+  if(activeCommentRef){
+    activeCommentRef.off();
+    activeCommentRef = null;
+  }
+}
+
+function formatCommentTime(ts){
+  if(!ts) return '';
+  const d = new Date(ts);
+  const two = n => String(n).padStart(2, '0');
+  return `${two(d.getDate())}/${two(d.getMonth() + 1)}/${d.getFullYear()} ${two(d.getHours())}:${two(d.getMinutes())}`;
+}
+
+function setupComments(playerName){
+  detachComments();
+
+  const listEl = document.getElementById('cmt-list');
+  const nameEl = document.getElementById('cmt-name');
+  const textEl = document.getElementById('cmt-text');
+  const sendEl = document.getElementById('cmt-send');
+  const errEl = document.getElementById('cmt-error');
+  const countEl = document.getElementById('cmt-count');
+  if(!listEl || !sendEl) return;
+
+  // Nhớ tên đã nhập lần trước cho tiện
+  const savedName = sessionStorage.getItem('lmcl_cmt_name');
+  if(savedName) nameEl.value = savedName;
+
+  textEl.addEventListener('input', () => {
+    countEl.textContent = textEl.value.length + '/300';
+  });
+
+  const ref = commentsRef.child(playerKey(playerName));
+  activeCommentRef = ref;
+
+  ref.limitToLast(50).on('value', snap => {
+    const val = snap.val() || {};
+    const items = Object.keys(val)
+      .map(k => ({ id: k, ...val[k] }))
+      .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+
+    if(items.length === 0){
+      listEl.innerHTML = '<p class="cmt-empty">Chưa có lời nhắn nào. Hãy là người đầu tiên!</p>';
+      return;
+    }
+    listEl.innerHTML = items.map(it => `<div class="cmt-item">
+        <div class="cmt-head">
+          <span class="cmt-who">${escapeHtml(it.name || 'Ẩn danh')}</span>
+          <span class="cmt-time">${escapeHtml(formatCommentTime(it.ts))}</span>
+        </div>
+        <p class="cmt-body">${escapeHtml(it.text || '')}</p>
+      </div>`).join('');
+  }, error => {
+    listEl.innerHTML = '<p class="cmt-empty">Không tải được lời nhắn (' + escapeHtml(error.message) + ')</p>';
+  });
+
+  sendEl.addEventListener('click', () => {
+    const who = nameEl.value.trim();
+    const msg = textEl.value.trim();
+    errEl.textContent = '';
+
+    if(!who){ errEl.textContent = 'Bạn hãy nhập tên'; nameEl.focus(); return; }
+    if(!msg){ errEl.textContent = 'Lời nhắn đang trống'; textEl.focus(); return; }
+
+    sendEl.disabled = true;
+    ref.push({ name: who.slice(0, 40), text: msg.slice(0, 300), ts: Date.now() })
+      .then(() => {
+        sessionStorage.setItem('lmcl_cmt_name', who);
+        textEl.value = '';
+        countEl.textContent = '0/300';
+      })
+      .catch(err => { errEl.textContent = 'Gửi thất bại: ' + err.message; })
+      .finally(() => { sendEl.disabled = false; });
+  });
 }
 
 /* =========================================
@@ -4298,8 +4503,6 @@ function setHeader(lines, badge){
   document.title = lines.join(' ') + (badge ? ' – ' + badge : '');
 }
 
-let currentView = 'livematch';
-
 let rankingsSelection = 'live';
 
 function buildRankingsSelect(){
@@ -4341,6 +4544,7 @@ function renderRankingsView(){
 
 function switchView(view){
   const cameFromOtherView = currentView !== view;
+  if(currentView === 'player' && view !== 'player' && typeof detachComments === 'function') detachComments();
   currentView = view;
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById('view-' + view);
