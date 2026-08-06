@@ -1037,8 +1037,16 @@
   .drawer-head {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding: 14px 16px 10px;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .drawer-logo {
+    height: 34px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
   }
   .drawer-head span {
     font-family: 'Tomorrow', sans-serif;
@@ -1658,6 +1666,22 @@
     font-style: normal;
     font-size: 9.5px;
     color: var(--chalk-dim);
+    margin-top: 2px;
+  }
+  .pm-res-match {
+    display: block;
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--chalk-dim);
+  }
+  .pm-res-match b { color: var(--chalk); font-weight: 600; }
+  .pm-res-match em {
+    font-style: normal;
+    color: var(--menu-accent);
+    font-size: 9.5px;
+    font-weight: 700;
+    margin: 0 5px;
+    letter-spacing: 0.4px;
   }
   .pm-res-score {
     flex-shrink: 0;
@@ -1983,6 +2007,7 @@
 <div class="drawer-overlay" id="drawer-overlay"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-head">
+    <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="LMCL" class="drawer-logo">
     <button type="button" class="drawer-close" id="drawer-close-btn" aria-label="Đóng menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
@@ -3468,6 +3493,7 @@ function latestResults(name){
     const own = isP1 ? sc.s1 : sc.s2;
     const opp = isP1 ? sc.s2 : sc.s1;
     live.push({
+      mine: name,
       opponent: isP1 ? f.p2 : f.p1,
       own, opp,
       win: own > opp,
@@ -3489,6 +3515,7 @@ function latestResults(name){
           const own = inA ? m.sa : m.sb;
           const opp = inA ? m.sb : m.sa;
           items.push({
+            mine: (inA ? ev.teams[m.a] : ev.teams[m.b]).join(' / '),
             opponent: (inA ? ev.teams[m.b] : ev.teams[m.a]).join(' / '),
             own, opp,
             win: own > opp,
@@ -3507,7 +3534,10 @@ function latestResultsHtml(name){
   if(!res) return '<p class="pm-none">Chưa có trận nào được ghi nhận</p>';
   const rows = res.items.slice(0, 8).map(r => `<li class="${r.win ? 'win' : 'loss'}">
       <span class="pm-res-tag">${r.win ? 'T' : 'B'}</span>
-      <span class="pm-res-opp">${escapeHtml(r.opponent)}<i>${escapeHtml(r.event)}</i></span>
+      <span class="pm-res-opp">
+        <span class="pm-res-match"><b>${escapeHtml(r.mine)}</b><em>vs</em>${escapeHtml(r.opponent)}</span>
+        <i>${escapeHtml(r.event)}</i>
+      </span>
       <span class="pm-res-score">${r.own}<em>-</em>${r.opp}</span>
     </li>`).join('');
   return `<p class="pm-res-label">${escapeHtml(res.label)}</p><ul class="pm-results">${rows}</ul>`;
