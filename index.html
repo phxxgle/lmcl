@@ -910,8 +910,16 @@
   table.standings-teams th:nth-child(7), table.standings-teams td:nth-child(7) { width: 10%; }
   table.standings-teams th:nth-child(8), table.standings-teams td:nth-child(8) { width: 8%; }
 
-  table.standings-simple th:nth-child(1), table.standings-simple td:nth-child(1) { width: 16%; }
-  table.standings-simple th:nth-child(2), table.standings-simple td:nth-child(2) { width: 84%; }
+  table.standings-simple th:nth-child(1), table.standings-simple td:nth-child(1) { width: 13%; }
+  table.standings-simple th:nth-child(2), table.standings-simple td:nth-child(2) { width: 55%; }
+  table.standings-simple th:nth-child(3), table.standings-simple td:nth-child(3) { width: 32%; }
+  table.standings-simple td.event-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    color: var(--chalk-dim);
+    white-space: normal;
+    line-height: 1.3;
+  }
 
   /* =========================================
      TOURNAMENT: single-card two-state layout
@@ -2876,11 +2884,12 @@ function eventContentHtml(ev){
     const simple = ev.finalRanking.map(r => `<tr>
       <td>${getRankBadgeHtml(r.rank)}</td>
       <td>${pairHtml(ev.teams[r.t])}</td>
+      <td class="event-name">${escapeHtml(ev.title || '')}</td>
     </tr>`).join('');
     return `${fixturesHtml}
       <div class="table-scroll">
         <table class="standings standings-simple">
-          <thead><tr><th>#</th><th>Đội</th></tr></thead>
+          <thead><tr><th>#</th><th>Đội</th><th>Nội dung</th></tr></thead>
           <tbody>${simple}</tbody>
         </table>
       </div>`;
