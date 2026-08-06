@@ -1656,20 +1656,21 @@ const TOUR_DATA = {
       badge: "JANUARY 2026",
       status: "finished",
       note: "Đã kết thúc — Tháng 1",
-      // Giải mở màn mùa 2026 nên chưa có mốc để so sánh: change = 0 (hiển thị "–").
+      // Change tính theo chênh lệch thứ hạng so với bảng tích luỹ cuối Season 2025.
+      // Người chưa có trong bảng 2025 là gương mặt mới nên để 0 (hiển thị "–").
       standings: [
-        { name: "Nguyễn Đan Quyên",   points: 8, change: 0 },
-        { name: "Vương Mạnh Chuyền",  points: 6, change: 0 },
-        { name: "Phạm Minh Quân",     points: 6, change: 0 },
-        { name: "Chu Văn Huynh",      points: 5, change: 0 },
-        { name: "Lê Thanh Phương",    points: 5, change: 0 },
-        { name: "Vũ Ngọc Linh",       points: 5, change: 0 },
-        { name: "Bùi Huyền Trang",    points: 4, change: 0 },
-        { name: "Đặng Thị Nhung",     points: 4, change: 0 },
-        { name: "Trần Trung Hiếu",    points: 3, change: 0 },
-        { name: "Nguyễn Tiến Trung",  points: 3, change: 0 },
-        { name: "Nguyễn Đình Đạt",    points: 3, change: 0 },
-        { name: "Nguyễn Văn Thành",   points: 3, change: 0 }
+        { name: "Nguyễn Đan Quyên",   points: 8, change:  0 },
+        { name: "Vương Mạnh Chuyền",  points: 6, change:  0 },
+        { name: "Phạm Minh Quân",     points: 6, change:  3 },
+        { name: "Chu Văn Huynh",      points: 5, change: -1 },
+        { name: "Lê Thanh Phương",    points: 5, change:  2 },
+        { name: "Vũ Ngọc Linh",       points: 5, change:  0 },
+        { name: "Bùi Huyền Trang",    points: 4, change: -5 },
+        { name: "Đặng Thị Nhung",     points: 4, change:  0 },
+        { name: "Trần Trung Hiếu",    points: 3, change:  0 },
+        { name: "Nguyễn Tiến Trung",  points: 3, change: -6 },
+        { name: "Nguyễn Đình Đạt",    points: 3, change:  0 },
+        { name: "Nguyễn Văn Thành",   points: 3, change: -3 }
       ]
     }
   ],
