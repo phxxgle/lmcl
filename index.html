@@ -1116,7 +1116,13 @@
     cursor: pointer;
     border-left: 2px solid var(--line);
   }
-  .drawer-tour-item:hover, .drawer-tour-item.active { color: var(--chalk); border-left-color: var(--chalk-dim); }
+  .drawer-tour-item:hover { color: var(--chalk); border-left-color: var(--chalk-dim); }
+  .drawer-tour-item.active {
+    color: var(--menu-accent);
+    font-weight: 600;
+    border-left-color: var(--menu-accent);
+    background: rgba(255, 255, 255, 0.05);
+  }
 
   .drawer-divider { height: 1px; background: var(--line); margin: 8px 10px; }
 
@@ -3208,16 +3214,33 @@ const drawerOverlay = document.getElementById('drawer-overlay');
 const drawerOpenBtn = document.getElementById('drawer-open-btn');
 const drawerCloseBtn = document.getElementById('drawer-close-btn');
 
+// Đồng bộ trạng thái menu với những gì đang xem, chạy mỗi lần mở drawer.
+function syncDrawerState(){
+  const submenu = document.getElementById('nav-tour-submenu');
+  const toggle = document.getElementById('nav-tour-toggle');
+  if(!submenu || !toggle) return;
+
+  // Đang ở trang Tournament thì mở sẵn danh sách mùa để thấy mục đang xem
+  const onTour = currentView === 'tour';
+  submenu.classList.toggle('open', onTour);
+  toggle.classList.toggle('expanded', onTour);
+
+  submenu.querySelectorAll('.drawer-year-btn').forEach(b => {
+    b.classList.toggle('active', onTour && b.getAttribute('data-year') === String(currentTourYear));
+  });
+  submenu.querySelectorAll('.drawer-tour-item[data-tour-id]').forEach(b => {
+    b.classList.toggle('active', onTour && b.getAttribute('data-tour-id') === currentTourId);
+  });
+}
+
 function openDrawer(){
+  syncDrawerState();
   drawer.classList.add('open');
   drawerOverlay.classList.add('open');
 }
 function closeDrawer(){
   drawer.classList.remove('open');
   drawerOverlay.classList.remove('open');
-  document.getElementById('nav-tour-submenu').classList.remove('open');
-  const tourToggle = document.getElementById('nav-tour-toggle');
-  if(tourToggle) tourToggle.classList.remove('expanded');
 }
 
 drawerOpenBtn.addEventListener('click', openDrawer);
