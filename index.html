@@ -1659,20 +1659,73 @@ const TOUR_DATA = {
       badge: "JANUARY 2026",
       status: "finished",
       note: "Đã kết thúc — Tháng 1",
+      events: {
+        md: {
+          label: "MD",
+          title: "Đôi Nam",
+          rowClass: "row-nam",
+          teams: [
+            ["Vương Mạnh Chuyền", "Trần Trung Hiếu"],
+            ["Chu Văn Huynh", "Phạm Minh Quân"],
+            ["Nguyễn Đan Quyên", "Nguyễn Văn Thành"]
+          ],
+          matches: [],
+          finalRanking: [
+            { rank: 1, t: 0 },
+            { rank: 2, t: 1 },
+            { rank: 3, t: 2 }
+          ],
+          showFullStats: false
+        },
+        wd: {
+          label: "WD",
+          title: "Đôi Nữ",
+          rowClass: "row-nu",
+          teams: [
+            ["Lê Thanh Phương", "Nguyễn Đình Đạt"],
+            ["Vũ Ngọc Linh", "Đặng Thị Nhung"],
+            ["Bùi Huyền Trang", "Nguyễn Ngọc Bích"]
+          ],
+          matches: [],
+          finalRanking: [
+            { rank: 1, t: 0 },
+            { rank: 2, t: 1 },
+            { rank: 3, t: 2 }
+          ],
+          showFullStats: false
+        },
+        xd: {
+          label: "XD",
+          title: "Đôi Nam Nữ",
+          rowClass: "row-xd",
+          teams: [
+            ["Nguyễn Đan Quyên", "Vương Mạnh Chuyền"],
+            ["Phạm Minh Quân", "Vũ Ngọc Linh"],
+            ["Nguyễn Văn Thành", "Nguyễn Ngọc Bích"]
+          ],
+          matches: [],
+          finalRanking: [
+            { rank: 1, t: 0 },
+            { rank: 2, t: 1 },
+            { rank: 3, t: 2 }
+          ],
+          showFullStats: false
+        }
+      },
       // Change tính theo chênh lệch thứ hạng so với bảng tích luỹ cuối Season 2025.
       // Người chưa có trong bảng 2025 là gương mặt mới nên để 0 (hiển thị "–").
       standings: [
         { name: "Nguyễn Đan Quyên",   points: 8, change:  0 },
-        { name: "Vương Mạnh Chuyền",  points: 6, change:  9 },
+        { name: "Vương Mạnh Chuyền",  points: 6, change:  0 },
         { name: "Phạm Minh Quân",     points: 6, change:  4 },
         { name: "Chu Văn Huynh",      points: 5, change: -2 },
         { name: "Lê Thanh Phương",    points: 5, change:  1 },
-        { name: "Vũ Ngọc Linh",       points: 5, change:  6 },
+        { name: "Vũ Ngọc Linh",       points: 5, change:  5 },
         { name: "Bùi Huyền Trang",    points: 4, change: -4 },
         { name: "Đặng Thị Nhung",     points: 4, change:  0 },
-        { name: "Trần Trung Hiếu",    points: 3, change:  5 },
+        { name: "Trần Trung Hiếu",    points: 3, change:  4 },
         { name: "Nguyễn Tiến Trung",  points: 3, change: -6 },
-        { name: "Nguyễn Đình Đạt",    points: 3, change:  2 },
+        { name: "Nguyễn Đình Đạt",    points: 3, change:  1 },
         { name: "Nguyễn Văn Thành",   points: 3, change: -3 }
       ]
     }
@@ -1711,16 +1764,16 @@ const TOUR_DATA = {
         { name: "Chu Văn Huynh",      points: 3, change: -1 },
         { name: "Bùi Huyền Trang",    points: 3, change: -1 },
         { name: "Nguyễn Tiến Trung",  points: 3, change:  2 },
-        { name: "Đặng Văn Hoàng",     points: 3, change:  8 },
-        { name: "Lê Thanh Phương",    points: 2, change:  2 },
+        { name: "Đặng Văn Hoàng",     points: 3, change:  7 },
+        { name: "Lê Thanh Phương",    points: 2, change:  1 },
         { name: "Phạm Minh Quân",     points: 2, change: -4 },
         { name: "Đặng Thị Nhung",     points: 2, change: -4 },
-        { name: "Nguyễn Văn Thành",   points: 1, change:  1 },
-        { name: "Nguyễn Ngọc Bích",   points: 1, change:  4 },
-        { name: "Vương Mạnh Chuyền",  points: 0, change: -4 },
-        { name: "Vũ Ngọc Linh",       points: 0, change: -3 },
-        { name: "Nguyễn Đình Đạt",    points: 0, change: -2 },
-        { name: "Trần Trung Hiếu",    points: 0, change: -2 }
+        { name: "Nguyễn Văn Thành",   points: 1, change:  0 },
+        { name: "Nguyễn Ngọc Bích",   points: 1, change:  3 },
+        // 0 điểm ở cả hai mùa nên không tính thay đổi hạng: hiển thị "–"
+        { name: "Vũ Ngọc Linh",       points: 0, change:  0 },
+        { name: "Nguyễn Đình Đạt",    points: 0, change:  0 },
+        { name: "Trần Trung Hiếu",    points: 0, change:  0 }
       ]
     }
   ],
@@ -1759,7 +1812,6 @@ const TOUR_DATA = {
         { name: "Đặng Thị Nhung",     points: 2, change: 0 },
         { name: "Nguyễn Đan Quyên",   points: 1, change: 0 },
         { name: "Nguyễn Tiến Trung",  points: 1, change: 0 },
-        { name: "Vương Mạnh Chuyền",  points: 0, change: 0 },
         { name: "Lê Thanh Phương",    points: 0, change: 0 },
         { name: "Vũ Ngọc Linh",       points: 0, change: 0 },
         { name: "Nguyễn Văn Thành",   points: 0, change: 0 },
