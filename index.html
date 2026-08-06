@@ -902,27 +902,6 @@
   /* =========================================
      TOURNAMENT: single-card two-state layout
      ========================================= */
-  .tour-breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 8px 0 12px;
-    font-size: 11.5px;
-    color: var(--chalk-dim);
-  }
-  .tour-breadcrumb button {
-    background: none;
-    border: none;
-    color: var(--menu-accent);
-    font-family: 'Inter', sans-serif;
-    font-size: 11.5px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0;
-  }
-  .tour-breadcrumb .bc-sep { color: var(--chalk-dim); }
-  .tour-breadcrumb .bc-cur { color: var(--chalk); font-weight: 600; }
-
   /* Giải switcher — prev / next dạng pill */
   .tour-switcher {
     display: flex;
@@ -1412,26 +1391,21 @@
   </div><!-- /view-livematch -->
 
   <div id="view-tour" class="app-view">
-    <div class="card" id="tour-card">
-      <!-- Header đổi tuỳ trạng thái: danh sách hoặc chi tiết giải -->
-      <div class="card-header" id="tour-card-header">
-        <h2 id="tour-title">Tournament</h2>
-        <div id="tour-nav-btns" style="display:none;"></div>
-      </div>
+    <!-- Danh sách các giải trong mùa, luôn hiển thị trên cùng -->
+    <div class="card">
+      <h2 id="tour-title">Tournament</h2>
+      <p class="sub" id="tour-sub"></p>
+      <div id="tour-list"></div>
+    </div>
 
-      <!-- Trạng thái 1: Danh sách giải theo năm -->
-      <div id="tour-list-view">
-        <p class="sub" id="tour-sub"></p>
-        <div id="tour-list"></div>
+    <!-- Kết quả của giải được chọn, hiện bên dưới -->
+    <div class="card" id="tour-detail-view" style="display:none;">
+      <div class="card-header">
+        <h2 id="tour-detail-title"></h2>
+        <div id="tour-nav-btns"></div>
       </div>
-
-      <!-- Trạng thái 2: Chi tiết giải đã chọn -->
-      <div id="tour-detail-view" style="display:none;">
-        <!-- Breadcrumb + switcher giải -->
-        <div class="tour-breadcrumb" id="tour-breadcrumb"></div>
-        <div class="sub-tabs" id="tour-detail-tabs"></div>
-        <div id="tour-detail-content"></div>
-      </div>
+      <div class="sub-tabs" id="tour-detail-tabs"></div>
+      <div id="tour-detail-content"></div>
     </div>
   </div>
 
@@ -2717,28 +2691,21 @@ function allFinishedTournaments(){
 
 function showTourListView(){
   currentTourId = null;
-  document.getElementById('tour-title').textContent = 'Tournament — Season ' + currentTourYear;
-  document.getElementById('tour-nav-btns').style.display = 'none';
-  document.getElementById('tour-list-view').style.display = '';
-  document.getElementById('tour-detail-view').style.display = 'none';
-  // re-highlight active card
-  document.querySelectorAll('#tour-list .tour-card').forEach(c => {
-    c.classList.remove('active-tour');
-  });
+  const detail = document.getElementById('tour-detail-view');
+  if(detail) detail.style.display = 'none';
+  document.querySelectorAll('#tour-list .tour-card').forEach(c => c.classList.remove('active-tour'));
 }
 
 function showTourDetailView(t, tabKey){
   if(!t) return;
   currentTourId = t.id;
 
-  // Update header
-  document.getElementById('tour-title').textContent = t.badge || t.name;
+  document.getElementById('tour-detail-title').textContent = t.badge || t.name;
 
-  // Build prev/next switcher
+  // Nút chuyển nhanh sang giải đã kết thúc khác
   const finished = allFinishedTournaments();
   const idx = finished.findIndex(x => x.t.id === t.id);
   const navBtns = document.getElementById('tour-nav-btns');
-  navBtns.style.display = 'flex';
   navBtns.innerHTML = `<div class="tour-switcher">
     <button class="tour-switch-btn" id="tour-prev-btn" aria-label="Giải trước" ${idx >= finished.length - 1 ? 'disabled' : ''}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -2751,19 +2718,8 @@ function showTourDetailView(t, tabKey){
 
   const prevBtn = document.getElementById('tour-prev-btn');
   const nextBtn = document.getElementById('tour-next-btn');
-  if(prevBtn) prevBtn.addEventListener('click', () => showTourDetailView(finished[idx + 1].t));
-  if(nextBtn) nextBtn.addEventListener('click', () => showTourDetailView(finished[idx - 1].t));
-
-  // Breadcrumb: Season 2026 → June 2026
-  const year = finished[idx] ? finished[idx].year : currentTourYear;
-  document.getElementById('tour-breadcrumb').innerHTML =
-    `<button id="tour-back-btn">Season ${year}</button>
-     <span class="bc-sep">›</span>
-     <span class="bc-cur">${escapeHtml(t.badge || t.name)}</span>`;
-  document.getElementById('tour-back-btn').addEventListener('click', () => {
-    renderTourList(year);
-    showTourListView();
-  });
+  if(prevBtn) prevBtn.addEventListener('click', () => switchToTournament(finished[idx + 1]));
+  if(nextBtn) nextBtn.addEventListener('click', () => switchToTournament(finished[idx - 1]));
 
   // Tabs
   const eventKeys = t.events ? Object.keys(t.events) : [];
@@ -2780,19 +2736,23 @@ function showTourDetailView(t, tabKey){
     btn.addEventListener('click', () => showTourDetailView(t, btn.getAttribute('data-tab')));
   });
 
-  const contentEl = document.getElementById('tour-detail-content');
-  contentEl.innerHTML = active === 'rank' ? rankContentHtml(t) : eventContentHtml(t.events[active]);
+  document.getElementById('tour-detail-content').innerHTML =
+    active === 'rank' ? rankContentHtml(t) : eventContentHtml(t.events[active]);
 
-  document.getElementById('tour-list-view').style.display = 'none';
   document.getElementById('tour-detail-view').style.display = '';
 
-  // Highlight card in list if visible
   document.querySelectorAll('#tour-list .tour-card').forEach(c => {
     c.classList.toggle('active-tour', c.getAttribute('data-tour-id') === t.id);
   });
 
   if(t.titleLines) setHeader(t.titleLines, t.badge);
-  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+// Chuyển sang giải khác, tự đổi năm nếu giải đó thuộc mùa khác.
+function switchToTournament(entry){
+  if(!entry) return;
+  if(String(entry.year) !== String(currentTourYear)) renderTourList(entry.year);
+  showTourDetailView(entry.t);
 }
 
 // Keep old name for compatibility with other callers
@@ -2823,7 +2783,7 @@ function renderTourList(year){
     return `<div class="tour-card ${isLive ? 'live-badge' : 'finished-card'}" data-tour-id="${escapeHtml(t.id)}" data-status="${escapeHtml(t.status)}">
       <div>
         <h3>${escapeHtml(t.badge || t.name)}</h3>
-        <p>${isLive ? 'Đang diễn ra' : 'Đã kết thúc'}</p>
+        ${isLive ? '<p>Đang diễn ra</p>' : ''}
       </div>
       <span class="tour-arrow">›</span>
     </div>`;
