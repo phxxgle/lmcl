@@ -1258,7 +1258,7 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
-    animation: pdIn 0.75s cubic-bezier(0.3, 0.8, 0.4, 1) both;
+    animation: pdIn 0.55s cubic-bezier(0.25, 0.9, 0.35, 1) both;
   }
   .pd-card:hover {
     transform: translateY(-3px);
@@ -1286,15 +1286,13 @@
     to   { opacity: 0; }
   }
 
-  /* Card hiện ra kiểu nháy sáng dần, lệch nhau theo thứ tự */
+  /* Card mở ra như kéo rèm từ trên xuống, lệch nhau theo thứ tự */
   @keyframes pdIn {
-    0%   { opacity: 0; transform: translateY(12px) scale(0.97); filter: brightness(1.8); }
-    35%  { opacity: 0.9; filter: brightness(1.4); }
-    48%  { opacity: 0.3; }
-    62%  { opacity: 1; filter: brightness(1.15); }
-    78%  { opacity: 0.65; }
-    100% { opacity: 1; transform: translateY(0) scale(1); filter: brightness(1); }
+    0%   { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateY(10px); }
+    60%  { opacity: 1; }
+    100% { opacity: 1; clip-path: inset(0 0 0 0); transform: translateY(0); }
   }
+
   @media (prefers-reduced-motion: reduce) {
     .pd-card { animation: none; }
     .pd-card:hover, .pd-card:active { transform: none; }
@@ -1514,46 +1512,41 @@
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--glass-border);
     border-radius: 7px;
-    padding: 3px 8px;
+    padding: 3px 8px 3px 6px;
   }
-  .pm-medal i {
-    width: 9px; height: 9px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-  .pm-medal.gold i   { background: linear-gradient(135deg, #FFE259, #FFA751); }
-  .pm-medal.silver i { background: linear-gradient(135deg, #E2E8F0, #94A3B8); }
-  .pm-medal.bronze i { background: linear-gradient(135deg, #F6AD55, #DD6B20); }
+  .pm-ico { width: 15px; height: 15px; flex-shrink: 0; }
+  .pm-medal.gold   { color: #FFC64D; }
+  .pm-medal.silver { color: #CBD5E1; }
+  .pm-medal.bronze { color: #E08B4C; }
+  .pm-medal.gold, .pm-medal.silver, .pm-medal.bronze { color: var(--chalk); }
+  .pm-medal.gold .pm-ico   { color: #FFC64D; }
+  .pm-medal.silver .pm-ico { color: #CBD5E1; }
+  .pm-medal.bronze .pm-ico { color: #E08B4C; }
 
   .pm-ach {
     list-style: none;
     margin: 0;
     padding: 0;
-    max-height: 190px;
+    max-height: 200px;
     overflow-y: auto;
   }
   .pm-ach li {
-    position: relative;
-    padding: 6px 0 6px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 7px 0;
     font-size: 11.5px;
     color: var(--chalk-dim);
-    line-height: 1.4;
+    line-height: 1.45;
     border-top: 1px solid var(--line);
   }
   .pm-ach li:first-child { border-top: none; }
-  .pm-ach li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 11px;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-  }
+  .pm-ach li .pm-ico { margin-top: 1px; }
   .pm-ach li.gold   { color: var(--chalk); }
-  .pm-ach li.gold::before   { background: linear-gradient(135deg, #FFE259, #FFA751); }
-  .pm-ach li.silver::before { background: linear-gradient(135deg, #E2E8F0, #94A3B8); }
-  .pm-ach li.bronze::before { background: linear-gradient(135deg, #F6AD55, #DD6B20); }
-  .pm-ach li.rank::before   { background: none; border: 1.5px solid var(--menu-accent); top: 10px; }
+  .pm-ach li.gold .pm-ico   { color: #FFC64D; }
+  .pm-ach li.silver .pm-ico { color: #CBD5E1; }
+  .pm-ach li.bronze .pm-ico { color: #E08B4C; }
+  .pm-ach li.rank .pm-ico   { color: var(--menu-accent); }
 
   .pm-none {
     margin: 0;
@@ -2282,7 +2275,7 @@ const MEMBERS_DATA = {
     "Nguyễn Văn Thành":  { dob: "1999", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
     "Nguyễn Đình Đạt":   { dob: "1997", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
     "Trần Trung Hiếu":   { dob: "20/01/1997", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/zVqZ8XLZ/716930520-1626252805150868-5081195298887915256-n.jpg" },
-    "Nguyễn Tiến Trung": { dob: "01/07/1997", hometown: "",            nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
+    "Nguyễn Tiến Trung": { dob: "01/07/1997", hometown: "Republic of Thanh Hóa", nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
   },
   nu: {
     "Nguyễn Đan Quyên":  { dob: "08/03/2005", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/bgprLybp/QUyen.jpg" },
@@ -3162,7 +3155,8 @@ function allProvinces(){
 function locationText(info){
   if(!info) return '—';
   const parts = [info.hometown, info.nation].filter(Boolean);
-  return parts.length ? parts.join(', ') : '—';
+  const uniq = [...new Set(parts)];
+  return uniq.length ? uniq.join(', ') : '—';
 }
 
 // Danh sách VĐV kèm thứ hạng, xếp theo bảng LMCL Rankings mới nhất.
@@ -3262,10 +3256,15 @@ function renderMembers(){
 }
 
 /* ─── Thành tích tự tổng hợp từ dữ liệu các giải ────────────────────────── */
-const EVENT_EN = { ms: "Men's Singles", ws: "Women's Singles", md: "Men's Doubles", wd: "Women's Doubles", xd: "Mixed Doubles" };
+const EVENT_VI = { ms: 'Đơn Nam', ws: 'Đơn Nữ', md: 'Đôi Nam', wd: 'Đôi Nữ', xd: 'Đôi Nam Nữ' };
 const MEDAL_BY_RANK = { 1: 'gold', 2: 'silver', 3: 'bronze' };
-const MEDAL_EN = { gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
-const ORDINAL = { 1: '1st', 2: '2nd', 3: '3rd' };
+const MEDAL_VI = { gold: 'Huy chương Vàng', silver: 'Huy chương Bạc', bronze: 'Huy chương Đồng' };
+
+// Icon huy chương (dải ruy băng + mặt huy chương có ngôi sao)
+const MEDAL_ICON = `<svg class="pm-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 1.8h3.1l2.2 4.6-2.6 1.2L6.6 1.8zm10.8 0h-3.1l-2.2 4.6 2.6 1.2 2.7-5.8z" opacity="0.75"/><circle cx="12" cy="15.6" r="6.4"/><path d="M12 11.9l1.05 2.15 2.37.34-1.71 1.66.4 2.36L12 17.29l-2.11 1.12.4-2.36-1.71-1.66 2.37-.34L12 11.9z" fill="#1a1a1a" opacity="0.45"/></svg>`;
+
+// Icon cho thứ hạng trên bảng xếp hạng
+const RANK_ICON = `<svg class="pm-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="20" x2="6" y2="13"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="18" y1="20" x2="18" y2="9"></line></svg>`;
 
 // Top 3 của một hạng mục: ưu tiên thứ hạng ghi sẵn, nếu không thì tính từ kết quả trận
 function eventTop3(ev){
@@ -3298,7 +3297,7 @@ function playerAchievements(name){
           medals[medal]++;
           lines.push({
             kind: medal,
-            text: `${MEDAL_EN[medal]} — ${EVENT_EN[key] || key.toUpperCase()}, ${when}`
+            text: `${MEDAL_VI[medal]} — ${EVENT_VI[key] || key.toUpperCase()}, ${when}`
           });
         });
       });
@@ -3307,7 +3306,7 @@ function playerAchievements(name){
       if(t.standings){
         const idx = t.standings.findIndex(r => r.name === name);
         if(idx >= 0 && idx < 3){
-          lines.push({ kind: 'rank', text: `${ORDINAL[idx + 1]} — ${when} Rankings` });
+          lines.push({ kind: 'rank', text: `Hạng ${idx + 1} — Bảng xếp hạng ${when}` });
         }
       }
     });
@@ -3319,15 +3318,15 @@ function playerAchievements(name){
 function achievementsHtml(name){
   const { medals, lines } = playerAchievements(name);
   if(lines.length === 0){
-    return '<p class="pm-none">No podium finishes yet</p>';
+    return '<p class="pm-none">Chưa có thành tích trong top 3</p>';
   }
   const tally = ['gold', 'silver', 'bronze']
     .filter(k => medals[k] > 0)
-    .map(k => `<span class="pm-medal ${k}"><i></i>${medals[k]}</span>`)
+    .map(k => `<span class="pm-medal ${k}">${MEDAL_ICON}${medals[k]}</span>`)
     .join('');
   return (tally ? `<div class="pm-tally">${tally}</div>` : '') +
     '<ul class="pm-ach">' +
-    lines.map(l => `<li class="${l.kind}">${escapeHtml(l.text)}</li>`).join('') +
+    lines.map(l => `<li class="${l.kind}">${l.kind === 'rank' ? RANK_ICON : MEDAL_ICON}<span>${escapeHtml(l.text)}</span></li>`).join('') +
     '</ul>';
 }
 
