@@ -1164,83 +1164,188 @@
   .app-view.active { display: block; }
 
   /* =========================================
-     PLAYER DIRECTORY (Members)
+     PLAYER DIRECTORY
      ========================================= */
-  .members-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 14px;
+  .pd-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--chalk-dim);
+    flex-shrink: 0;
   }
 
-  .player-card {
-    position: relative;
-    background: var(--card-bg);
+  .pd-filters {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 14px;
+  }
+  .pd-chip {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--chalk-dim);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
-    border-radius: 18px;
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .pd-chip:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+  .pd-chip.active {
+    background: var(--menu-accent);
+    color: var(--on-menu-accent);
+    border-color: var(--menu-accent);
+  }
+
+  .pd-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .pd-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 16px 10px 12px;
+    border-radius: 14px;
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02) 55%),
+      rgba(0, 0, 0, 0.22);
+    border: 1px solid var(--card-border);
     overflow: hidden;
     transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
-    cursor: default;
+    animation: pdIn 0.4s ease both;
   }
-  .player-card:hover {
+  .pd-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--pd-accent);
+  }
+  .pd-card:hover {
     transform: translateY(-3px);
-    border-color: var(--glass-border-light);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+    border-color: var(--pd-accent);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  }
+  .pd-card.pd-nam { --pd-accent: var(--blue); --pd-on-accent: #031B2A; }
+  .pd-card.pd-nu  { --pd-accent: var(--pink); --pd-on-accent: #2D0310; }
+
+  @keyframes pdIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pd-card { animation: none; }
+    .pd-card:hover { transform: none; }
   }
 
-  .player-photo {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    background: linear-gradient(150deg, rgba(255,255,255,0.09), rgba(0,0,0,0.28));
+  /* Huy hiệu thứ hạng ở góc */
+  .pd-rank {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--chalk-dim);
+    border: 1px solid var(--glass-border);
+  }
+  .pd-rank.top-1 { background: linear-gradient(135deg, #FFE259, #FFA751); color: #4A2E00; border: none; font-weight: 700; box-shadow: 0 0 10px rgba(255,209,102,0.45); }
+  .pd-rank.top-2 { background: linear-gradient(135deg, #E2E8F0, #94A3B8); color: #0F172A; border: none; font-weight: 700; }
+  .pd-rank.top-3 { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; border: none; font-weight: 700; }
+
+  .pd-tag {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: var(--pd-accent);
+    color: var(--pd-on-accent);
+  }
+
+  .pd-avatar {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    margin: 6px 0 10px;
+    object-fit: cover;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid var(--pd-accent);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.03);
     overflow: hidden;
+    flex-shrink: 0;
   }
-  .player-photo img {
+  .pd-avatar svg { width: 38px; height: 38px; color: var(--pd-accent); opacity: 0.75; }
+  .pd-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .pd-name {
+    margin: 0 0 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--chalk);
+    line-height: 1.25;
+    min-height: 31px;
+    display: flex;
+    align-items: center;
+  }
+
+  .pd-meta {
+    margin: 0;
+    font-size: 10.5px;
+    color: var(--chalk-dim);
+    line-height: 1.5;
+  }
+  .pd-meta span { display: block; }
+
+  .pd-stat {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid var(--line);
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
   }
-  .player-photo-fallback {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
-    letter-spacing: 1px;
+  .pd-stat b {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    color: var(--pd-accent);
+  }
+  .pd-stat i {
+    font-style: normal;
+    font-size: 9.5px;
+    letter-spacing: 0.6px;
     color: var(--chalk-dim);
   }
 
-  .player-body {
-    padding: 12px 12px 14px;
-    text-align: left;
-  }
-  .player-given {
-    margin: 0 0 2px;
-    font-size: 10.5px;
+  .pd-empty {
+    grid-column: 1 / -1;
+    text-align: center;
     color: var(--chalk-dim);
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
+    font-size: 12.5px;
+    padding: 20px 4px;
   }
-  .player-surname {
-    margin: 0 0 9px;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-    color: var(--chalk);
-    font-family: 'Tomorrow', sans-serif;
-    text-transform: uppercase;
-    line-height: 1.15;
-  }
-  .player-nation-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11.5px;
-    color: var(--chalk-dim);
-    font-family: 'Inter', sans-serif;
-  }
-  .player-nation-row svg { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.85; }
 
   /* Tour view */
   .tour-empty {
@@ -1520,9 +1625,17 @@
 
   <div id="view-members" class="app-view">
     <div class="card">
-      <h2>Player Directory</h2>
-      <p class="sub">Hồ sơ vận động viên LMCL Allstars</p>
-      <div class="members-grid" id="members-grid"></div>
+      <div class="card-header">
+        <h2>Player Directory</h2>
+        <span class="pd-count" id="pd-count"></span>
+      </div>
+      <p class="sub">Xếp theo thứ hạng mới nhất của LMCL Rankings</p>
+      <div class="pd-filters" id="pd-filters">
+        <button type="button" class="pd-chip active" data-filter="all">Tất cả</button>
+        <button type="button" class="pd-chip" data-filter="nam">Nam</button>
+        <button type="button" class="pd-chip" data-filter="nu">Nữ</button>
+      </div>
+      <div class="pd-grid" id="pd-grid"></div>
     </div>
   </div>
 
@@ -1920,23 +2033,28 @@ const PREVIOUS_TOURNAMENT = TOUR_DATA[2026].find(t => t.id === "lmcl-jun-2026");
 const OVERALL_DATA = PREVIOUS_TOURNAMENT.standings.map(r => ({ name: r.name, points: r.points }));
 
 // Dữ liệu hồ sơ vận động viên cho mục "Members". Chỉnh sửa các trường bên dưới
-// (dob: ngày sinh, nation: quốc tịch, achievements: thành tích, photo: URL ảnh) cho từng người.
+// (year: năm sinh, hometown: quê quán, achievements: thành tích, photo: URL ảnh) cho từng người.
+// Hồ sơ vận động viên cho Player Directory.
+// dob: ngày/năm sinh · nation: quốc tịch · hometown: quê quán
+// achievements: thành tích · photo: URL ảnh (bỏ trống sẽ dùng avatar mặc định)
+const DEFAULT_NATION = "Việt Nam";
+
 const MEMBERS_DATA = {
   nam: {
-    "Vương Mạnh Chuyền": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Chu Văn Huynh": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Phạm Minh Quân": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Nguyễn Văn Thành": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Nguyễn Đình Đạt": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Trần Trung Hiếu": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Nguyễn Tiến Trung": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" }
+    "Vương Mạnh Chuyền": { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Chu Văn Huynh":     { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Phạm Minh Quân":    { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Nguyễn Văn Thành":  { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Nguyễn Đình Đạt":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Trần Trung Hiếu":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Nguyễn Tiến Trung": { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" }
   },
   nu: {
-    "Nguyễn Đan Quyên": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Lê Thanh Phương": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Vũ Ngọc Linh": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Bùi Huyền Trang": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
-    "Đặng Thị Nhung": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" }
+    "Nguyễn Đan Quyên":  { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Lê Thanh Phương":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Vũ Ngọc Linh":      { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Bùi Huyền Trang":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
+    "Đặng Thị Nhung":    { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" }
   }
 };
 
@@ -2069,7 +2187,6 @@ scoresRef.on('value', snapshot => {
   renderReadonlyGroup('nam');
   renderReadonlyGroup('nu');
   ['nam','nu','overall','rankings'].forEach(refreshStandings);
-  if(typeof currentView !== 'undefined' && currentView === 'members') renderMembers();
 }, error => {
   showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
   console.error('Firebase error:', error);
@@ -2763,51 +2880,95 @@ pinInput.addEventListener('keypress', (e) => {
 });
 
 /* =========================================
-   PLAYER DIRECTORY (Members)
+   PLAYER DIRECTORY (MEMBERS)
    ========================================= */
-const FLAG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>';
+// Avatar mặc định khi VĐV chưa có ảnh
+const DEFAULT_AVATAR_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
 
-// Tách tên hiển thị: phần cuối (tên gọi) làm dòng chữ lớn, phần còn lại (họ + tên đệm) làm dòng nhỏ phía trên.
-function splitDisplayName(name){
-  const parts = name.trim().split(/\s+/);
-  const callName = parts[parts.length - 1];
-  const given = parts.slice(0, -1).join(' ');
-  return { given, callName };
-}
+let memberFilter = 'all';
 
-// Toàn bộ vận động viên của cả hai nội dung, gộp chung một danh sách duy nhất.
-function getDirectoryRoster(){
-  return [...ROSTERS.nam, ...ROSTERS.nu].map(name => ({ name, group: playerGroup(name) }));
+// Danh sách VĐV kèm thứ hạng, xếp theo bảng LMCL Rankings mới nhất.
+function directoryRows(){
+  const rankOf = {};
+  const ptsOf = {};
+  computeOverall().forEach(r => {
+    rankOf[r.name] = r.newRank;
+    ptsOf[r.name] = r.newTotal;
+  });
+
+  const rows = [];
+  ['nam', 'nu'].forEach(group => {
+    ROSTERS[group].forEach(name => {
+      rows.push({
+        name,
+        group,
+        info: (MEMBERS_DATA[group] && MEMBERS_DATA[group][name]) || {},
+        rank: rankOf[name],
+        points: ptsOf[name]
+      });
+    });
+  });
+
+  // Có hạng lên trước (theo thứ hạng), chưa có hạng xuống cuối
+  rows.sort((a, b) => {
+    if(a.rank === undefined && b.rank === undefined) return a.name.localeCompare(b.name, 'vi');
+    if(a.rank === undefined) return 1;
+    if(b.rank === undefined) return -1;
+    return a.rank - b.rank;
+  });
+  return rows;
 }
 
 function renderMembers(){
-  const container = document.getElementById('members-grid');
-  if(!container) return;
+  const grid = document.getElementById('pd-grid');
+  const countEl = document.getElementById('pd-count');
+  if(!grid) return;
 
-  const roster = getDirectoryRoster();
+  const all = directoryRows();
+  const rows = memberFilter === 'all' ? all : all.filter(r => r.group === memberFilter);
 
-  if(roster.length === 0){
-    container.innerHTML = '<div class="no-results" style="grid-column:1/-1;">Không có vận động viên phù hợp</div>';
+  if(countEl) countEl.textContent = rows.length + ' VĐV';
+
+  if(rows.length === 0){
+    grid.innerHTML = '<div class="pd-empty">Không có vận động viên phù hợp</div>';
     return;
   }
 
-  container.innerHTML = roster.map(p => {
-    const group = p.group;
-    const info = (MEMBERS_DATA[group] && MEMBERS_DATA[group][p.name]) || {};
-    const { given, callName } = splitDisplayName(p.name);
-    const photoHtml = info.photo
-      ? `<img src="${escapeHtml(info.photo)}" alt="${escapeHtml(p.name)}">`
-      : `<span class="player-photo-fallback">${escapeHtml(callName.charAt(0).toUpperCase())}</span>`;
-    return `<div class="player-card">
-      <div class="player-photo">${photoHtml}</div>
-      <div class="player-body">
-        ${given ? `<p class="player-given">${escapeHtml(given)}</p>` : ''}
-        <h3 class="player-surname">${escapeHtml(callName)}</h3>
-        <div class="player-nation-row">${FLAG_ICON} <span>${escapeHtml(info.nation || 'Việt Nam')}</span></div>
-      </div>
-    </div>`;
+  grid.innerHTML = rows.map((r, i) => {
+    const info = r.info;
+    const rankTxt = r.rank === undefined ? '–' : '#' + r.rank;
+    const rankCls = r.rank >= 1 && r.rank <= 3 ? ' top-' + r.rank : '';
+    const avatar = info.photo
+      ? `<img src="${escapeHtml(info.photo)}" alt="${escapeHtml(r.name)}">`
+      : DEFAULT_AVATAR_SVG;
+    const pts = r.points === undefined ? '–' : r.points;
+    return `<article class="pd-card pd-${r.group}" style="animation-delay:${i * 45}ms">
+      <span class="pd-rank${rankCls}">${rankTxt}</span>
+      <span class="pd-tag">${r.group === 'nam' ? 'MS' : 'WS'}</span>
+      <div class="pd-avatar">${avatar}</div>
+      <h3 class="pd-name">${escapeHtml(r.name)}</h3>
+      <p class="pd-meta">
+        <span>DOB · ${escapeHtml(info.dob || '—')}</span>
+        <span>${escapeHtml(info.nation || DEFAULT_NATION)}</span>
+      </p>
+      <div class="pd-stat"><b>${pts}</b><i>PTS</i></div>
+    </article>`;
   }).join('');
 }
+
+// Bộ lọc Tất cả / Nam / Nữ
+(() => {
+  const filters = document.getElementById('pd-filters');
+  if(!filters) return;
+  filters.querySelectorAll('.pd-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      filters.querySelectorAll('.pd-chip').forEach(b => b.classList.remove('active'));
+      chip.classList.add('active');
+      memberFilter = chip.getAttribute('data-filter');
+      renderMembers();
+    });
+  });
+})();
 
 /* =========================================
    TOUR VIEW
