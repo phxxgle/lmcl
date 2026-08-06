@@ -1774,20 +1774,22 @@ const TOUR_DATA = {
       },
       // Bảng tích luỹ cuối Season 2025 = điểm Season 2024 + điểm Season 2025.
       // Đặng Văn Hoàng và Nguyễn Ngọc Bích đã nghỉ thi đấu sau mùa này.
+      // Chỉ tính Change cho người đã có điểm ở Season 2024 (tức có mốc hạng thực sự).
+      // Người 2024 chưa có điểm thì để 0 → hiển thị "–".
       standings: [
-        { name: "Nguyễn Đan Quyên",   points: 4, change: 0 },
-        { name: "Chu Văn Huynh",      points: 3, change: 0 },
-        { name: "Bùi Huyền Trang",    points: 3, change: 0 },
-        { name: "Nguyễn Tiến Trung",  points: 3, change: 0 },
-        { name: "Đặng Văn Hoàng",     points: 3, change: 0 },
-        { name: "Lê Thanh Phương",    points: 2, change: 0 },
-        { name: "Phạm Minh Quân",     points: 2, change: 0 },
-        { name: "Đặng Thị Nhung",     points: 2, change: 0 },
-        { name: "Vũ Ngọc Linh",       points: 1, change: 0 },
-        { name: "Nguyễn Văn Thành",   points: 1, change: 0 },
-        { name: "Nguyễn Đình Đạt",    points: 0, change: 0 },
-        { name: "Trần Trung Hiếu",    points: 0, change: 0 },
-        { name: "Nguyễn Ngọc Bích",   points: 0, change: 0 }
+        { name: "Nguyễn Đan Quyên",   points: 4, change:  4 },
+        { name: "Chu Văn Huynh",      points: 3, change: -1 },
+        { name: "Bùi Huyền Trang",    points: 3, change: -1 },
+        { name: "Nguyễn Tiến Trung",  points: 3, change:  2 },
+        { name: "Đặng Văn Hoàng",     points: 3, change:  0 },
+        { name: "Lê Thanh Phương",    points: 2, change:  0 },
+        { name: "Phạm Minh Quân",     points: 2, change: -4 },
+        { name: "Đặng Thị Nhung",     points: 2, change: -4 },
+        { name: "Vũ Ngọc Linh",       points: 1, change:  0 },
+        { name: "Nguyễn Văn Thành",   points: 1, change:  0 },
+        { name: "Nguyễn Đình Đạt",    points: 0, change:  0 },
+        { name: "Trần Trung Hiếu",    points: 0, change:  0 },
+        { name: "Nguyễn Ngọc Bích",   points: 0, change:  0 }
       ]
     }
   ],
