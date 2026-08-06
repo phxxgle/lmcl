@@ -3580,7 +3580,6 @@ function buildSeasonSelect(){
   sel.value = currentTourYear;
   sel.addEventListener('change', () => {
     renderTourList(sel.value);
-    showTourListView();
     setHeader(['LMCL', 'TOURNAMENT'], 'Season ' + currentTourYear);
     // Đồng bộ trạng thái năm đang chọn ở menu bên trái
     document.querySelectorAll('#nav-tour-submenu .drawer-year-btn').forEach(b => {
@@ -3590,6 +3589,7 @@ function buildSeasonSelect(){
 }
 
 function renderTourList(year){
+  showTourListView();
   currentTourYear = String(year);
   document.getElementById('tour-title').textContent = 'Tournament';
   const seasonSel = document.getElementById('tour-season-select');
@@ -3627,6 +3627,11 @@ function renderTourList(year){
       if(t) showTourDetailView(t);
     });
   });
+
+  // Mùa chỉ có đúng một giải đã kết thúc thì mở luôn bảng, khỏi phải bấm thêm
+  if(list.length === 1 && list[0].status === 'finished'){
+    showTourDetailView(list[0]);
+  }
 }
 
 function renderTourSubmenu(){
@@ -3644,7 +3649,6 @@ function renderTourSubmenu(){
       submenu.querySelectorAll('.drawer-year-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderTourList(btn.getAttribute('data-year'));
-      showTourListView();
       switchView('tour');
       closeDrawer();
     });
@@ -3728,6 +3732,16 @@ function switchView(view){
   const target = document.getElementById('view-' + view);
   if(target) target.classList.add('active');
 
+  // Rời khỏi Tournament thì thu gọn ngay danh sách mùa, tránh menu bị giật khi đóng
+  if(view !== 'tour'){
+    const sub = document.getElementById('nav-tour-submenu');
+    const toggle = document.getElementById('nav-tour-toggle');
+    if(sub) sub.classList.remove('open');
+    if(toggle) toggle.classList.remove('expanded');
+    document.querySelectorAll('#nav-tour-submenu .drawer-year-btn, #nav-tour-submenu .drawer-tour-item')
+      .forEach(b => b.classList.remove('active'));
+  }
+
   if(view === 'livematch'){
     setHeader(CURRENT_TOURNAMENT.titleLines, CURRENT_TOURNAMENT.badge);
   } else if(view === 'members'){
@@ -3750,7 +3764,6 @@ function switchView(view){
   }
   if(view === 'tour'){
     renderTourList(currentTourYear);
-    showTourListView();
   }
 
   requestAnimationFrame(() => {
