@@ -151,6 +151,64 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
+  /* Nhãn báo đang ở quyền BTC, ghim góc trên phải */
+  .admin-flag {
+    display: none;
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 40;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--on-menu-accent);
+    background: var(--menu-accent);
+    border-radius: 999px;
+    padding: 5px 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  }
+  body.admin-mode .admin-flag { display: inline-flex; }
+  .af-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--on-menu-accent);
+    animation: afBlink 1.4s ease-in-out infinite;
+  }
+  @keyframes afBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.25; }
+  }
+  @media (prefers-reduced-motion: reduce) { .af-dot { animation: none; } }
+
+  /* Nhãn báo đang ở quyền BTC, góc trên phải */
+  .admin-flag {
+    display: none;
+    position: absolute;
+    top: 18px;
+    right: 12px;
+    z-index: 3;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    background: var(--menu-accent);
+    color: var(--on-menu-accent);
+    border-radius: 999px;
+    padding: 5px 11px;
+    box-shadow: 0 0 14px rgba(193, 255, 114, 0.45);
+    animation: adminPulse 2.4s ease-in-out infinite;
+  }
+  body.admin-mode .admin-flag { display: inline-block; }
+  @keyframes adminPulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(193, 255, 114, 0.35); }
+    50%      { box-shadow: 0 0 20px rgba(193, 255, 114, 0.7); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .admin-flag { animation: none; }
+  }
+
   /* Nút quyền BTC nằm trong thanh icon của thẻ Schedule */
   .admin-icon-btn { border-color: rgba(193, 255, 114, 0.3); }
   .admin-icon-btn.is-admin {
@@ -159,27 +217,6 @@
     border-color: var(--menu-accent);
     box-shadow: 0 0 12px rgba(193, 255, 114, 0.35);
   }
-
-  /* Nhãn "Chế độ BTC" cố định ở góc trên bên phải màn hình khi đang ở quyền BTC */
-  .btc-mode-badge {
-    display: none;
-    position: fixed;
-    top: 14px;
-    right: 12px;
-    align-items: center;
-    gap: 6px;
-    background: var(--menu-accent);
-    color: var(--on-menu-accent);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.6px;
-    padding: 6px 10px 6px 8px;
-    border-radius: 999px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-    z-index: 250;
-  }
-  .btc-mode-badge svg { width: 13px; height: 13px; flex-shrink: 0; }
-  body.admin-mode .btc-mode-badge { display: flex; }
 
   /* =========================================
      GLASSMORPHISM: TABS NAVIGATION
@@ -758,10 +795,11 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
     z-index: 100;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 16px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .modal-overlay.open { display: flex; }
   .modal-box {
@@ -771,13 +809,12 @@
     padding: 24px;
     width: 100%;
     max-width: 320px;
-    max-height: calc(100vh - 32px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
     box-shadow: 0 16px 32px rgba(0,0,0,0.5);
     text-align: center;
     margin: auto;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .modal-box h3 { margin: 0 0 8px; font-size: 17px; }
   .modal-box p { margin: 0 0 16px; font-size: 12px; color: var(--chalk-dim); }
@@ -1627,13 +1664,7 @@
   .pm-medal.silver .pm-ico { color: #CBD5E1; }
   .pm-medal.bronze .pm-ico { color: #E08B4C; }
 
-  .pm-ach {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 200px;
-    overflow-y: auto;
-  }
+  .pm-ach { list-style: none; margin: 0; padding: 0; }
   .pm-ach li {
     display: flex;
     align-items: flex-start;
@@ -1660,60 +1691,156 @@
     letter-spacing: 0.5px;
     color: var(--chalk-dim);
   }
-  .pm-results { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow-y: auto; }
+  .pm-results { list-style: none; margin: 0; padding: 0; }
   .pm-results li {
-    display: block;
-    padding: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 9px 0;
     border-top: 1px solid var(--line);
-    font-size: 11.5px;
   }
   .pm-results li:first-child { border-top: none; }
-  .pm-res-teams {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .pm-res-team {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+
   .pm-res-tag {
-    width: 18px; height: 18px;
+    width: 20px; height: 20px;
     flex-shrink: 0;
+    margin-top: 1px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 5px;
+    border-radius: 6px;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 11px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
   }
-  .pm-res-team.win  .pm-res-tag { background: rgba(74, 222, 128, 0.2); color: var(--green-ok); }
-  .pm-res-team.loss .pm-res-tag { background: rgba(248, 113, 113, 0.18); color: var(--red); }
-  .pm-res-name {
-    flex: 1;
+  .pm-results li.win  .pm-res-tag { background: rgba(74, 222, 128, 0.2); color: var(--green-ok); }
+  .pm-results li.loss .pm-res-tag { background: rgba(248, 113, 113, 0.18); color: var(--red); }
+
+  .pm-res-body { flex: 1; min-width: 0; }
+  /* Mỗi đội một dòng, điểm nằm đúng dòng của đội đó */
+  .pm-res-side {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    line-height: 1.45;
+  }
+  .pm-res-side .side-name {
+    font-size: 11.5px;
+    color: var(--chalk-dim);
     min-width: 0;
-    color: var(--chalk);
-    line-height: 1.3;
-    overflow-wrap: break-word;
   }
-  .pm-res-team.win .pm-res-name { font-weight: 600; }
-  .pm-res-team.loss .pm-res-name { color: var(--chalk-dim); }
-  .pm-res-pts {
+  .pm-res-side .side-score {
     flex-shrink: 0;
     font-family: 'Space Mono', monospace;
-    font-weight: 700;
     font-size: 12.5px;
-    color: var(--chalk);
-  }
-  .pm-res-team.loss .pm-res-pts { color: var(--chalk-dim); }
-  .pm-res-event {
-    display: block;
-    margin-top: 5px;
-    font-style: normal;
-    font-size: 9.5px;
+    font-weight: 700;
     color: var(--chalk-dim);
   }
+  .pm-res-side.winner .side-name { color: var(--chalk); font-weight: 600; }
+  .pm-res-side.winner .side-score { color: var(--chalk); }
+
+  .pm-res-event {
+    display: block;
+    margin-top: 3px;
+    font-size: 9.5px;
+    color: var(--chalk-dim);
+    opacity: 0.75;
+  }
+
+  /* ── Trang hồ sơ riêng của vận động viên ── */
+  .pp-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 16px 0 4px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--menu-accent);
+  }
+  .pp-back svg { width: 14px; height: 14px; }
+  .pp-back:hover { text-decoration: underline; }
+
+  .pp-hero {
+    display: flex;
+    gap: 14px;
+    align-items: flex-end;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+  .pp-photo {
+    position: relative;
+    width: 108px;
+    min-width: 108px;
+    aspect-ratio: 3 / 4;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+  }
+  .pp-photo img {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .pp-photo svg { width: 42px; height: 42px; color: var(--chalk-dim); opacity: 0.4; }
+
+  .pp-id { min-width: 0; padding-bottom: 2px; }
+  .pp-given {
+    display: block;
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--chalk);
+    line-height: 1.25;
+  }
+  .pp-family {
+    margin: 0 0 7px;
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--chalk);
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+  .pp-loc {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--chalk-dim);
+    margin-bottom: 9px;
+  }
+  .pp-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pp-chip {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.7px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    color: var(--chalk);
+  }
+  .pp-chip.ghost { color: var(--chalk-dim); }
+  .pp-chip.top-1 { background: linear-gradient(135deg, #FFE259, #FFA751); color: #4A2E00; border: none; }
+  .pp-chip.top-2 { background: linear-gradient(135deg, #E2E8F0, #94A3B8); color: #0F172A; border: none; }
+  .pp-chip.top-3 { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; border: none; }
+
+  #view-player .pm-ach,
+  #view-player .pm-results { max-height: none; overflow: visible; }
 
   .pm-none {
     margin: 0;
@@ -1771,18 +1898,19 @@
 </head>
 <body data-theme="allmatches">
 
-<div class="btc-mode-badge" id="btc-mode-badge">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-  <span>Chế độ BTC</span>
-</div>
-
 <div class="wrap">
+  <div class="admin-flag" id="admin-flag" aria-hidden="true">
+    <span class="af-dot"></span>CHẾ ĐỘ BTC
+  </div>
+
   <header>
     <button type="button" class="hamburger-btn" id="drawer-open-btn" aria-label="Menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line>
       </svg>
     </button>
+
+    <span class="admin-flag" id="admin-flag">CHẾ ĐỘ BTC</span>
 
     <div class="brand-container">
       <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
@@ -2028,6 +2156,15 @@
     <div class="pd-grid" id="pd-grid"></div>
   </div>
 
+  <!-- TRANG HỒ SƠ RIÊNG CỦA VẬN ĐỘNG VIÊN -->
+  <div id="view-player" class="app-view">
+    <button type="button" class="pp-back" id="pp-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Members
+    </button>
+    <div id="player-page"></div>
+  </div>
+
   <p class="foot-note">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
 </div>
 
@@ -2085,16 +2222,6 @@
     <div class="modal-actions">
       <button type="button" class="btn-cancel" id="pin-cancel-btn">Hủy</button>
       <button type="button" class="btn-submit" id="pin-submit-btn">Xác nhận</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL HỒ SƠ VẬN ĐỘNG VIÊN -->
-<div class="modal-overlay" id="player-modal">
-  <div class="modal-box" style="max-width:330px;text-align:left;">
-    <div id="pm-body"></div>
-    <div class="modal-actions" style="margin-top:16px;">
-      <button type="button" class="btn-submit" id="pm-close-btn" style="flex:1;">Đóng</button>
     </div>
   </div>
 </div>
@@ -3264,13 +3391,6 @@ if (infoToggleNam) infoToggleNam.addEventListener('click', openInfoModal);
 if (infoToggleNu) infoToggleNu.addEventListener('click', openInfoModal);
 infoCloseBtn.addEventListener('click', closeInfoModal);
 
-const playerModal = document.getElementById('player-modal');
-const pmCloseBtn = document.getElementById('pm-close-btn');
-function closePlayerModal(){ playerModal.classList.remove('open'); }
-if(pmCloseBtn) pmCloseBtn.addEventListener('click', closePlayerModal);
-if(playerModal) playerModal.addEventListener('click', e => {
-  if(e.target === playerModal) closePlayerModal();
-});
 infoModal.addEventListener('click', (e) => {
   if (e.target === infoModal) closeInfoModal();
 });
@@ -3420,13 +3540,13 @@ function renderMembers(){
   grid.querySelectorAll('.pd-card').forEach(card => {
     card.addEventListener('click', () => {
       const name = card.getAttribute('data-player');
-      if(REDUCE_MOTION){ openPlayerModal(name); return; }
+      if(REDUCE_MOTION){ openPlayerPage(name); return; }
       card.classList.remove('tapped');
       void card.offsetWidth;
       card.classList.add('tapped');
       setTimeout(() => {
         card.classList.remove('tapped');
-        openPlayerModal(name);
+        openPlayerPage(name);
       }, 200);
     });
   });
@@ -3561,126 +3681,76 @@ function latestResultsHtml(name){
   const res = latestResults(name);
   if(!res) return '<p class="pm-none">Chưa có trận nào được ghi nhận</p>';
   const rows = res.items.slice(0, 8).map(r => `<li class="${r.win ? 'win' : 'loss'}">
-      <div class="pm-res-teams">
-        <div class="pm-res-team ${r.win ? 'win' : 'loss'}">
-          <span class="pm-res-tag">${r.win ? 'W' : 'L'}</span>
-          <span class="pm-res-name">${escapeHtml(r.mine)}</span>
-          <span class="pm-res-pts">${r.own}</span>
+      <span class="pm-res-tag">${r.win ? 'W' : 'L'}</span>
+      <div class="pm-res-body">
+        <div class="pm-res-side ${r.win ? 'winner' : ''}">
+          <span class="side-name">${escapeHtml(r.mine)}</span>
+          <span class="side-score">${r.own}</span>
         </div>
-        <div class="pm-res-team ${r.win ? 'loss' : 'win'}">
-          <span class="pm-res-tag">${r.win ? 'L' : 'W'}</span>
-          <span class="pm-res-name">${escapeHtml(r.opponent)}</span>
-          <span class="pm-res-pts">${r.opp}</span>
+        <div class="pm-res-side ${r.win ? '' : 'winner'}">
+          <span class="side-name">${escapeHtml(r.opponent)}</span>
+          <span class="side-score">${r.opp}</span>
         </div>
+        <span class="pm-res-event">${escapeHtml(r.event)}</span>
       </div>
-      <i class="pm-res-event">${escapeHtml(r.event)}</i>
     </li>`).join('');
   return `<p class="pm-res-label">${escapeHtml(res.label)}</p><ul class="pm-results">${rows}</ul>`;
 }
 
 /* ─── Hồ sơ đầy đủ của một VĐV ─────────────────────────────────────────── */
-function openPlayerModal(name){
+function openPlayerPage(name){
   const row = directoryRows().find(r => r.name === name);
-  const modal = document.getElementById('player-modal');
-  const box = document.getElementById('pm-body');
-  if(!row || !modal || !box) return;
+  const page = document.getElementById('player-page');
+  if(!row || !page) return;
 
   const info = row.info;
-  const avatar = info.photo
+  const nm = splitName(row.name);
+  const photo = info.photo
     ? `<img src="${escapeHtml(info.photo)}" alt="${escapeHtml(row.name)}">`
     : DEFAULT_AVATAR_SVG;
   const rankTxt = row.rank === undefined ? '—' : '#' + row.rank;
+  const rankCls = row.rank >= 1 && row.rank <= 3 ? ' top-' + row.rank : '';
 
-  box.innerHTML = `
-    <div class="pm-head">
-      <div class="pm-avatar">${avatar}</div>
-      <div>
-        <h3>${escapeHtml(row.name)}</h3>
-        <div class="pm-badges">
-          <span class="pm-badge">RANK ${rankTxt}</span>
+  page.innerHTML = `
+    <div class="pp-hero">
+      <div class="pp-photo">
+        ${info.photo ? `<div class="pd-photo-bg" style="background-image:url('${escapeHtml(info.photo)}')"></div>` : ''}
+        ${photo}
+      </div>
+      <div class="pp-id">
+        ${nm.given ? `<span class="pp-given">${escapeHtml(nm.given)}</span>` : ''}
+        <h2 class="pp-family">${escapeHtml(nm.family)}</h2>
+        <div class="pp-loc">${flagHtml(info)}<span>${escapeHtml(locationText(info))}</span></div>
+        <div class="pp-chips">
+          <span class="pp-chip${rankCls}">RANK ${rankTxt}</span>
+          <span class="pp-chip ghost">${row.points === undefined ? '—' : row.points + ' PTS'}</span>
         </div>
       </div>
     </div>
-    <div class="pm-rows">
-      <div class="pm-row"><span class="k">Date of Birth</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
-      <div class="pm-row"><span class="k">Hometown</span><span class="v">${escapeHtml(info.hometown || '—')}</span></div>
-      <div class="pm-row"><span class="k">Nation</span><span class="v">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span></div>
-      <div class="pm-row"><span class="k">Ranking Points</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
+
+    <div class="card">
+      <h2>Profile</h2>
+      <div class="pm-rows">
+        <div class="pm-row"><span class="k">Date of Birth</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
+        <div class="pm-row"><span class="k">Hometown</span><span class="v">${escapeHtml(info.hometown || '—')}</span></div>
+        <div class="pm-row"><span class="k">Nation</span><span class="v">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span></div>
+        <div class="pm-row"><span class="k">Ranking Points</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
+      </div>
     </div>
-    <div class="pm-section">
-      <h4>Latest Results</h4>
+
+    <div class="card">
+      <h2>Latest Results</h2>
       ${latestResultsHtml(row.name)}
     </div>
-    <div class="pm-section">
-      <h4>Achievements</h4>
+
+    <div class="card">
+      <h2>Achievements</h2>
       ${achievementsHtml(row.name)}
     </div>`;
 
-  modal.classList.add('open');
+  switchView('player');
+  setHeader(['LMCL', 'PLAYER', 'PROFILE'], '');
 }
-
-// Thanh tìm kiếm + nút lọc của Player Directory
-function buildMemberFilterMenu(){
-  const menu = document.getElementById('pd-filter-menu');
-  if(!menu) return;
-  const provinces = allProvinces();
-  menu.innerHTML =
-    `<div class="pd-fm-label">Nội dung</div>
-     <button type="button" data-dim="group" data-value="all" class="active">Tất cả</button>
-     <button type="button" data-dim="group" data-value="nam">Nam</button>
-     <button type="button" data-dim="group" data-value="nu">Nữ</button>
-     <div class="pd-fm-divider"></div>
-     <div class="pd-fm-label">Quê quán</div>
-     <button type="button" data-dim="province" data-value="all" class="active">Tất cả</button>` +
-    provinces.map(p => `<button type="button" data-dim="province" data-value="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join('');
-}
-
-(() => {
-  const search = document.getElementById('pd-search');
-  if(search){
-    search.addEventListener('input', () => {
-      memberSearch = search.value;
-      renderMembers();
-    });
-  }
-
-  const btn = document.getElementById('pd-filter-btn');
-  const menu = document.getElementById('pd-filter-menu');
-  if(!btn || !menu) return;
-
-  buildMemberFilterMenu();
-
-  btn.addEventListener('click', e => {
-    e.stopPropagation();
-    const isOpen = menu.classList.toggle('open');
-    btn.classList.toggle('active', isOpen);
-  });
-
-  menu.addEventListener('click', e => {
-    const b = e.target.closest('button[data-dim]');
-    if(!b) return;
-    e.stopPropagation();
-    const dim = b.getAttribute('data-dim');
-    const val = b.getAttribute('data-value');
-    if(dim === 'group') memberFilter = val;
-    else memberProvince = val;
-
-    menu.querySelectorAll(`button[data-dim="${dim}"]`).forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-
-    btn.classList.toggle('has-filter', memberFilter !== 'all' || memberProvince !== 'all');
-    menu.classList.remove('open');
-    btn.classList.remove('active');
-    renderMembers();
-  });
-
-  document.addEventListener('click', () => {
-    if(menu.classList.contains('open')){
-      menu.classList.remove('open');
-      btn.classList.remove('active');
-    }
-  });
-})();
 
 /* =========================================
    TOUR VIEW
@@ -4147,6 +4217,8 @@ function switchView(view){
     setHeader(CURRENT_TOURNAMENT.titleLines, CURRENT_TOURNAMENT.badge);
   } else if(view === 'members'){
     setHeader(['LMCL', 'TEAM', 'MEMBERS'], '');
+  } else if(view === 'player'){
+    setHeader(['LMCL', 'PLAYER', 'PROFILE'], '');
   } else if(view === 'rankings'){
     setHeader(['LMCL', 'RANKINGS'], '');
   } else if(view === 'tour'){
@@ -4216,6 +4288,9 @@ document.getElementById('nav-livematch').addEventListener('click', () => {
   switchView('livematch');
   closeDrawer();
 });
+const ppBack = document.getElementById('pp-back');
+if(ppBack) ppBack.addEventListener('click', () => switchView('members'));
+
 document.getElementById('nav-rankings').addEventListener('click', () => {
   switchView('rankings');
   closeDrawer();
