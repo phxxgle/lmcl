@@ -154,7 +154,7 @@
   /* Nhãn báo đang ở quyền BTC, ghim góc trên phải */
   .admin-flag {
     display: none;
-    position: fixed;
+    position: absolute;
     top: 12px;
     right: 12px;
     z-index: 40;
@@ -476,9 +476,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: center;
+    text-align: left;
   }
-  .fixture-row .name.right { text-align: center; }
+  /* Cột tên bên trái áp sát về phía ô điểm, cột bên phải áp sát ra ngoài */
+  .fixture-row .name.right { text-align: right; }
 
   input[type=number] {
     background: rgba(0, 0, 0, 0.3);
@@ -1446,29 +1447,72 @@
   }
   .pd-photo svg { width: 46px; height: 46px; color: var(--chalk-dim); opacity: 0.4; }
 
-  /* Nhãn MVP nổi trên ảnh */
+  /* Huy hiệu MVP nổi trên ảnh */
   .pd-mvp {
     position: absolute;
     top: 8px;
     left: 8px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
     align-items: flex-start;
     z-index: 2;
   }
   .pd-mvp b {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 10.5px;
+    font-size: 10px;
     letter-spacing: 0.8px;
-    padding: 2px 7px;
-    border-radius: 5px;
-    line-height: 1.35;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    padding: 3px 9px 3px 7px;
+    border-radius: 4px 4px 4px 4px;
+    line-height: 1.4;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
-  .pd-mvp .mvp-team { background: linear-gradient(135deg, #FFE259, #FFA751); color: #4A2E00; }
-  .pd-mvp .mvp-ms   { background: var(--blue); color: #031B2A; }
-  .pd-mvp .mvp-ws   { background: var(--pink); color: #2D0310; }
+  /* Đuôi ruy băng hai bên để trông như huy hiệu */
+  .pd-mvp b::before,
+  .pd-mvp b::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+  .pd-mvp b::before {
+    left: 0;
+    border-width: 5px 0 0 6px;
+    border-color: transparent transparent transparent currentColor;
+    opacity: 0.55;
+  }
+  .pd-mvp b::after {
+    right: 0;
+    border-width: 5px 6px 0 0;
+    border-color: transparent currentColor transparent transparent;
+    opacity: 0.55;
+  }
+  .pd-mvp b i {
+    font-style: normal;
+    display: inline-flex;
+    align-items: center;
+  }
+  .pd-mvp b svg { width: 11px; height: 11px; }
+
+  .pd-mvp .mvp-team {
+    background: linear-gradient(135deg, #FFE87C 0%, #FFC64D 45%, #FF9A3D 100%);
+    color: #4A2E00;
+  }
+  .pd-mvp .mvp-ms {
+    background: linear-gradient(135deg, #7DD3FC 0%, #38BDF8 45%, #0284C7 100%);
+    color: #041F31;
+  }
+  .pd-mvp .mvp-ws {
+    background: linear-gradient(135deg, #FDA4C3 0%, #FF6584 45%, #DB2777 100%);
+    color: #350212;
+  }
 
   /* Tên và thứ hạng nằm cùng một dòng, hạng đẩy về góc phải */
   .pd-namerow {
@@ -1857,6 +1901,25 @@
   #view-player .pm-ach,
   #view-player .pm-results { max-height: none; overflow: visible; }
 
+  .title-with-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+  }
+  .info-plain {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--chalk-dim);
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease;
+  }
+  .info-plain svg { width: 15px; height: 15px; }
+  .info-plain:hover { color: var(--accent); }
+
   .rank-pts { margin: 10px 0; }
   .rank-pts div {
     display: flex;
@@ -2160,13 +2223,13 @@
   <div id="view-rankings" class="app-view">
     <div class="card">
       <div class="card-header">
-        <h2>LMCL Rankings</h2>
-        <div class="header-icons">
-          <select id="rankings-select" class="rank-select" aria-label="Chọn bảng xếp hạng"></select>
-          <button type="button" class="icon-btn" id="rank-info-btn" aria-label="Cách tính điểm">
+        <div class="title-with-info">
+          <h2>LMCL Rankings</h2>
+          <button type="button" class="info-plain" id="rank-info-btn" aria-label="Cách tính điểm">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
           </button>
         </div>
+        <select id="rankings-select" class="rank-select" aria-label="Chọn bảng xếp hạng"></select>
       </div>
       <p class="sub" id="rankings-sub"></p>
       <div class="table-scroll">
@@ -2270,15 +2333,11 @@
   <div class="modal-box" style="max-width:340px;text-align:left;">
     <h3 style="text-align:center;">Cách tính điểm xếp hạng</h3>
     <div style="font-size:12.5px;color:var(--chalk-dim);line-height:1.8;">
-      <p>Mỗi giải đấu, top 3 của <strong style="color:var(--chalk);">từng hạng mục</strong> được cộng điểm:</p>
       <div class="rank-pts">
-        <div><span class="rp gold">Hạng 1</span> <b>+3 điểm</b></div>
-        <div><span class="rp silver">Hạng 2</span> <b>+2 điểm</b></div>
-        <div><span class="rp bronze">Hạng 3</span> <b>+1 điểm</b></div>
+        <div><span class="rp gold">HCV</span> <b>+3 điểm</b></div>
+        <div><span class="rp silver">HCB</span> <b>+2 điểm</b></div>
+        <div><span class="rp bronze">HCĐ</span> <b>+1 điểm</b></div>
       </div>
-      <p>Với nội dung đôi, <strong style="color:var(--chalk);">cả hai thành viên</strong> đều nhận đủ số điểm của đội.</p>
-      <p>Điểm được <strong style="color:var(--chalk);">tích luỹ qua các mùa</strong>, không đặt lại về 0. Bảng xếp hạng sắp theo tổng điểm từ cao xuống thấp; bằng điểm thì giữ nguyên thứ tự của kỳ trước.</p>
-      <p style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);">Cột <strong style="color:var(--chalk);">Change</strong> là số bậc tăng/giảm so với bảng xếp hạng liền trước. Dấu “–” nghĩa là giữ nguyên hạng, hoặc chưa có mốc để so sánh.</p>
     </div>
     <div class="modal-actions" style="margin-top:14px;">
       <button type="button" class="btn-submit" id="rank-info-close" style="flex:1;">Đóng</button>
@@ -3478,6 +3537,9 @@ pinInput.addEventListener('keypress', (e) => {
 // Avatar mặc định khi VĐV chưa có ảnh
 const DEFAULT_AVATAR_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
 
+// Ngôi sao nhỏ trong huy hiệu MVP
+const MVP_STAR = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 16.4l-5.6 3.3 1.4-6.3L3 9.1l6.4-.6L12 2.6z"/></svg>`;
+
 let memberFilter = 'all';
 let memberProvince = 'all';
 let memberSearch = '';
@@ -3553,8 +3615,8 @@ function directoryRows(){
   const topWomen = ranked.find(r => r.group === 'nu');
   rows.forEach(r => { r.tags = []; });
   if(topOverall) topOverall.tags.push({ key: 'team', label: 'MVP' });
-  if(topMen) topMen.tags.push({ key: 'ms', label: 'MVP MS' });
-  if(topWomen) topWomen.tags.push({ key: 'ws', label: 'MVP WS' });
+  if(topMen) topMen.tags.push({ key: 'ms', label: "Men's MVP" });
+  if(topWomen) topWomen.tags.push({ key: 'ws', label: "Women's MVP" });
 
   return rows;
 }
@@ -3592,7 +3654,7 @@ function renderMembers(){
          <img src="${escapeHtml(info.photo)}" alt="${escapeHtml(r.name)}" loading="lazy">`
       : DEFAULT_AVATAR_SVG;
     return `<article class="pd-card" data-player="${escapeHtml(r.name)}" style="animation-delay:${i * 45}ms">
-      <div class="pd-photo">${photo}${(r.tags && r.tags.length) ? `<span class="pd-mvp">${r.tags.map(t => `<b class="mvp-${t.key}">${t.label}</b>`).join('')}</span>` : ''}</div>
+      <div class="pd-photo">${photo}${(r.tags && r.tags.length) ? `<span class="pd-mvp">${r.tags.map(t => `<b class="mvp-${t.key}"><i>${MVP_STAR}</i>${t.label}</b>`).join('')}</span>` : ''}</div>
       <div class="pd-body">
         <div class="pd-namerow">
           <div class="pd-namecol">
