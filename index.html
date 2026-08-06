@@ -1241,6 +1241,15 @@
   }
   .pd-filter-menu button:hover { background: rgba(255, 255, 255, 0.06); color: var(--chalk); }
   .pd-filter-menu button.active { color: var(--menu-accent); font-weight: 600; }
+  .pd-filter-menu { max-height: 320px; overflow-y: auto; }
+  .pd-fm-label {
+    font-size: 9.5px;
+    color: var(--chalk-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 7px 10px 3px;
+  }
+  .pd-fm-divider { height: 1px; background: var(--line); margin: 5px 4px; }
 
   .pd-count {
     font-family: 'Space Mono', monospace;
@@ -1297,27 +1306,32 @@
   .pd-photo img { width: 100%; height: 100%; object-fit: cover; }
   .pd-photo svg { width: 46px; height: 46px; color: var(--chalk-dim); opacity: 0.4; }
 
-  .pd-rank {
-    position: absolute;
-    top: 8px; left: 8px;
-    min-width: 24px; height: 24px;
-    padding: 0 6px;
-    display: inline-flex;
+  /* Hàng thứ hạng nằm trong phần thông tin của card */
+  .pd-rankline {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    color: var(--chalk);
-    border: 1px solid var(--glass-border);
+    gap: 6px;
+    margin-bottom: 6px;
   }
-  .pd-rank.top-1 { background: linear-gradient(135deg, #FFE259, #FFA751); color: #4A2E00; border: none; font-weight: 700; }
-  .pd-rank.top-2 { background: linear-gradient(135deg, #E2E8F0, #94A3B8); color: #0F172A; border: none; font-weight: 700; }
-  .pd-rank.top-3 { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; border: none; font-weight: 700; }
+  .pd-rankline .lbl {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--chalk-dim);
+  }
+  .pd-rankline .val {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--chalk);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    padding: 1px 6px;
+  }
+  .pd-rankline .val.top-1 { background: linear-gradient(135deg, #FFE259, #FFA751); color: #4A2E00; border: none; }
+  .pd-rankline .val.top-2 { background: linear-gradient(135deg, #E2E8F0, #94A3B8); color: #0F172A; border: none; }
+  .pd-rankline .val.top-3 { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; border: none; }
 
   /* Phần thông tin phía dưới */
   .pd-body {
@@ -1326,16 +1340,20 @@
     flex-direction: column;
     gap: 2px;
   }
+  /* Họ + tên đệm và tên chính cùng một font để tách hẳn khỏi khối thông tin bên dưới */
   .pd-given {
-    font-size: 10.5px;
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.3px;
     color: var(--chalk-dim);
-    line-height: 1.3;
+    line-height: 1.25;
   }
   .pd-family {
-    margin: 0 0 6px;
+    margin: 0 0 8px;
     font-family: 'Tomorrow', sans-serif;
     font-weight: 700;
-    font-size: 17px;
+    font-size: 18px;
     letter-spacing: 0.3px;
     color: var(--chalk);
     line-height: 1.1;
@@ -2091,20 +2109,20 @@ const THANH_HOA_FLAG = "https://i.ibb.co/B215T1x3/Untitled-1.png";
 
 const MEMBERS_DATA = {
   nam: {
-    "Vương Mạnh Chuyền": { dob: "—", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Chu Văn Huynh":     { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Phạm Minh Quân":    { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Nguyễn Văn Thành":  { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Nguyễn Đình Đạt":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Trần Trung Hiếu":   { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Nguyễn Tiến Trung": { dob: "—", hometown: "",            nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "" }
+    "Vương Mạnh Chuyền": { dob: "—", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/FQxVx4N/Chuy-n.jpg" },
+    "Chu Văn Huynh":     { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/JjRtSg6W/Huynh.jpg" },
+    "Phạm Minh Quân":    { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Y74Cr5ss/quan.jpg" },
+    "Nguyễn Văn Thành":  { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
+    "Nguyễn Đình Đạt":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
+    "Trần Trung Hiếu":   { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/zVqZ8XLZ/716930520-1626252805150868-5081195298887915256-n.jpg" },
+    "Nguyễn Tiến Trung": { dob: "—", hometown: "",            nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
   },
   nu: {
-    "Nguyễn Đan Quyên":  { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Lê Thanh Phương":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Vũ Ngọc Linh":      { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Bùi Huyền Trang":   { dob: "—", hometown: "Hòa Bình",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
-    "Đặng Thị Nhung":    { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" }
+    "Nguyễn Đan Quyên":  { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/bgprLybp/QUyen.jpg" },
+    "Lê Thanh Phương":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8gF63ZPX/Phuong.jpg" },
+    "Vũ Ngọc Linh":      { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8LvcDmPR/718659419-1589001649328004-6981631338756931634-n.jpg" },
+    "Bùi Huyền Trang":   { dob: "—", hometown: "Hòa Bình",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/hQ4qNqd/717185999-1725763642101341-7406834729885665162-n.jpg" },
+    "Đặng Thị Nhung":    { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/j91D1NDF/722908557-1661304405127994-631551005197498279-n.jpg" }
   }
 };
 
@@ -2944,6 +2962,7 @@ pinInput.addEventListener('keypress', (e) => {
 const DEFAULT_AVATAR_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
 
 let memberFilter = 'all';
+let memberProvince = 'all';
 let memberSearch = '';
 
 // Cờ Việt Nam vẽ sẵn để không phụ thuộc ảnh ngoài; các cờ khác dùng URL trong dữ liệu.
@@ -2954,6 +2973,23 @@ function flagHtml(info){
   if(!f) return '';
   if(f === 'vn') return VN_FLAG_SVG;
   return `<img class="pd-flag" src="${escapeHtml(f)}" alt="${escapeHtml(info.nation || '')}">`;
+}
+
+// Quê quán dùng cho bộ lọc; ai không có quê quán thì lấy tên quốc gia
+function provinceOf(info){
+  if(!info) return '';
+  return info.hometown || info.nation || '';
+}
+
+function allProvinces(){
+  const set = new Set();
+  ['nam', 'nu'].forEach(g => {
+    Object.values(MEMBERS_DATA[g] || {}).forEach(info => {
+      const p = provinceOf(info);
+      if(p) set.add(p);
+    });
+  });
+  return [...set].sort((a, b) => a.localeCompare(b, 'vi'));
 }
 
 function locationText(info){
@@ -3008,6 +3044,7 @@ function renderMembers(){
   const q = memberSearch.trim().toLowerCase();
   const rows = directoryRows().filter(r => {
     if(memberFilter !== 'all' && r.group !== memberFilter) return false;
+    if(memberProvince !== 'all' && provinceOf(r.info) !== memberProvince) return false;
     if(q && !r.name.toLowerCase().includes(q)) return false;
     return true;
   });
@@ -3025,16 +3062,14 @@ function renderMembers(){
     const rankTxt = r.rank === undefined ? '–' : '#' + r.rank;
     const rankCls = r.rank >= 1 && r.rank <= 3 ? ' top-' + r.rank : '';
     const photo = info.photo
-      ? `<img src="${escapeHtml(info.photo)}" alt="${escapeHtml(r.name)}">`
+      ? `<img src="${escapeHtml(info.photo)}" alt="${escapeHtml(r.name)}" loading="lazy">`
       : DEFAULT_AVATAR_SVG;
     return `<article class="pd-card" style="animation-delay:${i * 45}ms">
-      <div class="pd-photo">
-        ${photo}
-        <span class="pd-rank${rankCls}">${rankTxt}</span>
-      </div>
+      <div class="pd-photo">${photo}</div>
       <div class="pd-body">
         ${nm.given ? `<span class="pd-given">${escapeHtml(nm.given)}</span>` : ''}
         <h3 class="pd-family">${escapeHtml(nm.family)}</h3>
+        <div class="pd-rankline"><span class="lbl">RANK</span><span class="val${rankCls}">${rankTxt}</span></div>
         <div class="pd-loc">${flagHtml(info)}<span>${escapeHtml(locationText(info))}</span></div>
         <button type="button" class="pd-more" data-player="${escapeHtml(r.name)}">SEE PLAYER PROFILE</button>
       </div>
@@ -3080,6 +3115,21 @@ function openPlayerModal(name){
 }
 
 // Thanh tìm kiếm + nút lọc của Player Directory
+function buildMemberFilterMenu(){
+  const menu = document.getElementById('pd-filter-menu');
+  if(!menu) return;
+  const provinces = allProvinces();
+  menu.innerHTML =
+    `<div class="pd-fm-label">Nội dung</div>
+     <button type="button" data-dim="group" data-value="all" class="active">Tất cả</button>
+     <button type="button" data-dim="group" data-value="nam">Nam</button>
+     <button type="button" data-dim="group" data-value="nu">Nữ</button>
+     <div class="pd-fm-divider"></div>
+     <div class="pd-fm-label">Quê quán</div>
+     <button type="button" data-dim="province" data-value="all" class="active">Tất cả</button>` +
+    provinces.map(p => `<button type="button" data-dim="province" data-value="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join('');
+}
+
 (() => {
   const search = document.getElementById('pd-search');
   if(search){
@@ -3093,23 +3143,30 @@ function openPlayerModal(name){
   const menu = document.getElementById('pd-filter-menu');
   if(!btn || !menu) return;
 
+  buildMemberFilterMenu();
+
   btn.addEventListener('click', e => {
     e.stopPropagation();
     const isOpen = menu.classList.toggle('open');
     btn.classList.toggle('active', isOpen);
   });
 
-  menu.querySelectorAll('button[data-filter]').forEach(b => {
-    b.addEventListener('click', e => {
-      e.stopPropagation();
-      memberFilter = b.getAttribute('data-filter');
-      menu.querySelectorAll('button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      btn.classList.toggle('has-filter', memberFilter !== 'all');
-      menu.classList.remove('open');
-      btn.classList.remove('active');
-      renderMembers();
-    });
+  menu.addEventListener('click', e => {
+    const b = e.target.closest('button[data-dim]');
+    if(!b) return;
+    e.stopPropagation();
+    const dim = b.getAttribute('data-dim');
+    const val = b.getAttribute('data-value');
+    if(dim === 'group') memberFilter = val;
+    else memberProvince = val;
+
+    menu.querySelectorAll(`button[data-dim="${dim}"]`).forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+
+    btn.classList.toggle('has-filter', memberFilter !== 'all' || memberProvince !== 'all');
+    menu.classList.remove('open');
+    btn.classList.remove('active');
+    renderMembers();
   });
 
   document.addEventListener('click', () => {
