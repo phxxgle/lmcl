@@ -1393,7 +1393,10 @@
   <div id="view-tour" class="app-view">
     <!-- Danh sách các giải trong mùa, luôn hiển thị trên cùng -->
     <div class="card">
-      <h2 id="tour-title">Tournament</h2>
+      <div class="card-header">
+        <h2 id="tour-title">Tournament</h2>
+        <select id="tour-season-select" class="rank-select" aria-label="Chọn mùa giải"></select>
+      </div>
       <p class="sub" id="tour-sub"></p>
       <div id="tour-list"></div>
     </div>
@@ -1660,16 +1663,16 @@ const TOUR_DATA = {
       // Người chưa có trong bảng 2025 là gương mặt mới nên để 0 (hiển thị "–").
       standings: [
         { name: "Nguyễn Đan Quyên",   points: 8, change:  0 },
-        { name: "Vương Mạnh Chuyền",  points: 6, change:  0 },
-        { name: "Phạm Minh Quân",     points: 6, change:  3 },
-        { name: "Chu Văn Huynh",      points: 5, change: -1 },
-        { name: "Lê Thanh Phương",    points: 5, change:  2 },
-        { name: "Vũ Ngọc Linh",       points: 5, change:  0 },
-        { name: "Bùi Huyền Trang",    points: 4, change: -5 },
+        { name: "Vương Mạnh Chuyền",  points: 6, change:  9 },
+        { name: "Phạm Minh Quân",     points: 6, change:  4 },
+        { name: "Chu Văn Huynh",      points: 5, change: -2 },
+        { name: "Lê Thanh Phương",    points: 5, change:  1 },
+        { name: "Vũ Ngọc Linh",       points: 5, change:  6 },
+        { name: "Bùi Huyền Trang",    points: 4, change: -4 },
         { name: "Đặng Thị Nhung",     points: 4, change:  0 },
-        { name: "Trần Trung Hiếu",    points: 3, change:  0 },
+        { name: "Trần Trung Hiếu",    points: 3, change:  5 },
         { name: "Nguyễn Tiến Trung",  points: 3, change: -6 },
-        { name: "Nguyễn Đình Đạt",    points: 3, change:  0 },
+        { name: "Nguyễn Đình Đạt",    points: 3, change:  2 },
         { name: "Nguyễn Văn Thành",   points: 3, change: -3 }
       ]
     }
@@ -1704,16 +1707,20 @@ const TOUR_DATA = {
       // Bảng tích luỹ cuối Season 2025 = điểm Season 2024 + điểm Season 2025.
       // Đặng Văn Hoàng và Nguyễn Ngọc Bích đã nghỉ thi đấu sau mùa này.
       standings: [
-        { name: "Nguyễn Đan Quyên",   points: 4, change: 4 },
-        { name: "Bùi Huyền Trang",    points: 3, change: -1 },
+        { name: "Nguyễn Đan Quyên",   points: 4, change:  4 },
         { name: "Chu Văn Huynh",      points: 3, change: -1 },
-        { name: "Nguyễn Tiến Trung",  points: 3, change: 2 },
-        { name: "Đặng Văn Hoàng",     points: 3, change: 0 },
-        { name: "Phạm Minh Quân",     points: 2, change: -3 },
-        { name: "Lê Thanh Phương",    points: 2, change: 0 },
+        { name: "Bùi Huyền Trang",    points: 3, change: -1 },
+        { name: "Nguyễn Tiến Trung",  points: 3, change:  2 },
+        { name: "Đặng Văn Hoàng",     points: 3, change:  8 },
+        { name: "Lê Thanh Phương",    points: 2, change:  2 },
+        { name: "Phạm Minh Quân",     points: 2, change: -4 },
         { name: "Đặng Thị Nhung",     points: 2, change: -4 },
-        { name: "Nguyễn Văn Thành",   points: 1, change: 0 },
-        { name: "Nguyễn Ngọc Bích",   points: 1, change: 0 }
+        { name: "Nguyễn Văn Thành",   points: 1, change:  1 },
+        { name: "Nguyễn Ngọc Bích",   points: 1, change:  4 },
+        { name: "Vương Mạnh Chuyền",  points: 0, change: -4 },
+        { name: "Vũ Ngọc Linh",       points: 0, change: -3 },
+        { name: "Nguyễn Đình Đạt",    points: 0, change: -2 },
+        { name: "Trần Trung Hiếu",    points: 0, change: -2 }
       ]
     }
   ],
@@ -1746,12 +1753,20 @@ const TOUR_DATA = {
       },
       // Mùa giải đầu tiên — chỉ có XD. Change = 0 vì chưa có mốc trước.
       standings: [
-        { name: "Bùi Huyền Trang",    points: 3, change: 0 },
         { name: "Chu Văn Huynh",      points: 3, change: 0 },
+        { name: "Bùi Huyền Trang",    points: 3, change: 0 },
         { name: "Phạm Minh Quân",     points: 2, change: 0 },
         { name: "Đặng Thị Nhung",     points: 2, change: 0 },
         { name: "Nguyễn Đan Quyên",   points: 1, change: 0 },
-        { name: "Nguyễn Tiến Trung",  points: 1, change: 0 }
+        { name: "Nguyễn Tiến Trung",  points: 1, change: 0 },
+        { name: "Vương Mạnh Chuyền",  points: 0, change: 0 },
+        { name: "Lê Thanh Phương",    points: 0, change: 0 },
+        { name: "Vũ Ngọc Linh",       points: 0, change: 0 },
+        { name: "Nguyễn Văn Thành",   points: 0, change: 0 },
+        { name: "Nguyễn Đình Đạt",    points: 0, change: 0 },
+        { name: "Trần Trung Hiếu",    points: 0, change: 0 },
+        { name: "Đặng Văn Hoàng",     points: 0, change: 0 },
+        { name: "Nguyễn Ngọc Bích",   points: 0, change: 0 }
       ]
     }
   ]
@@ -2877,9 +2892,28 @@ function hideTournamentDetail(){
   if(card) card.style.display = 'none';
 }
 
+function buildSeasonSelect(){
+  const sel = document.getElementById('tour-season-select');
+  if(!sel) return;
+  const years = Object.keys(TOUR_DATA).sort((a, b) => b - a);
+  sel.innerHTML = years.map(y => `<option value="${y}">Season ${y}</option>`).join('');
+  sel.value = currentTourYear;
+  sel.addEventListener('change', () => {
+    renderTourList(sel.value);
+    showTourListView();
+    setHeader(['LMCL', 'TOURNAMENT'], 'Season ' + currentTourYear);
+    // Đồng bộ trạng thái năm đang chọn ở menu bên trái
+    document.querySelectorAll('#nav-tour-submenu .drawer-year-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-year') === String(currentTourYear));
+    });
+  });
+}
+
 function renderTourList(year){
   currentTourYear = String(year);
-  document.getElementById('tour-title').textContent = 'Tournament — Season ' + currentTourYear;
+  document.getElementById('tour-title').textContent = 'Tournament';
+  const seasonSel = document.getElementById('tour-season-select');
+  if(seasonSel && seasonSel.value !== currentTourYear) seasonSel.value = currentTourYear;
   const list = TOUR_DATA[currentTourYear] || [];
   const listEl = document.getElementById('tour-list');
   const subEl = document.getElementById('tour-sub');
@@ -3094,6 +3128,7 @@ document.getElementById('nav-login').addEventListener('click', () => {
 });
 
 renderTourSubmenu();
+buildSeasonSelect();
 buildRankingsSelect();
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
