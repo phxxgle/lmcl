@@ -1087,8 +1087,11 @@
   }
   .drawer-submenu.open { max-height: 600px; }
 
+  /* Mục con dùng ngôn ngữ thị giác riêng: chấm tròn + vệt nền mờ dần + vạch dọc,
+     khác hẳn "viên thuốc" tô đặc của mục lớn để thấy rõ phân cấp. */
   .drawer-year-btn {
     display: block;
+    position: relative;
     width: 100%;
     background: none;
     border: none;
@@ -1097,7 +1100,7 @@
     font-size: 13px;
     letter-spacing: 0.6px;
     text-align: left;
-    padding: 9px 12px 9px 22px;
+    padding: 9px 12px 9px 24px;
     cursor: pointer;
     border-left: 2px solid var(--line);
     border-radius: 0 8px 8px 0;
@@ -1106,13 +1109,26 @@
   .drawer-year-btn:hover { color: var(--chalk); border-left-color: var(--chalk-dim); }
   .drawer-year-btn.active {
     color: var(--menu-accent);
-    background: transparent;
     border-left-color: var(--menu-accent);
+    background: linear-gradient(90deg, rgba(193, 255, 114, 0.14), rgba(193, 255, 114, 0) 78%);
     font-weight: 700;
+  }
+  .drawer-year-btn.active::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--menu-accent);
+    box-shadow: 0 0 7px rgba(193, 255, 114, 0.75);
   }
 
   .drawer-tour-item {
     display: block;
+    position: relative;
     width: 100%;
     background: none;
     border: none;
@@ -1120,16 +1136,31 @@
     font-family: 'Inter', sans-serif;
     font-size: 12.5px;
     text-align: left;
-    padding: 8px 12px 8px 36px;
+    padding: 8px 12px 8px 38px;
     cursor: pointer;
     border-left: 2px solid var(--line);
+    border-radius: 0 8px 8px 0;
+    transition: all 0.2s ease;
   }
   .drawer-tour-item:hover { color: var(--chalk); border-left-color: var(--chalk-dim); }
   .drawer-tour-item.active {
     color: var(--menu-accent);
     font-weight: 600;
-    background: transparent;
     border-left-color: var(--menu-accent);
+    background: linear-gradient(90deg, rgba(193, 255, 114, 0.1), rgba(193, 255, 114, 0) 78%);
+  }
+  /* Cấp sâu hơn dùng chấm rỗng để phân biệt với cấp mùa giải */
+  .drawer-tour-item.active::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    border: 1.5px solid var(--menu-accent);
+    background: transparent;
   }
 
   .drawer-divider { height: 1px; background: var(--line); margin: 8px 10px; }
