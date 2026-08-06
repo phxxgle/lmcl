@@ -151,31 +151,13 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
-  .admin-icon-btn {
-    position: absolute;
-    top: 18px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--chalk-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    padding: 0;
-    z-index: 2;
-  }
-  .admin-icon-btn svg { width: 16px; height: 16px; }
-  .admin-icon-btn:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+  /* Nút quyền BTC nằm trong thanh icon của thẻ Schedule */
+  .admin-icon-btn { border-color: rgba(193, 255, 114, 0.3); }
   .admin-icon-btn.is-admin {
-    background: var(--accent);
-    color: var(--on-accent);
-    border-color: var(--accent);
-    box-shadow: 0 0 12px rgba(255, 209, 102, 0.3);
+    background: var(--menu-accent);
+    color: var(--on-menu-accent);
+    border-color: var(--menu-accent);
+    box-shadow: 0 0 12px rgba(193, 255, 114, 0.35);
   }
 
   /* =========================================
@@ -1271,14 +1253,37 @@
     border-radius: 14px;
     overflow: hidden;
     background: var(--card-bg);
-    border: 1px solid var(--card-border);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
     animation: pdIn 0.4s ease both;
   }
   .pd-card:hover {
     transform: translateY(-3px);
-    border-color: var(--glass-border-light);
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
+    border-color: var(--menu-accent);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(193, 255, 114, 0.25);
+  }
+  .pd-card:active { transform: scale(0.975); }
+
+  /* Nhấn vào card: nhún nhẹ rồi bật lại trước khi mở hồ sơ */
+  @keyframes pdTap {
+    0%   { transform: scale(1); }
+    45%  { transform: scale(0.955); }
+    100% { transform: scale(1); }
+  }
+  .pd-card.tapped { animation: pdTap 0.28s ease; }
+  .pd-card.tapped .pd-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(193, 255, 114, 0.16);
+    animation: pdFlash 0.4s ease forwards;
+  }
+  @keyframes pdFlash {
+    from { opacity: 1; }
+    to   { opacity: 0; }
   }
 
   @keyframes pdIn {
@@ -1287,7 +1292,8 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .pd-card { animation: none; }
-    .pd-card:hover { transform: none; }
+    .pd-card:hover, .pd-card:active { transform: none; }
+    .pd-card.tapped { animation: none; }
   }
 
   /* Khung ảnh dọc phía trên */
@@ -1303,8 +1309,18 @@
       rgba(0, 0, 0, 0.4);
     overflow: hidden;
   }
-  /* contain để thấy trọn ảnh, không bị cắt đầu hay cắt vai */
+  /* Ảnh nền cùng bức, phóng to và làm mờ để lấp kín hai mép trống */
+  .pd-photo-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(18px) saturate(1.1) brightness(0.55);
+    transform: scale(1.25);
+  }
+  /* Ảnh chính dùng contain nên luôn thấy trọn, không cắt đầu hay cắt vai */
   .pd-photo img {
+    position: relative;
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -1524,11 +1540,6 @@
         <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line>
       </svg>
     </button>
-    <button type="button" class="admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền Trọng tài" title="Kích hoạt quyền BTC">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-      </svg>
-    </button>
 
     <div class="brand-container">
       <img src="https://i.ibb.co/MyCr9VFM/logo-lmcl.png" alt="logo lmcl" class="site-logo">
@@ -1553,6 +1564,11 @@
       <div class="card-header">
         <h2>Schedule — All Matches</h2>
         <div class="header-icons">
+          <button type="button" class="icon-btn admin-icon-btn" id="auth-toggle-btn" aria-label="Quyền BTC" title="Kích hoạt quyền BTC">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+            </svg>
+          </button>
           <button type="button" class="icon-btn" id="search-toggle-all" aria-label="Tìm kiếm">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </button>
@@ -3136,9 +3152,10 @@ function renderMembers(){
     const rankTxt = r.rank === undefined ? '–' : '#' + r.rank;
     const rankCls = r.rank >= 1 && r.rank <= 3 ? ' top-' + r.rank : '';
     const photo = info.photo
-      ? `<img src="${escapeHtml(info.photo)}" alt="${escapeHtml(r.name)}" loading="lazy">`
+      ? `<div class="pd-photo-bg" style="background-image:url('${escapeHtml(info.photo)}')"></div>
+         <img src="${escapeHtml(info.photo)}" alt="${escapeHtml(r.name)}" loading="lazy">`
       : DEFAULT_AVATAR_SVG;
-    return `<article class="pd-card" style="animation-delay:${i * 45}ms">
+    return `<article class="pd-card" data-player="${escapeHtml(r.name)}" style="animation-delay:${i * 45}ms">
       <div class="pd-photo">${photo}</div>
       <div class="pd-body">
         <div class="pd-namerow">
@@ -3154,8 +3171,19 @@ function renderMembers(){
     </article>`;
   }).join('');
 
-  grid.querySelectorAll('.pd-more').forEach(btn => {
-    btn.addEventListener('click', () => openPlayerModal(btn.getAttribute('data-player')));
+  // Bấm bất kỳ đâu trên card cũng mở hồ sơ, có nhún nhẹ trước khi mở
+  grid.querySelectorAll('.pd-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const name = card.getAttribute('data-player');
+      if(REDUCE_MOTION){ openPlayerModal(name); return; }
+      card.classList.remove('tapped');
+      void card.offsetWidth;
+      card.classList.add('tapped');
+      setTimeout(() => {
+        card.classList.remove('tapped');
+        openPlayerModal(name);
+      }, 200);
+    });
   });
 }
 
