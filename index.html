@@ -899,6 +899,65 @@
   table.standings-simple th:nth-child(1), table.standings-simple td:nth-child(1) { width: 16%; }
   table.standings-simple th:nth-child(2), table.standings-simple td:nth-child(2) { width: 84%; }
 
+  /* =========================================
+     TOURNAMENT: single-card two-state layout
+     ========================================= */
+  .tour-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 12px;
+    font-size: 11.5px;
+    color: var(--chalk-dim);
+  }
+  .tour-breadcrumb button {
+    background: none;
+    border: none;
+    color: var(--menu-accent);
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+  }
+  .tour-breadcrumb .bc-sep { color: var(--chalk-dim); }
+  .tour-breadcrumb .bc-cur { color: var(--chalk); font-weight: 600; }
+
+  /* Giải switcher — prev / next dạng pill */
+  .tour-switcher {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tour-switch-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--card-border);
+    color: var(--chalk-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tour-switch-btn:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+  .tour-switch-btn:disabled { opacity: 0.25; cursor: default; }
+  .tour-switch-btn svg { width: 14px; height: 14px; }
+  .tour-switch-label {
+    font-size: 11px;
+    color: var(--chalk-dim);
+    min-width: 36px;
+    text-align: center;
+  }
+
+  #view-tour .tour-card {
+    border-left: 3px solid transparent;
+  }
+  #view-tour .tour-card.live-badge { border-left-color: var(--green-ok); }
+  #view-tour .tour-card.finished-card { border-left-color: var(--chalk-dim); opacity: 0.85; }
+  #view-tour .tour-card.finished-card:hover { opacity: 1; border-left-color: var(--menu-accent); }
+
   .foot-note {
     font-size: 9.5px;
     color: var(--chalk-dim);
@@ -1353,23 +1412,26 @@
   </div><!-- /view-livematch -->
 
   <div id="view-tour" class="app-view">
-    <!-- Detail card shown first so results are immediately visible -->
-    <div class="card" id="tour-detail" style="display:none;">
-      <div class="card-header">
-        <h2 id="tour-detail-title"></h2>
-        <button type="button" class="icon-btn" id="tour-detail-back" aria-label="Quay lại danh sách giải">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        </button>
+    <div class="card" id="tour-card">
+      <!-- Header đổi tuỳ trạng thái: danh sách hoặc chi tiết giải -->
+      <div class="card-header" id="tour-card-header">
+        <h2 id="tour-title">Tournament</h2>
+        <div id="tour-nav-btns" style="display:none;"></div>
       </div>
-      <p class="sub" id="tour-detail-sub" style="display:none;"></p>
-      <div class="sub-tabs" id="tour-detail-tabs"></div>
-      <div id="tour-detail-content"></div>
-    </div>
 
-    <div class="card" id="tour-list-card">
-      <h2 id="tour-title">Tournament — Season 2026</h2>
-      <p class="sub" id="tour-sub"></p>
-      <div id="tour-list"></div>
+      <!-- Trạng thái 1: Danh sách giải theo năm -->
+      <div id="tour-list-view">
+        <p class="sub" id="tour-sub"></p>
+        <div id="tour-list"></div>
+      </div>
+
+      <!-- Trạng thái 2: Chi tiết giải đã chọn -->
+      <div id="tour-detail-view" style="display:none;">
+        <!-- Breadcrumb + switcher giải -->
+        <div class="tour-breadcrumb" id="tour-breadcrumb"></div>
+        <div class="sub-tabs" id="tour-detail-tabs"></div>
+        <div id="tour-detail-content"></div>
+      </div>
     </div>
   </div>
 
@@ -2639,36 +2701,103 @@ function rankContentHtml(t){
     </div>`;
 }
 
-// Bảng xếp hạng và kết quả từng hạng mục của một giải đã kết thúc.
-function renderTournamentDetail(t, tabKey){
-  const card = document.getElementById('tour-detail');
-  const tabsEl = document.getElementById('tour-detail-tabs');
-  const contentEl = document.getElementById('tour-detail-content');
-  if(!card || !tabsEl || !contentEl || !t) return;
+// ─── Tournament single-card navigation ─────────────────────────────────────
+// State: which tournament is open and which event tab is active.
+let currentTourId = null;
 
+function allFinishedTournaments(){
+  const out = [];
+  Object.keys(TOUR_DATA).sort((a, b) => b - a).forEach(year => {
+    (TOUR_DATA[year] || []).forEach(t => {
+      if(t.status === 'finished') out.push({ year, t });
+    });
+  });
+  return out;
+}
+
+function showTourListView(){
+  currentTourId = null;
+  document.getElementById('tour-title').textContent = 'Tournament — Season ' + currentTourYear;
+  document.getElementById('tour-nav-btns').style.display = 'none';
+  document.getElementById('tour-list-view').style.display = '';
+  document.getElementById('tour-detail-view').style.display = 'none';
+  // re-highlight active card
+  document.querySelectorAll('#tour-list .tour-card').forEach(c => {
+    c.classList.remove('active-tour');
+  });
+}
+
+function showTourDetailView(t, tabKey){
+  if(!t) return;
+  currentTourId = t.id;
+
+  // Update header
+  document.getElementById('tour-title').textContent = t.badge || t.name;
+
+  // Build prev/next switcher
+  const finished = allFinishedTournaments();
+  const idx = finished.findIndex(x => x.t.id === t.id);
+  const navBtns = document.getElementById('tour-nav-btns');
+  navBtns.style.display = 'flex';
+  navBtns.innerHTML = `<div class="tour-switcher">
+    <button class="tour-switch-btn" id="tour-prev-btn" aria-label="Giải trước" ${idx >= finished.length - 1 ? 'disabled' : ''}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <span class="tour-switch-label">${idx + 1}/${finished.length}</span>
+    <button class="tour-switch-btn" id="tour-next-btn" aria-label="Giải sau" ${idx <= 0 ? 'disabled' : ''}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>`;
+
+  const prevBtn = document.getElementById('tour-prev-btn');
+  const nextBtn = document.getElementById('tour-next-btn');
+  if(prevBtn) prevBtn.addEventListener('click', () => showTourDetailView(finished[idx + 1].t));
+  if(nextBtn) nextBtn.addEventListener('click', () => showTourDetailView(finished[idx - 1].t));
+
+  // Breadcrumb: Season 2026 → June 2026
+  const year = finished[idx] ? finished[idx].year : currentTourYear;
+  document.getElementById('tour-breadcrumb').innerHTML =
+    `<button id="tour-back-btn">Season ${year}</button>
+     <span class="bc-sep">›</span>
+     <span class="bc-cur">${escapeHtml(t.badge || t.name)}</span>`;
+  document.getElementById('tour-back-btn').addEventListener('click', () => {
+    renderTourList(year);
+    showTourListView();
+  });
+
+  // Tabs
   const eventKeys = t.events ? Object.keys(t.events) : [];
   const tabs = eventKeys.map(k => ({ key: k, label: t.events[k].label || k.toUpperCase() }));
   if(t.standings) tabs.push({ key: 'rank', label: 'Rankings' });
-  if(tabs.length === 0) return;
 
-  const active = tabs.some(x => x.key === tabKey) ? tabKey : tabs[0].key;
+  const active = tabs.some(x => x.key === tabKey) ? tabKey : (tabs[0] ? tabs[0].key : 'rank');
 
-  document.getElementById('tour-detail-title').textContent = t.name;
-  const subEl = document.getElementById('tour-detail-sub');
-  if(subEl) subEl.style.display = 'none';
-
+  const tabsEl = document.getElementById('tour-detail-tabs');
   tabsEl.innerHTML = tabs.map(x =>
     `<button type="button" class="sub-tab-btn ${x.key === active ? 'active' : ''}" data-tab="${x.key}">${escapeHtml(x.label)}</button>`
   ).join('');
   tabsEl.querySelectorAll('.sub-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => renderTournamentDetail(t, btn.getAttribute('data-tab')));
+    btn.addEventListener('click', () => showTourDetailView(t, btn.getAttribute('data-tab')));
   });
 
+  const contentEl = document.getElementById('tour-detail-content');
   contentEl.innerHTML = active === 'rank' ? rankContentHtml(t) : eventContentHtml(t.events[active]);
 
-  card.style.display = '';
+  document.getElementById('tour-list-view').style.display = 'none';
+  document.getElementById('tour-detail-view').style.display = '';
+
+  // Highlight card in list if visible
+  document.querySelectorAll('#tour-list .tour-card').forEach(c => {
+    c.classList.toggle('active-tour', c.getAttribute('data-tour-id') === t.id);
+  });
+
   if(t.titleLines) setHeader(t.titleLines, t.badge);
+  window.scrollTo({ top: 0, behavior: 'auto' });
 }
+
+// Keep old name for compatibility with other callers
+function renderTournamentDetail(t, tabKey){ showTourDetailView(t, tabKey); }
+function hideTournamentDetail(){ showTourListView(); }
 
 function hideTournamentDetail(){
   const card = document.getElementById('tour-detail');
@@ -2676,7 +2805,6 @@ function hideTournamentDetail(){
 }
 
 function renderTourList(year){
-  hideTournamentDetail();
   currentTourYear = String(year);
   document.getElementById('tour-title').textContent = 'Tournament — Season ' + currentTourYear;
   const list = TOUR_DATA[currentTourYear] || [];
@@ -2689,35 +2817,29 @@ function renderTourList(year){
     return;
   }
   subEl.textContent = '';
-  listEl.innerHTML = list.map(t => `<div class="tour-card ${t.status === 'live' ? 'live-badge' : ''}" data-tour-id="${escapeHtml(t.id)}" data-status="${escapeHtml(t.status)}">
-    <div>
-      <h3>${escapeHtml(t.name)}</h3>
-    </div>
-    <span class="tour-arrow">→</span>
-  </div>`).join('');
+
+  listEl.innerHTML = list.map(t => {
+    const isLive = t.status === 'live';
+    return `<div class="tour-card ${isLive ? 'live-badge' : 'finished-card'}" data-tour-id="${escapeHtml(t.id)}" data-status="${escapeHtml(t.status)}">
+      <div>
+        <h3>${escapeHtml(t.badge || t.name)}</h3>
+        <p>${isLive ? 'Đang diễn ra' : 'Đã kết thúc'}</p>
+      </div>
+      <span class="tour-arrow">›</span>
+    </div>`;
+  }).join('');
 
   listEl.querySelectorAll('.tour-card').forEach(card => {
     card.addEventListener('click', () => {
-      listEl.querySelectorAll('.tour-card').forEach(c => c.classList.remove('active-tour'));
-      card.classList.add('active-tour');
       if(card.getAttribute('data-status') === 'live'){
-        hideTournamentDetail();
         switchView('livematch');
         closeDrawer();
         return;
       }
       const t = findTournament(card.getAttribute('data-tour-id'));
-      if(t) renderTournamentDetail(t);
+      if(t) showTourDetailView(t);
     });
   });
-
-  // Auto-open the first finished tournament so results are visible immediately.
-  const firstFinished = list.find(t => t.status === 'finished');
-  if(firstFinished){
-    const card = listEl.querySelector(`[data-tour-id="${firstFinished.id}"]`);
-    if(card) card.classList.add('active-tour');
-    renderTournamentDetail(firstFinished);
-  }
 }
 
 function renderTourSubmenu(){
@@ -2735,6 +2857,7 @@ function renderTourSubmenu(){
       submenu.querySelectorAll('.drawer-year-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderTourList(btn.getAttribute('data-year'));
+      showTourListView();
       switchView('tour');
       closeDrawer();
     });
@@ -2749,8 +2872,9 @@ function renderTourSubmenu(){
         switchView('livematch');
       } else {
         switchView('tour');
+        renderTourList(year);
         const t = (TOUR_DATA[year] || []).find(x => x.id === id);
-        if(t) renderTournamentDetail(t);
+        if(t) showTourDetailView(t);
       }
       closeDrawer();
     });
@@ -2823,7 +2947,7 @@ function switchView(view){
   } else if(view === 'rankings'){
     setHeader(['LMCL', 'RANKINGS'], '');
   } else if(view === 'tour'){
-    setHeader(['LMCL', 'TOURNAMENT'], currentTourYear);
+    setHeader(['LMCL', 'TOURNAMENT'], 'Season ' + currentTourYear);
   }
 
   document.querySelectorAll('.drawer-item[data-view]').forEach(b => {
@@ -2839,6 +2963,7 @@ function switchView(view){
   }
   if(view === 'tour'){
     renderTourList(currentTourYear);
+    showTourListView();
   }
 
   requestAnimationFrame(() => {
@@ -2871,14 +2996,6 @@ document.getElementById('nav-livematch').addEventListener('click', () => {
   switchView('livematch');
   closeDrawer();
 });
-const tourDetailBack = document.getElementById('tour-detail-back');
-if(tourDetailBack){
-  tourDetailBack.addEventListener('click', () => {
-    hideTournamentDetail();
-    setHeader(['LMCL', 'TOURNAMENT'], currentTourYear);
-  });
-}
-
 document.getElementById('nav-rankings').addEventListener('click', () => {
   switchView('rankings');
   closeDrawer();
