@@ -1258,7 +1258,7 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
-    animation: pdIn 0.4s ease both;
+    animation: pdIn 0.75s cubic-bezier(0.3, 0.8, 0.4, 1) both;
   }
   .pd-card:hover {
     transform: translateY(-3px);
@@ -1286,9 +1286,14 @@
     to   { opacity: 0; }
   }
 
+  /* Card hiện ra kiểu nháy sáng dần, lệch nhau theo thứ tự */
   @keyframes pdIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    0%   { opacity: 0; transform: translateY(12px) scale(0.97); filter: brightness(1.8); }
+    35%  { opacity: 0.9; filter: brightness(1.4); }
+    48%  { opacity: 0.3; }
+    62%  { opacity: 1; filter: brightness(1.15); }
+    78%  { opacity: 0.65; }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: brightness(1); }
   }
   @media (prefers-reduced-motion: reduce) {
     .pd-card { animation: none; }
@@ -1483,6 +1488,79 @@
   .pm-row .k { color: var(--chalk-dim); flex-shrink: 0; }
   .pm-row .v { color: var(--chalk); text-align: right; font-weight: 500; }
   .pm-row .v .pd-flag { vertical-align: -1px; margin-right: 4px; }
+
+  /* Khối thành tích trong hồ sơ */
+  .pm-section { margin-top: 14px; }
+  .pm-section h4 {
+    margin: 0 0 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    color: var(--menu-accent);
+  }
+  .pm-tally {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .pm-medal {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--chalk);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 7px;
+    padding: 3px 8px;
+  }
+  .pm-medal i {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .pm-medal.gold i   { background: linear-gradient(135deg, #FFE259, #FFA751); }
+  .pm-medal.silver i { background: linear-gradient(135deg, #E2E8F0, #94A3B8); }
+  .pm-medal.bronze i { background: linear-gradient(135deg, #F6AD55, #DD6B20); }
+
+  .pm-ach {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 190px;
+    overflow-y: auto;
+  }
+  .pm-ach li {
+    position: relative;
+    padding: 6px 0 6px 16px;
+    font-size: 11.5px;
+    color: var(--chalk-dim);
+    line-height: 1.4;
+    border-top: 1px solid var(--line);
+  }
+  .pm-ach li:first-child { border-top: none; }
+  .pm-ach li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .pm-ach li.gold   { color: var(--chalk); }
+  .pm-ach li.gold::before   { background: linear-gradient(135deg, #FFE259, #FFA751); }
+  .pm-ach li.silver::before { background: linear-gradient(135deg, #E2E8F0, #94A3B8); }
+  .pm-ach li.bronze::before { background: linear-gradient(135deg, #F6AD55, #DD6B20); }
+  .pm-ach li.rank::before   { background: none; border: 1.5px solid var(--menu-accent); top: 10px; }
+
+  .pm-none {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--chalk-dim);
+    font-style: italic;
+  }
 
   .pd-empty {
     grid-column: 1 / -1;
@@ -1770,7 +1848,7 @@
 
   <div id="view-members" class="app-view">
     <div class="pd-toolbar">
-      <input type="text" class="pd-search" id="pd-search" placeholder="Tìm vận động viên...">
+      <input type="text" class="pd-search" id="pd-search" placeholder="Search for a player">
       <div class="pd-filter-wrap">
         <button type="button" class="pd-filter-btn" id="pd-filter-btn" aria-label="Lọc">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
@@ -1781,7 +1859,6 @@
           <button type="button" data-filter="nu">Nữ</button>
         </div>
       </div>
-      <span class="pd-count" id="pd-count"></span>
     </div>
     <div class="pd-grid" id="pd-grid"></div>
   </div>
@@ -2199,20 +2276,20 @@ const THANH_HOA_FLAG = "https://i.ibb.co/B215T1x3/Untitled-1.png";
 
 const MEMBERS_DATA = {
   nam: {
-    "Vương Mạnh Chuyền": { dob: "—", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/FQxVx4N/Chuy-n.jpg" },
-    "Chu Văn Huynh":     { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/JjRtSg6W/Huynh.jpg" },
-    "Phạm Minh Quân":    { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Y74Cr5ss/quan.jpg" },
-    "Nguyễn Văn Thành":  { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
-    "Nguyễn Đình Đạt":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
-    "Trần Trung Hiếu":   { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/zVqZ8XLZ/716930520-1626252805150868-5081195298887915256-n.jpg" },
-    "Nguyễn Tiến Trung": { dob: "—", hometown: "",            nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
+    "Vương Mạnh Chuyền": { dob: "12/08/2003", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/FQxVx4N/Chuy-n.jpg" },
+    "Chu Văn Huynh":     { dob: "1997", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/JjRtSg6W/Huynh.jpg" },
+    "Phạm Minh Quân":    { dob: "2000", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Y74Cr5ss/quan.jpg" },
+    "Nguyễn Văn Thành":  { dob: "1999", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
+    "Nguyễn Đình Đạt":   { dob: "1997", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
+    "Trần Trung Hiếu":   { dob: "20/01/1997", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/zVqZ8XLZ/716930520-1626252805150868-5081195298887915256-n.jpg" },
+    "Nguyễn Tiến Trung": { dob: "01/07/1997", hometown: "",            nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
   },
   nu: {
-    "Nguyễn Đan Quyên":  { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/bgprLybp/QUyen.jpg" },
-    "Lê Thanh Phương":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8gF63ZPX/Phuong.jpg" },
-    "Vũ Ngọc Linh":      { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8LvcDmPR/718659419-1589001649328004-6981631338756931634-n.jpg" },
-    "Bùi Huyền Trang":   { dob: "—", hometown: "Hòa Bình",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/hQ4qNqd/717185999-1725763642101341-7406834729885665162-n.jpg" },
-    "Đặng Thị Nhung":    { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/j91D1NDF/722908557-1661304405127994-631551005197498279-n.jpg" }
+    "Nguyễn Đan Quyên":  { dob: "08/03/2005", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/bgprLybp/QUyen.jpg" },
+    "Lê Thanh Phương":   { dob: "19/12/1996", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8gF63ZPX/Phuong.jpg" },
+    "Vũ Ngọc Linh":      { dob: "20/02/1998", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8LvcDmPR/718659419-1589001649328004-6981631338756931634-n.jpg" },
+    "Bùi Huyền Trang":   { dob: "1997", hometown: "Hòa Bình",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/hQ4qNqd/717185999-1725763642101341-7406834729885665162-n.jpg" },
+    "Đặng Thị Nhung":    { dob: "03/08/1999", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/j91D1NDF/722908557-1661304405127994-631551005197498279-n.jpg" }
   }
 };
 
@@ -3128,7 +3205,6 @@ function splitName(full){
 
 function renderMembers(){
   const grid = document.getElementById('pd-grid');
-  const countEl = document.getElementById('pd-count');
   if(!grid) return;
 
   const q = memberSearch.trim().toLowerCase();
@@ -3138,8 +3214,6 @@ function renderMembers(){
     if(q && !r.name.toLowerCase().includes(q)) return false;
     return true;
   });
-
-  if(countEl) countEl.textContent = rows.length + ' VĐV';
 
   if(rows.length === 0){
     grid.innerHTML = '<div class="pd-empty">Không tìm thấy vận động viên phù hợp</div>';
@@ -3187,6 +3261,76 @@ function renderMembers(){
   });
 }
 
+/* ─── Thành tích tự tổng hợp từ dữ liệu các giải ────────────────────────── */
+const EVENT_EN = { ms: "Men's Singles", ws: "Women's Singles", md: "Men's Doubles", wd: "Women's Doubles", xd: "Mixed Doubles" };
+const MEDAL_BY_RANK = { 1: 'gold', 2: 'silver', 3: 'bronze' };
+const MEDAL_EN = { gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
+const ORDINAL = { 1: '1st', 2: '2nd', 3: '3rd' };
+
+// Top 3 của một hạng mục: ưu tiên thứ hạng ghi sẵn, nếu không thì tính từ kết quả trận
+function eventTop3(ev){
+  if(ev.finalRanking){
+    return ev.finalRanking
+      .filter(r => r.rank <= 3)
+      .map(r => ({ rank: r.rank, players: ev.teams[r.t] }));
+  }
+  if(ev.matches && ev.matches.length){
+    return computeEventStandings(ev)
+      .slice(0, 3)
+      .map((r, i) => ({ rank: i + 1, players: r.pair }));
+  }
+  return [];
+}
+
+function playerAchievements(name){
+  const medals = { gold: 0, silver: 0, bronze: 0 };
+  const lines = [];
+
+  Object.keys(TOUR_DATA).sort((a, b) => b - a).forEach(year => {
+    (TOUR_DATA[year] || []).forEach(t => {
+      const when = t.badge || t.name;
+
+      // Huy chương từng hạng mục
+      Object.keys(t.events || {}).forEach(key => {
+        eventTop3(t.events[key]).forEach(pos => {
+          if(!pos.players.includes(name)) return;
+          const medal = MEDAL_BY_RANK[pos.rank];
+          medals[medal]++;
+          lines.push({
+            kind: medal,
+            text: `${MEDAL_EN[medal]} — ${EVENT_EN[key] || key.toUpperCase()}, ${when}`
+          });
+        });
+      });
+
+      // Thứ hạng top 3 trên bảng xếp hạng của mùa/giải
+      if(t.standings){
+        const idx = t.standings.findIndex(r => r.name === name);
+        if(idx >= 0 && idx < 3){
+          lines.push({ kind: 'rank', text: `${ORDINAL[idx + 1]} — ${when} Rankings` });
+        }
+      }
+    });
+  });
+
+  return { medals, lines };
+}
+
+function achievementsHtml(name){
+  const { medals, lines } = playerAchievements(name);
+  if(lines.length === 0){
+    return '<p class="pm-none">No podium finishes yet</p>';
+  }
+  const tally = ['gold', 'silver', 'bronze']
+    .filter(k => medals[k] > 0)
+    .map(k => `<span class="pm-medal ${k}"><i></i>${medals[k]}</span>`)
+    .join('');
+  return (tally ? `<div class="pm-tally">${tally}</div>` : '') +
+    '<ul class="pm-ach">' +
+    lines.map(l => `<li class="${l.kind}">${escapeHtml(l.text)}</li>`).join('') +
+    '</ul>';
+}
+
 /* ─── Hồ sơ đầy đủ của một VĐV ─────────────────────────────────────────── */
 function openPlayerModal(name){
   const row = directoryRows().find(r => r.name === name);
@@ -3206,15 +3350,19 @@ function openPlayerModal(name){
       <div>
         <h3>${escapeHtml(row.name)}</h3>
         <div class="pm-badges">
-          <span class="pm-badge">HẠNG ${rankTxt}</span>
+          <span class="pm-badge">WORLD RANK ${rankTxt}</span>
         </div>
       </div>
     </div>
     <div class="pm-rows">
-      <div class="pm-row"><span class="k">Ngày sinh</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
-      <div class="pm-row"><span class="k">Quê quán</span><span class="v">${flagHtml(info)}${escapeHtml(locationText(info))}</span></div>
-      <div class="pm-row"><span class="k">Điểm tích luỹ</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
-      <div class="pm-row"><span class="k">Thành tích</span><span class="v">${escapeHtml(info.achievements || '—')}</span></div>
+      <div class="pm-row"><span class="k">Date of Birth</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
+      <div class="pm-row"><span class="k">Hometown</span><span class="v">${escapeHtml(info.hometown || '—')}</span></div>
+      <div class="pm-row"><span class="k">Nation</span><span class="v">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span></div>
+      <div class="pm-row"><span class="k">Ranking Points</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
+    </div>
+    <div class="pm-section">
+      <h4>Achievements</h4>
+      ${achievementsHtml(row.name)}
     </div>`;
 
   modal.classList.add('open');
@@ -3286,7 +3434,8 @@ function buildMemberFilterMenu(){
 /* =========================================
    TOUR VIEW
    ========================================= */
-let currentTourYear = Object.keys(TOUR_DATA).sort((a,b) => b - a)[0];
+const DEFAULT_TOUR_YEAR = Object.keys(TOUR_DATA).sort((a, b) => b - a)[0];
+let currentTourYear = DEFAULT_TOUR_YEAR;
 
 // Markup của một bảng xếp hạng đã chốt (điểm và thay đổi hạng lấy từ dữ liệu giải).
 function staticRankingRowsHtml(standings){
@@ -3727,6 +3876,7 @@ function renderRankingsView(){
 }
 
 function switchView(view){
+  const cameFromOtherView = currentView !== view;
   currentView = view;
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById('view-' + view);
@@ -3763,6 +3913,8 @@ function switchView(view){
     renderRankingsView();
   }
   if(view === 'tour'){
+    // Vào lại Tournament từ mục khác thì trả về trạng thái mặc định: mùa mới nhất
+    if(cameFromOtherView) currentTourYear = DEFAULT_TOUR_YEAR;
     renderTourList(currentTourYear);
   }
 
