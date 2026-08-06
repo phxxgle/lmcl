@@ -1100,8 +1100,16 @@
     padding: 9px 12px 9px 22px;
     cursor: pointer;
     border-left: 2px solid var(--line);
+    border-radius: 0 8px 8px 0;
+    transition: all 0.2s ease;
   }
-  .drawer-year-btn:hover, .drawer-year-btn.active { color: var(--menu-accent); border-left-color: var(--menu-accent); }
+  .drawer-year-btn:hover { color: var(--chalk); border-left-color: var(--menu-accent); }
+  .drawer-year-btn.active {
+    background: var(--menu-accent);
+    color: var(--on-menu-accent);
+    border-left-color: var(--menu-accent);
+    font-weight: 700;
+  }
 
   .drawer-tour-item {
     display: block;
@@ -3266,8 +3274,12 @@ navTourToggle.addEventListener('click', () => {
   const isOpen = navTourSubmenu.classList.toggle('open');
   navTourToggle.classList.toggle('expanded', isOpen);
   // Bấm vào Tournament vừa mở danh sách năm, vừa chuyển sang trang Tournament
-  // để mục này sáng lên như Live Match / Members. Drawer vẫn mở để chọn năm tiếp.
+  // để mục này sáng lên như Current Season / Members. Drawer vẫn mở để chọn năm tiếp.
   switchView('tour');
+  // Đánh dấu ngay mùa đang xem để thấy rõ mình đang ở đâu
+  navTourSubmenu.querySelectorAll('.drawer-year-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-year') === String(currentTourYear));
+  });
 });
 
 document.getElementById('nav-login').addEventListener('click', () => {
