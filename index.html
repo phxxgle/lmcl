@@ -1143,23 +1143,11 @@
     transition: all 0.2s ease;
   }
   .drawer-tour-item:hover { color: var(--chalk); border-left-color: var(--chalk-dim); }
+  /* Cấp sâu nhất chỉ cần vạch dọc sáng xanh */
   .drawer-tour-item.active {
     color: var(--menu-accent);
     font-weight: 600;
     border-left-color: var(--menu-accent);
-    background: linear-gradient(90deg, rgba(193, 255, 114, 0.1), rgba(193, 255, 114, 0) 78%);
-  }
-  /* Cấp sâu hơn dùng chấm rỗng để phân biệt với cấp mùa giải */
-  .drawer-tour-item.active::before {
-    content: '';
-    position: absolute;
-    left: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    border: 1.5px solid var(--menu-accent);
     background: transparent;
   }
 
