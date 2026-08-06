@@ -1163,46 +1163,161 @@
   .app-view { display: none; }
   .app-view.active { display: block; }
 
-  /* Members */
-  .member-card {
+  /* =========================================
+     PLAYER DIRECTORY (Members)
+     ========================================= */
+  .directory-toolbar {
     display: flex;
-    gap: 12px;
-    background: rgba(0,0,0,0.15);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 10px;
-    margin-top: 10px;
-    align-items: center;
+    gap: 8px;
+    margin: 2px 0 4px;
   }
-  .member-photo {
-    width: 56px; height: 56px;
+  .directory-pill {
+    flex: 1;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+    background: var(--glass-bg);
+    color: var(--chalk-dim);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 9px 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .directory-pill:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+  .directory-pill.active {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: transparent;
+    font-weight: bold;
+  }
+
+  .members-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .player-card {
+    position: relative;
+    background: linear-gradient(165deg, rgba(255,255,255,0.06), rgba(0,0,0,0.18) 65%);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 30px 10px 14px;
+    text-align: center;
+    overflow: hidden;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    cursor: default;
+  }
+  .player-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 52px;
+    background: linear-gradient(180deg, var(--card-accent, rgba(193,255,114,0.16)), transparent);
+    pointer-events: none;
+  }
+  .player-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--glass-border-light);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+  }
+  .player-card.player-nam { --card-accent: rgba(56,189,248,0.18); }
+  .player-card.player-nu { --card-accent: rgba(255,101,132,0.18); }
+
+  .player-card .player-rank-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+  }
+  .player-card .player-rank-tag .rank-badge {
+    width: 24px; height: 24px; font-size: 12px;
+  }
+
+  .player-card .player-gender-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .player-card.player-nam .player-gender-dot { background: var(--blue); box-shadow: 0 0 6px rgba(56,189,248,0.7); }
+  .player-card.player-nu .player-gender-dot { background: var(--pink); box-shadow: 0 0 6px rgba(255,101,132,0.7); }
+
+  .player-avatar-wrap {
+    position: relative;
+    width: 74px; height: 74px;
+    margin: 0 auto 10px;
+  }
+  .player-avatar {
+    width: 74px; height: 74px;
     border-radius: 50%;
     object-fit: cover;
-    flex-shrink: 0;
-    border: 2px solid var(--glass-border-light);
+    display: block;
     background: rgba(255,255,255,0.05);
+    border: 2.5px solid var(--glass-border-light);
   }
-  .member-info h3 {
-    margin: 0 0 3px;
-    font-size: 14px;
+  .player-avatar-fallback {
+    width: 74px; height: 74px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+    color: var(--on-accent);
+    background: linear-gradient(150deg, var(--accent), rgba(255,255,255,0.35));
+    border: 2.5px solid var(--glass-border-light);
+  }
+  .player-card.player-nam .player-avatar,
+  .player-card.player-nam .player-avatar-fallback { border-color: rgba(56,189,248,0.55); }
+  .player-card.player-nu .player-avatar,
+  .player-card.player-nu .player-avatar-fallback { border-color: rgba(255,101,132,0.55); }
+  .player-card.player-nam .player-avatar-fallback { background: linear-gradient(150deg, var(--blue), rgba(255,255,255,0.35)); color: #031B2A; }
+  .player-card.player-nu .player-avatar-fallback { background: linear-gradient(150deg, var(--pink), rgba(255,255,255,0.35)); color: #2D0310; }
+
+  .player-name {
+    margin: 0 0 6px;
+    font-size: 13.5px;
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     color: var(--chalk);
+    line-height: 1.25;
+    min-height: 33px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .member-info p {
-    margin: 0;
-    font-size: 11px;
+
+  .player-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .player-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 10.5px;
     color: var(--chalk-dim);
-    line-height: 1.5;
+    font-family: 'Inter', sans-serif;
   }
+  .player-meta-row svg { width: 11px; height: 11px; flex-shrink: 0; opacity: 0.8; }
+
   .member-tag {
     display: inline-block;
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.4px;
-    padding: 2px 6px;
-    border-radius: 5px;
-    margin-top: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
   }
   .member-tag.nam { background: rgba(56,189,248,0.15); color: var(--blue); }
   .member-tag.nu { background: rgba(255,101,132,0.15); color: var(--pink); }
@@ -1485,14 +1600,14 @@
 
   <div id="view-members" class="app-view">
     <div class="card">
-      <h2>Members — MS</h2>
-      <p class="sub">Hồ sơ vận động viên nội dung Đơn Nam</p>
-      <div id="members-nam"></div>
-    </div>
-    <div class="card">
-      <h2>Members — WS</h2>
-      <p class="sub">Hồ sơ vận động viên nội dung Đơn Nữ</p>
-      <div id="members-nu"></div>
+      <h2>Player Directory</h2>
+      <p class="sub">Xếp theo bảng xếp hạng tích luỹ gần nhất</p>
+      <div class="directory-toolbar">
+        <button type="button" class="directory-pill active" data-mfilter="all">Tất cả</button>
+        <button type="button" class="directory-pill" data-mfilter="nam">Đơn Nam</button>
+        <button type="button" class="directory-pill" data-mfilter="nu">Đơn Nữ</button>
+      </div>
+      <div class="members-grid" id="members-grid"></div>
     </div>
   </div>
 
@@ -1890,23 +2005,23 @@ const PREVIOUS_TOURNAMENT = TOUR_DATA[2026].find(t => t.id === "lmcl-jun-2026");
 const OVERALL_DATA = PREVIOUS_TOURNAMENT.standings.map(r => ({ name: r.name, points: r.points }));
 
 // Dữ liệu hồ sơ vận động viên cho mục "Members". Chỉnh sửa các trường bên dưới
-// (year: năm sinh, hometown: quê quán, achievements: thành tích, photo: URL ảnh) cho từng người.
+// (dob: ngày sinh, nation: quốc tịch, achievements: thành tích, photo: URL ảnh) cho từng người.
 const MEMBERS_DATA = {
   nam: {
-    "Vương Mạnh Chuyền": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Chu Văn Huynh": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Phạm Minh Quân": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Nguyễn Văn Thành": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Nguyễn Đình Đạt": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Trần Trung Hiếu": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Nguyễn Tiến Trung": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" }
+    "Vương Mạnh Chuyền": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Chu Văn Huynh": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Phạm Minh Quân": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Nguyễn Văn Thành": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Nguyễn Đình Đạt": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Trần Trung Hiếu": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Nguyễn Tiến Trung": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" }
   },
   nu: {
-    "Nguyễn Đan Quyên": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Lê Thanh Phương": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Vũ Ngọc Linh": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Bùi Huyền Trang": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" },
-    "Đặng Thị Nhung": { year: "—", hometown: "Chưa cập nhật", achievements: "Chưa cập nhật", photo: "" }
+    "Nguyễn Đan Quyên": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Lê Thanh Phương": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Vũ Ngọc Linh": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Bùi Huyền Trang": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" },
+    "Đặng Thị Nhung": { dob: "—", nation: "Việt Nam", achievements: "Chưa cập nhật", photo: "" }
   }
 };
 
@@ -2039,6 +2154,7 @@ scoresRef.on('value', snapshot => {
   renderReadonlyGroup('nam');
   renderReadonlyGroup('nu');
   ['nam','nu','overall','rankings'].forEach(refreshStandings);
+  if(typeof currentView !== 'undefined' && currentView === 'members') renderMembers();
 }, error => {
   showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
   console.error('Firebase error:', error);
@@ -2732,33 +2848,64 @@ pinInput.addEventListener('keypress', (e) => {
 });
 
 /* =========================================
-   MEMBERS VIEW
+   PLAYER DIRECTORY (Members)
    ========================================= */
 function memberInitials(name){
   const parts = name.trim().split(/\s+/);
   return parts[parts.length - 1].charAt(0).toUpperCase();
 }
 
-function renderMembers(group){
-  const container = document.getElementById('members-' + group);
+const CALENDAR_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>';
+const FLAG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>';
+
+let membersFilter = 'all';
+
+// Danh sách toàn bộ vận động viên (cả hai nội dung), sắp theo bảng xếp hạng
+// tích luỹ gần nhất (live rankings của giải đang diễn ra).
+function getDirectoryOrder(){
+  const ranked = computeOverall(); // đã sắp theo newRank tăng dần
+  return ranked.map(r => ({ name: r.name, group: playerGroup(r.name), rank: r.newRank }));
+}
+
+function renderMembers(){
+  const container = document.getElementById('members-grid');
   if(!container) return;
-  container.innerHTML = ROSTERS[group].map(name => {
-    const info = (MEMBERS_DATA[group] && MEMBERS_DATA[group][name]) || {};
-    const photoHtml = info.photo
-      ? `<img class="member-photo" src="${escapeHtml(info.photo)}" alt="${escapeHtml(name)}">`
-      : `<div class="member-photo" style="display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--on-accent);background:var(--accent);">${escapeHtml(memberInitials(name))}</div>`;
-    return `<div class="member-card">
-      ${photoHtml}
-      <div class="member-info">
-        <h3>${escapeHtml(name)}</h3>
-        <p>Năm sinh: ${escapeHtml(info.year || 'Chưa cập nhật')}</p>
-        <p>Quê quán: ${escapeHtml(info.hometown || 'Chưa cập nhật')}</p>
-        <p>Thành tích: ${escapeHtml(info.achievements || 'Chưa cập nhật')}</p>
-        <span class="member-tag ${group}">${group === 'nam' ? 'ĐƠN NAM' : 'ĐƠN NỮ'}</span>
+
+  const order = getDirectoryOrder().filter(p => p.group && (membersFilter === 'all' || p.group === membersFilter));
+
+  if(order.length === 0){
+    container.innerHTML = '<div class="no-results" style="grid-column:1/-1;">Không có vận động viên phù hợp</div>';
+    return;
+  }
+
+  container.innerHTML = order.map(p => {
+    const group = p.group;
+    const info = (MEMBERS_DATA[group] && MEMBERS_DATA[group][p.name]) || {};
+    const avatarHtml = info.photo
+      ? `<img class="player-avatar" src="${escapeHtml(info.photo)}" alt="${escapeHtml(p.name)}">`
+      : `<div class="player-avatar-fallback">${escapeHtml(memberInitials(p.name))}</div>`;
+    return `<div class="player-card player-${group}">
+      <span class="player-rank-tag">${getRankBadgeHtml(p.rank)}</span>
+      <span class="player-gender-dot" title="${group === 'nam' ? 'Đơn Nam' : 'Đơn Nữ'}"></span>
+      <div class="player-avatar-wrap">${avatarHtml}</div>
+      <h3 class="player-name">${escapeHtml(p.name)}</h3>
+      <div class="player-meta">
+        <span class="player-meta-row">${CALENDAR_ICON} ${escapeHtml(info.dob || 'Chưa cập nhật')}</span>
+        <span class="player-meta-row">${FLAG_ICON} ${escapeHtml(info.nation || 'Chưa cập nhật')}</span>
       </div>
+      <span class="member-tag ${group}">${group === 'nam' ? 'ĐƠN NAM' : 'ĐƠN NỮ'}</span>
     </div>`;
   }).join('');
 }
+
+document.querySelectorAll('.directory-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    membersFilter = btn.getAttribute('data-mfilter');
+    document.querySelectorAll('.directory-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMembers();
+  });
+});
 
 /* =========================================
    TOUR VIEW
@@ -3220,8 +3367,7 @@ function switchView(view){
   });
 
   if(view === 'members'){
-    renderMembers('nam');
-    renderMembers('nu');
+    renderMembers();
   }
   if(view === 'rankings'){
     renderRankingsView();
