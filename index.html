@@ -1624,16 +1624,14 @@ const TOUR_DATA = {
             { a: 5, b: 4, sa: 24, sb: 22 },
             { a: 1, b: 2, sa: 14, sb: 21 }
           ],
-          // Hạng mục này xếp hạng theo thể thức riêng (không dựa trên W/L, hiệu số),
-          // nên thứ hạng được ghi thẳng ở đây. t = chỉ số đội trong mảng teams.
+          // Hạng mục này xếp hạng theo thể thức riêng, chỉ hiển thị top 3.
+          // showFullStats: true → hiển thị P/W/L/PF/PA/DIFF trong bảng standings.
           finalRanking: [
             { rank: 1, t: 5 },
             { rank: 2, t: 4 },
-            { rank: 3, t: 3 },
-            { rank: 4, t: 2 },
-            { rank: 5, t: 1 },
-            { rank: 6, t: 0 }
-          ]
+            { rank: 3, t: 3 }
+          ],
+          showFullStats: true
         }
       },
       standings: [
@@ -1672,6 +1670,87 @@ const TOUR_DATA = {
         { name: "Nguyễn Tiến Trung",  points: 3, change: 0 },
         { name: "Nguyễn Đình Đạt",    points: 3, change: 0 },
         { name: "Nguyễn Văn Thành",   points: 3, change: 0 }
+      ]
+    }
+  ],
+  2025: [
+    {
+      id: "lmcl-2025",
+      name: "LMCL Allstars — 2025",
+      titleLines: ["LMCL", "ALLSTARS", "RANKINGS"],
+      badge: "2025",
+      status: "finished",
+      note: "Đã kết thúc",
+      events: {
+        xd: {
+          label: "XD",
+          title: "Đôi Nam Nữ",
+          rowClass: "row-xd",
+          teams: [
+            ["Nguyễn Đan Quyên", "Đặng Văn Hoàng"],
+            ["Lê Thanh Phương", "Nguyễn Tiến Trung"],
+            ["Nguyễn Văn Thành", "Nguyễn Ngọc Bích"]
+          ],
+          matches: [],
+          finalRanking: [
+            { rank: 1, t: 0 },
+            { rank: 2, t: 1 },
+            { rank: 3, t: 2 }
+          ],
+          showFullStats: false
+        }
+      },
+      // Bảng tích luỹ cuối Season 2025 = điểm Season 2024 + điểm Season 2025.
+      // Đặng Văn Hoàng và Nguyễn Ngọc Bích đã nghỉ thi đấu sau mùa này.
+      standings: [
+        { name: "Nguyễn Đan Quyên",   points: 4, change: 4 },
+        { name: "Bùi Huyền Trang",    points: 3, change: -1 },
+        { name: "Chu Văn Huynh",      points: 3, change: -1 },
+        { name: "Nguyễn Tiến Trung",  points: 3, change: 2 },
+        { name: "Đặng Văn Hoàng",     points: 3, change: 0 },
+        { name: "Phạm Minh Quân",     points: 2, change: -3 },
+        { name: "Lê Thanh Phương",    points: 2, change: 0 },
+        { name: "Đặng Thị Nhung",     points: 2, change: -4 },
+        { name: "Nguyễn Văn Thành",   points: 1, change: 0 },
+        { name: "Nguyễn Ngọc Bích",   points: 1, change: 0 }
+      ]
+    }
+  ],
+  2024: [
+    {
+      id: "lmcl-2024",
+      name: "LMCL Allstars — 2024",
+      titleLines: ["LMCL", "ALLSTARS", "RANKINGS"],
+      badge: "2024",
+      status: "finished",
+      note: "Đã kết thúc",
+      events: {
+        xd: {
+          label: "XD",
+          title: "Đôi Nam Nữ",
+          rowClass: "row-xd",
+          teams: [
+            ["Bùi Huyền Trang", "Chu Văn Huynh"],
+            ["Phạm Minh Quân", "Đặng Thị Nhung"],
+            ["Nguyễn Đan Quyên", "Nguyễn Tiến Trung"]
+          ],
+          matches: [],
+          finalRanking: [
+            { rank: 1, t: 0 },
+            { rank: 2, t: 1 },
+            { rank: 3, t: 2 }
+          ],
+          showFullStats: false
+        }
+      },
+      // Mùa giải đầu tiên — chỉ có XD. Change = 0 vì chưa có mốc trước.
+      standings: [
+        { name: "Bùi Huyền Trang",    points: 3, change: 0 },
+        { name: "Chu Văn Huynh",      points: 3, change: 0 },
+        { name: "Phạm Minh Quân",     points: 2, change: 0 },
+        { name: "Đặng Thị Nhung",     points: 2, change: 0 },
+        { name: "Nguyễn Đan Quyên",   points: 1, change: 0 },
+        { name: "Nguyễn Tiến Trung",  points: 1, change: 0 }
       ]
     }
   ]
@@ -2617,27 +2696,60 @@ function pairHtml(pair){
 }
 
 function eventContentHtml(ev){
-  const fixtures = ev.matches.map((m, i) => {
-    const t1 = ev.teams[m.a], t2 = ev.teams[m.b];
-    const w1 = m.sa > m.sb ? 'winner' : '';
-    const w2 = m.sb > m.sa ? 'winner' : '';
-    return `<div class="fixture-row played ${ev.rowClass || ''}">
-      <span class="fixture-num">${i + 1}</span>
-      <span class="name pair right">${pairHtml(t1)}</span>
-      <span class="score-display ${w1}">${m.sa}</span>
-      <span></span>
-      <span class="score-display ${w2}">${m.sb}</span>
-      <span class="name pair">${pairHtml(t2)}</span>
-    </div>`;
-  }).join('');
+  let fixturesHtml = '';
+  if(ev.matches && ev.matches.length > 0){
+    fixturesHtml = '<div class="fixtures">' + ev.matches.map((m, i) => {
+      const t1 = ev.teams[m.a], t2 = ev.teams[m.b];
+      const w1 = m.sa > m.sb ? 'winner' : '';
+      const w2 = m.sb > m.sa ? 'winner' : '';
+      return `<div class="fixture-row played ${ev.rowClass || ''}">
+        <span class="fixture-num">${i + 1}</span>
+        <span class="name pair right">${pairHtml(t1)}</span>
+        <span class="score-display ${w1}">${m.sa}</span>
+        <span></span>
+        <span class="score-display ${w2}">${m.sb}</span>
+        <span class="name pair">${pairHtml(t2)}</span>
+      </div>`;
+    }).join('') + '</div>';
+  }
 
-  // Hạng mục có finalRanking dùng bảng rút gọn: chỉ thứ hạng và tên đội.
+  // Hạng mục có finalRanking: chỉ hiển thị các đội được liệt kê.
   if(ev.finalRanking){
+    // Tính thống kê từ các trận nếu cần hiển thị cột P/W/L/PF/PA/DIFF.
+    const statsMap = {};
+    if(ev.showFullStats){
+      const allRows = computeEventStandings(ev);
+      allRows.forEach(r => { statsMap[r.idx] = r; });
+    }
+
+    if(ev.showFullStats){
+      const rows = ev.finalRanking.map(r => {
+        const s = statsMap[r.t] || { played:0,win:0,loss:0,ptsFor:0,ptsAgainst:0,diff:0 };
+        return `<tr>
+          <td>${getRankBadgeHtml(r.rank)}</td>
+          <td>${pairHtml(ev.teams[r.t])}</td>
+          <td>${s.played}</td>
+          <td>${s.win}</td>
+          <td>${s.loss}</td>
+          <td>${s.ptsFor}</td>
+          <td>${s.ptsAgainst}</td>
+          <td class="${s.diff > 0 ? 'diff-pos' : (s.diff < 0 ? 'diff-neg' : '')}">${s.diff > 0 ? '+' : ''}${s.diff}</td>
+        </tr>`;
+      }).join('');
+      return `${fixturesHtml}
+        <div class="table-scroll">
+          <table class="standings standings-teams">
+            <thead><tr><th>#</th><th>Đội</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
     const simple = ev.finalRanking.map(r => `<tr>
       <td>${getRankBadgeHtml(r.rank)}</td>
       <td>${pairHtml(ev.teams[r.t])}</td>
     </tr>`).join('');
-    return `<div class="fixtures">${fixtures}</div>
+    return `${fixturesHtml}
       <div class="table-scroll">
         <table class="standings standings-simple">
           <thead><tr><th>#</th><th>Đội</th></tr></thead>
@@ -2657,7 +2769,7 @@ function eventContentHtml(ev){
     <td class="${r.diff > 0 ? 'diff-pos' : (r.diff < 0 ? 'diff-neg' : '')}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
   </tr>`).join('');
 
-  return `<div class="fixtures">${fixtures}</div>
+  return `${fixturesHtml}
     <div class="table-scroll">
       <table class="standings standings-teams">
         <thead><tr><th>#</th><th>Đội</th><th>P</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
