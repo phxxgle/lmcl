@@ -1103,10 +1103,10 @@
     border-radius: 0 8px 8px 0;
     transition: all 0.2s ease;
   }
-  .drawer-year-btn:hover { color: var(--chalk); border-left-color: var(--menu-accent); }
+  .drawer-year-btn:hover { color: var(--chalk); border-left-color: var(--chalk-dim); }
   .drawer-year-btn.active {
-    background: var(--menu-accent);
-    color: var(--on-menu-accent);
+    color: var(--menu-accent);
+    background: transparent;
     border-left-color: var(--menu-accent);
     font-weight: 700;
   }
@@ -1128,8 +1128,8 @@
   .drawer-tour-item.active {
     color: var(--menu-accent);
     font-weight: 600;
+    background: transparent;
     border-left-color: var(--menu-accent);
-    background: rgba(255, 255, 255, 0.05);
   }
 
   .drawer-divider { height: 1px; background: var(--line); margin: 8px 10px; }
