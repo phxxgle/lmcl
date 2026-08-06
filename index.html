@@ -1173,10 +1173,16 @@
     flex-shrink: 0;
   }
 
+  .pd-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 16px 0 12px;
+  }
   .pd-filters {
     display: flex;
     gap: 6px;
-    margin: 0 0 14px;
   }
   .pd-chip {
     font-family: 'Inter', sans-serif;
@@ -1316,6 +1322,93 @@
     line-height: 1.5;
   }
   .pd-meta span { display: block; }
+
+  .pd-loc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 2px;
+  }
+  .pd-flag {
+    width: 16px;
+    height: 11px;
+    border-radius: 2px;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+  .pd-loc-text { text-align: left; }
+
+  /* Nút mở hồ sơ đầy đủ, nằm góc dưới phải của card */
+  .pd-more {
+    align-self: flex-end;
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--pd-accent);
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+  .pd-more:hover { opacity: 1; text-decoration: underline; }
+  .pd-more svg { width: 10px; height: 10px; }
+
+  /* Modal hồ sơ VĐV */
+  .pm-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 14px;
+  }
+  .pm-avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid var(--pd-accent);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .pm-avatar svg { width: 32px; height: 32px; color: var(--pd-accent); opacity: 0.75; }
+  .pm-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .pm-head h3 { margin: 0 0 4px; font-size: 15px; }
+  .pm-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .pm-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    background: var(--pd-accent);
+    color: var(--pd-on-accent);
+  }
+  .pm-badge.ghost {
+    background: rgba(255,255,255,0.08);
+    color: var(--chalk-dim);
+    border: 1px solid var(--glass-border);
+  }
+  .pm-rows { text-align: left; }
+  .pm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+  }
+  .pm-row .k { color: var(--chalk-dim); flex-shrink: 0; }
+  .pm-row .v { color: var(--chalk); text-align: right; font-weight: 500; }
+  .pm-row .v .pd-flag { vertical-align: -1px; margin-right: 4px; }
 
   .pd-stat {
     margin-top: 10px;
@@ -1624,19 +1717,15 @@
   </div>
 
   <div id="view-members" class="app-view">
-    <div class="card">
-      <div class="card-header">
-        <h2>Player Directory</h2>
-        <span class="pd-count" id="pd-count"></span>
-      </div>
-      <p class="sub">Xếp theo thứ hạng mới nhất của LMCL Rankings</p>
+    <div class="pd-toolbar">
       <div class="pd-filters" id="pd-filters">
         <button type="button" class="pd-chip active" data-filter="all">Tất cả</button>
         <button type="button" class="pd-chip" data-filter="nam">Nam</button>
         <button type="button" class="pd-chip" data-filter="nu">Nữ</button>
       </div>
-      <div class="pd-grid" id="pd-grid"></div>
+      <span class="pd-count" id="pd-count"></span>
     </div>
+    <div class="pd-grid" id="pd-grid"></div>
   </div>
 
   <p class="foot-note">© Copyright 2026 LMCL ALLSTARS. All rights reserved. The content of this website is the property of LMCL.</p>
@@ -1697,6 +1786,16 @@
     <div class="modal-actions">
       <button type="button" class="btn-cancel" id="pin-cancel-btn">Hủy</button>
       <button type="button" class="btn-submit" id="pin-submit-btn">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HỒ SƠ VẬN ĐỘNG VIÊN -->
+<div class="modal-overlay" id="player-modal">
+  <div class="modal-box" style="max-width:330px;text-align:left;">
+    <div id="pm-body"></div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button type="button" class="btn-submit" id="pm-close-btn" style="flex:1;">Đóng</button>
     </div>
   </div>
 </div>
@@ -2035,26 +2134,27 @@ const OVERALL_DATA = PREVIOUS_TOURNAMENT.standings.map(r => ({ name: r.name, poi
 // Dữ liệu hồ sơ vận động viên cho mục "Members". Chỉnh sửa các trường bên dưới
 // (year: năm sinh, hometown: quê quán, achievements: thành tích, photo: URL ảnh) cho từng người.
 // Hồ sơ vận động viên cho Player Directory.
-// dob: ngày/năm sinh · nation: quốc tịch · hometown: quê quán
-// achievements: thành tích · photo: URL ảnh (bỏ trống sẽ dùng avatar mặc định)
-const DEFAULT_NATION = "Việt Nam";
+// dob: ngày/năm sinh · hometown: quê quán · nation: quốc gia
+// flag: "vn" dùng cờ Việt Nam vẽ sẵn, hoặc điền URL ảnh cờ riêng
+// achievements: thành tích · photo: URL ảnh đại diện (bỏ trống → avatar mặc định)
+const THANH_HOA_FLAG = "https://i.ibb.co/B215T1x3/Untitled-1.png";
 
 const MEMBERS_DATA = {
   nam: {
-    "Vương Mạnh Chuyền": { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Chu Văn Huynh":     { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Phạm Minh Quân":    { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Nguyễn Văn Thành":  { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Nguyễn Đình Đạt":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Trần Trung Hiếu":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Nguyễn Tiến Trung": { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" }
+    "Vương Mạnh Chuyền": { dob: "—", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Chu Văn Huynh":     { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Phạm Minh Quân":    { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Nguyễn Văn Thành":  { dob: "—", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Nguyễn Đình Đạt":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Trần Trung Hiếu":   { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Nguyễn Tiến Trung": { dob: "—", hometown: "",            nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "" }
   },
   nu: {
-    "Nguyễn Đan Quyên":  { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Lê Thanh Phương":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Vũ Ngọc Linh":      { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Bùi Huyền Trang":   { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" },
-    "Đặng Thị Nhung":    { dob: "—", nation: DEFAULT_NATION, hometown: "—", achievements: "—", photo: "" }
+    "Nguyễn Đan Quyên":  { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Lê Thanh Phương":   { dob: "—", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Vũ Ngọc Linh":      { dob: "—", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Bùi Huyền Trang":   { dob: "—", hometown: "Hòa Bình",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" },
+    "Đặng Thị Nhung":    { dob: "—", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "" }
   }
 };
 
@@ -2858,6 +2958,14 @@ function closeInfoModal(){
 if (infoToggleNam) infoToggleNam.addEventListener('click', openInfoModal);
 if (infoToggleNu) infoToggleNu.addEventListener('click', openInfoModal);
 infoCloseBtn.addEventListener('click', closeInfoModal);
+
+const playerModal = document.getElementById('player-modal');
+const pmCloseBtn = document.getElementById('pm-close-btn');
+function closePlayerModal(){ playerModal.classList.remove('open'); }
+if(pmCloseBtn) pmCloseBtn.addEventListener('click', closePlayerModal);
+if(playerModal) playerModal.addEventListener('click', e => {
+  if(e.target === playerModal) closePlayerModal();
+});
 infoModal.addEventListener('click', (e) => {
   if (e.target === infoModal) closeInfoModal();
 });
@@ -2886,6 +2994,22 @@ pinInput.addEventListener('keypress', (e) => {
 const DEFAULT_AVATAR_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
 
 let memberFilter = 'all';
+
+// Cờ Việt Nam vẽ sẵn để không phụ thuộc ảnh ngoài; các cờ khác dùng URL trong dữ liệu.
+const VN_FLAG_SVG = `<svg class="pd-flag" viewBox="0 0 30 20" role="img" aria-label="Việt Nam"><rect width="30" height="20" fill="#DA251D"/><polygon fill="#FFFF00" points="15,4.2 16.72,9.5 22.3,9.5 17.79,12.78 19.51,18.08 15,14.8 10.49,18.08 12.21,12.78 7.7,9.5 13.28,9.5"/></svg>`;
+
+function flagHtml(info){
+  const f = info && info.flag;
+  if(!f) return '';
+  if(f === 'vn') return VN_FLAG_SVG;
+  return `<img class="pd-flag" src="${escapeHtml(f)}" alt="${escapeHtml(info.nation || '')}">`;
+}
+
+function locationText(info){
+  if(!info) return '—';
+  const parts = [info.hometown, info.nation].filter(Boolean);
+  return parts.length ? parts.join(', ') : '—';
+}
 
 // Danh sách VĐV kèm thứ hạng, xếp theo bảng LMCL Rankings mới nhất.
 function directoryRows(){
@@ -2949,11 +3073,54 @@ function renderMembers(){
       <h3 class="pd-name">${escapeHtml(r.name)}</h3>
       <p class="pd-meta">
         <span>DOB · ${escapeHtml(info.dob || '—')}</span>
-        <span>${escapeHtml(info.nation || DEFAULT_NATION)}</span>
+        <span class="pd-loc">${flagHtml(info)}<span class="pd-loc-text">${escapeHtml(locationText(info))}</span></span>
       </p>
       <div class="pd-stat"><b>${pts}</b><i>PTS</i></div>
+      <button type="button" class="pd-more" data-player="${escapeHtml(r.name)}">
+        See Player Profile
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
     </article>`;
   }).join('');
+
+  grid.querySelectorAll('.pd-more').forEach(btn => {
+    btn.addEventListener('click', () => openPlayerModal(btn.getAttribute('data-player')));
+  });
+}
+
+/* ─── Hồ sơ đầy đủ của một VĐV ─────────────────────────────────────────── */
+function openPlayerModal(name){
+  const row = directoryRows().find(r => r.name === name);
+  const modal = document.getElementById('player-modal');
+  const box = document.getElementById('pm-body');
+  if(!row || !modal || !box) return;
+
+  const info = row.info;
+  const avatar = info.photo
+    ? `<img src="${escapeHtml(info.photo)}" alt="${escapeHtml(row.name)}">`
+    : DEFAULT_AVATAR_SVG;
+  const rankTxt = row.rank === undefined ? '—' : '#' + row.rank;
+
+  box.className = 'pd-' + row.group;
+  box.innerHTML = `
+    <div class="pm-head">
+      <div class="pm-avatar">${avatar}</div>
+      <div>
+        <h3>${escapeHtml(row.name)}</h3>
+        <div class="pm-badges">
+          <span class="pm-badge">${row.group === 'nam' ? 'ĐƠN NAM' : 'ĐƠN NỮ'}</span>
+          <span class="pm-badge ghost">HẠNG ${rankTxt}</span>
+        </div>
+      </div>
+    </div>
+    <div class="pm-rows">
+      <div class="pm-row"><span class="k">Ngày sinh</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
+      <div class="pm-row"><span class="k">Quê quán</span><span class="v">${flagHtml(info)}${escapeHtml(locationText(info))}</span></div>
+      <div class="pm-row"><span class="k">Điểm tích luỹ</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
+      <div class="pm-row"><span class="k">Thành tích</span><span class="v">${escapeHtml(info.achievements || '—')}</span></div>
+    </div>`;
+
+  modal.classList.add('open');
 }
 
 // Bộ lọc Tất cả / Nam / Nữ
