@@ -1487,13 +1487,13 @@
     width: 45%;
     height: 100%;
     background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.85), transparent);
-    animation: mvpShine 3s ease-in-out infinite;
+    animation: mvpShine 1.8s ease-in-out infinite;
   }
-  .pd-mvp b:nth-child(2)::after { animation-delay: 1.5s; }
+  .pd-mvp b:nth-child(2)::after { animation-delay: 0.9s; }
 
   @keyframes mvpShine {
-    0%, 60%   { left: -60%; }
-    90%, 100% { left: 130%; }
+    0%, 45%   { left: -60%; }
+    80%, 100% { left: 130%; }
   }
   @media (prefers-reduced-motion: reduce) {
     .pd-mvp b::after { animation: none; display: none; }
@@ -1896,6 +1896,31 @@
   .pp-chip.top-2 { background: linear-gradient(135deg, #E2E8F0, #94A3B8); color: #0F172A; border: none; }
   .pp-chip.top-3 { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; border: none; }
 
+  /* Huy hiệu MVP cạnh chip Rank, có vệt sáng quét như trên card */
+  .pp-chip.mvp {
+    position: relative;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+  .pp-chip.mvp::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+    animation: mvpShine 1.8s ease-in-out infinite;
+  }
+  .pp-chip.mvp + .pp-chip.mvp::after { animation-delay: 0.9s; }
+  .pp-chip.mvp-team { background: linear-gradient(135deg, #FFE87C 0%, #FFC64D 45%, #FF9A3D 100%); color: #4A2E00; }
+  .pp-chip.mvp-ms   { background: linear-gradient(135deg, #7DD3FC 0%, #38BDF8 45%, #0284C7 100%); color: #041F31; }
+  .pp-chip.mvp-ws   { background: linear-gradient(135deg, #FDA4C3 0%, #FF6584 45%, #DB2777 100%); color: #350212; }
+  @media (prefers-reduced-motion: reduce) {
+    .pp-chip.mvp::after { animation: none; display: none; }
+  }
+
   #view-player .pm-ach,
   #view-player .pm-results { max-height: none; overflow: visible; }
 
@@ -2011,31 +2036,34 @@
     border-color: var(--menu-accent);
     font-weight: 700;
   }
-  .pp-tab-ico { position: relative; display: inline-flex; }
-  .pp-tab-ico svg { width: 15px; height: 15px; }
+  .pp-tab-ico { width: 15px; height: 15px; flex-shrink: 0; }
 
-  /* Huy hiệu số lượng lời nhắn: neo vào góc trên phải của cả nút, không đè chữ */
+  /* Số lời nhắn nằm gọn trong dòng chữ, dạng viên thuốc nhỏ */
   .pp-badge {
-    position: absolute;
-    top: 3px;
-    right: 8px;
-    min-width: 15px;
-    height: 15px;
-    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
     border-radius: 999px;
     background: var(--red);
     color: #fff;
     font-family: 'Inter', sans-serif;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
-    line-height: 15px;
-    text-align: center;
-    box-shadow: 0 0 0 2px var(--green-bg);
+    line-height: 1;
+    letter-spacing: 0;
+    flex-shrink: 0;
+  }
+  .pp-tab.active .pp-badge {
+    background: var(--on-menu-accent);
+    color: var(--menu-accent);
   }
   .pp-badge.pulse { animation: badgePop 1.6s ease-in-out infinite; }
   @keyframes badgePop {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 2px var(--green-bg); }
-    50%      { transform: scale(1.18); box-shadow: 0 0 0 2px var(--green-bg), 0 0 10px 2px rgba(248, 113, 113, 0.75); }
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.16); box-shadow: 0 0 10px 2px rgba(248, 113, 113, 0.6); }
   }
 
   .pp-panel { display: none; }
@@ -2043,18 +2071,20 @@
 
   /* Ghi chú nhỏ cạnh tiêu đề Confession */
   .cmt-note {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    flex-shrink: 0;
-    font-size: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 8px 0 14px;
+    font-size: 10.5px;
+    line-height: 1.5;
     color: var(--chalk-dim);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--card-border);
-    border-radius: 999px;
-    padding: 4px 9px;
+    border-left: 3px solid var(--menu-accent);
+    border-radius: 9px;
+    padding: 8px 10px;
   }
-  .cmt-note svg { width: 11px; height: 11px; }
+  .cmt-note svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; }
 
   /* ── Lời nhắn cho vận động viên ── */
   .cmt-form { margin-bottom: 14px; }
@@ -4139,6 +4169,7 @@ function openPlayerPage(name){
         <div class="pp-chips">
           <span class="pp-chip${rankCls}">RANK ${rankTxt}</span>
           <span class="pp-chip ghost">${row.points === undefined ? '—' : row.points + ' PTS'}</span>
+          ${(row.tags || []).map(t => `<span class="pp-chip mvp mvp-${t.key}">${t.label}</span>`).join('')}
         </div>
       </div>
     </div>
@@ -4146,9 +4177,7 @@ function openPlayerPage(name){
     <div class="pp-tabs" id="pp-tabs">
       <button type="button" class="pp-tab active" data-tab="profile">Profile</button>
       <button type="button" class="pp-tab" data-tab="confession">
-        <span class="pp-tab-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.5-.6L3 21l1.7-4.4A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"></path></svg>
-        </span>
+        <svg class="pp-tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.5-.6L3 21l1.7-4.4A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"></path></svg>
         Confession
         <b class="pp-badge" id="cmt-badge" hidden>0</b>
       </button>
@@ -4194,19 +4223,17 @@ function openPlayerPage(name){
 
     <div class="pp-panel" id="pp-panel-confession">
       <div class="card">
-        <div class="card-header">
-          <h2>Confession</h2>
-          <span class="cmt-note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a4 4 0 0 0-4 4v5a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path></svg>
-            Lời nhắn ẩn danh
-          </span>
-        </div>
+        <h2>Confession</h2>
+        <p class="cmt-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Ẩn danh hoàn toàn — Ai cũng có thể gửi và xem lời nhắn của VĐV này</span>
+        </p>
         <div class="cmt-form">
           <input type="text" id="cmt-name" class="cmt-input" maxlength="40" placeholder="Tên của bạn">
           <textarea id="cmt-text" class="cmt-input cmt-area" maxlength="300" rows="3" placeholder="Viết lời nhắn..."></textarea>
           <div class="cmt-actions">
             <span class="cmt-count" id="cmt-count">0/300</span>
-            <button type="button" class="cmt-send" id="cmt-send">Gửi lời nhắn</button>
+            <button type="button" class="cmt-send" id="cmt-send">Gửi lời nhắn (Ẩn danh)</button>
           </div>
           <p class="cmt-error" id="cmt-error"></p>
         </div>
