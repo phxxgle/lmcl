@@ -2,12 +2,13 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#062617">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LMCL Rankings – August 2026</title>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tomorrow:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -2595,9 +2596,9 @@
 <div class="modal-overlay" id="pin-modal">
   <div class="modal-box">
     <h3>Xác nhận quyền BTC</h3>
-    <p>Vui lòng nhập mã PIN để kích hoạt quyền cập nhật điểm số</p>
-    <input type="password" id="pin-input" placeholder="Mã PIN" autocomplete="off">
-    <div class="pin-error" id="pin-error">Mã PIN không chính xác!</div>
+    <p>Nhập mã BTC để kích hoạt quyền cập nhật điểm số</p>
+    <input type="password" id="pin-input" placeholder="Mã BTC" autocomplete="current-password">
+    <div class="pin-error" id="pin-error">Mã BTC không chính xác!</div>
     <div class="modal-actions">
       <button type="button" class="btn-cancel" id="pin-cancel-btn">Hủy</button>
       <button type="button" class="btn-submit" id="pin-submit-btn">Xác nhận</button>
@@ -2994,6 +2995,12 @@ firebase.initializeApp(firebaseConfig);
 const scoresRef = firebase.database().ref('scores');
 const commentsRef = firebase.database().ref('comments');
 
+// Quyền BTC do Firebase Authentication cấp. Tài khoản dùng chung một email cố định
+// (email không phải bí mật), BTC chỉ cần nhập MẬT KHẨU — thao tác y như mã PIN cũ.
+// Mật khẩu KHÔNG nằm trong mã nguồn, nên xem source cũng không sửa được điểm.
+const BTC_EMAIL = "btc@lmcl.local";
+const firebaseAuth = firebase.auth();
+
 function showConnBanner(msg){
   const el = document.getElementById('conn-banner');
   el.textContent = msg;
@@ -3008,8 +3015,9 @@ if(firebaseConfig.apiKey === 'YOUR_API_KEY' || firebaseConfig.projectId === 'YOU
 }
 
 let scores = {};
-let isAdmin = sessionStorage.getItem('lmcl_is_admin') === 'true'; 
-const SECRET_PIN = "BTC";
+// Firebase tự nhớ phiên đăng nhập, không cần sessionStorage nữa.
+// Có sửa biến này trong DevTools thì Security Rules vẫn chặn ghi dữ liệu.
+let isAdmin = false;
 
 const uiState = {
   all: { status: 'all', gender: 'all', day: 'all' }
@@ -3745,28 +3753,36 @@ function updateAuthUI() {
     if (!wasAdmin) flashAdminBanner(true);
     authToggleBtn.classList.add('is-admin');
     authToggleBtn.setAttribute('title', 'Đang ở quyền BTC (Bấm để thoát)');
-    sessionStorage.setItem('lmcl_is_admin', 'true');
     if (navLoginLabel) navLoginLabel.textContent = 'Đăng xuất (Đang là BTC)';
   } else {
     flashAdminBanner(false);
     authToggleBtn.classList.remove('is-admin');
     authToggleBtn.setAttribute('title', 'Kích hoạt quyền BTC');
-    sessionStorage.removeItem('lmcl_is_admin');
     if (navLoginLabel) navLoginLabel.textContent = 'Đăng nhập BTC';
   }
   renderAll();
 }
 
+function showAuthError(msg){
+  pinError.textContent = msg;
+  pinError.style.display = 'block';
+}
+
 authToggleBtn.addEventListener('click', () => {
   if (isAdmin) {
-    isAdmin = false;
-    updateAuthUI();
+    firebaseAuth.signOut().catch(err => console.error('Đăng xuất lỗi:', err));
   } else {
     pinInput.value = '';
     pinError.style.display = 'none';
     pinModal.classList.add('open');
     pinInput.focus();
   }
+});
+
+// Nguồn sự thật duy nhất về quyền BTC
+firebaseAuth.onAuthStateChanged(user => {
+  isAdmin = !!user;
+  updateAuthUI();
 });
 
 pinCancelBtn.addEventListener('click', () => {
@@ -3794,15 +3810,31 @@ infoModal.addEventListener('click', (e) => {
 });
 
 function verifyPin() {
-  if (pinInput.value === SECRET_PIN) {
-    isAdmin = true;
-    pinModal.classList.remove('open');
-    updateAuthUI();
-  } else {
-    pinError.style.display = 'block';
-    pinInput.value = '';
-    pinInput.focus();
-  }
+  const pass = pinInput.value;
+  if(!pass){ showAuthError('Bạn chưa nhập mã BTC'); return; }
+
+  pinSubmitBtn.disabled = true;
+  firebaseAuth.signInWithEmailAndPassword(BTC_EMAIL, pass)
+    .then(() => {
+      pinModal.classList.remove('open');
+      pinInput.value = '';
+      pinError.style.display = 'none';
+    })
+    .catch(err => {
+      const map = {
+        'auth/wrong-password':        'Mã BTC không chính xác!',
+        'auth/invalid-credential':    'Mã BTC không chính xác!',
+        'auth/user-not-found':        'Chưa tạo tài khoản BTC trên Firebase',
+        'auth/invalid-email':         'Email BTC trong code chưa đúng',
+        'auth/too-many-requests':     'Sai quá nhiều lần, đợi một lát rồi thử lại',
+        'auth/network-request-failed':'Không có mạng, thử lại sau',
+        'auth/operation-not-allowed': 'Chưa bật Email/Password trong Firebase'
+      };
+      showAuthError(map[err.code] || ('Đăng nhập thất bại (' + err.code + ')'));
+      pinInput.value = '';
+      pinInput.focus();
+    })
+    .finally(() => { pinSubmitBtn.disabled = false; });
 }
 
 pinSubmitBtn.addEventListener('click', verifyPin);
