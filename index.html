@@ -1474,7 +1474,30 @@
   }
   /* Đuôi ruy băng hai bên để trông như huy hiệu */
 
-  .pd-mvp b { box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45); }
+  /* Chỉ có vệt sáng quét ngang, không nhấp nháy */
+  .pd-mvp b {
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+  .pd-mvp b::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+    animation: mvpShine 3s ease-in-out infinite;
+  }
+  .pd-mvp b:nth-child(2)::after { animation-delay: 1.5s; }
+
+  @keyframes mvpShine {
+    0%, 60%   { left: -60%; }
+    90%, 100% { left: 130%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pd-mvp b::after { animation: none; display: none; }
+  }
 
   .pd-mvp .mvp-team {
     background: linear-gradient(135deg, #FFE87C 0%, #FFC64D 45%, #FF9A3D 100%);
@@ -1949,6 +1972,7 @@
     line-height: 1.3;
     word-break: break-word;
   }
+  .pp-stat-wide { grid-column: 1 / -1; }
   .pp-stat .val.accent {
     font-family: 'Space Mono', monospace;
     font-size: 16px;
@@ -1990,11 +2014,11 @@
   .pp-tab-ico { position: relative; display: inline-flex; }
   .pp-tab-ico svg { width: 15px; height: 15px; }
 
-  /* Huy hiệu số lượng lời nhắn kiểu thông báo */
+  /* Huy hiệu số lượng lời nhắn: neo vào góc trên phải của cả nút, không đè chữ */
   .pp-badge {
     position: absolute;
-    top: -7px;
-    right: -9px;
+    top: 3px;
+    right: 8px;
     min-width: 15px;
     height: 15px;
     padding: 0 4px;
@@ -2872,20 +2896,20 @@ const THANH_HOA_FLAG = "https://i.ibb.co/B215T1x3/Untitled-1.png";
 
 const MEMBERS_DATA = {
   nam: {
-    "Vương Mạnh Chuyền": { dob: "12/08/2003", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/FQxVx4N/Chuy-n.jpg" },
-    "Chu Văn Huynh":     { dob: "1997", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/JjRtSg6W/Huynh.jpg" },
-    "Phạm Minh Quân":    { dob: "2000", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Y74Cr5ss/quan.jpg" },
-    "Nguyễn Văn Thành":  { dob: "1999", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
-    "Nguyễn Đình Đạt":   { dob: "1997", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
-    "Trần Trung Hiếu":   { dob: "20/01/1997", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/zVqZ8XLZ/716930520-1626252805150868-5081195298887915256-n.jpg" },
-    "Nguyễn Tiến Trung": { dob: "01/07/1997", hometown: "Republic of Thanh Hóa", nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
+    "Vương Mạnh Chuyền": { dob: "12/08/2003", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/FQxVx4N/Chuy-n.jpg" },
+    "Chu Văn Huynh":     { dob: "1997", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/JjRtSg6W/Huynh.jpg" },
+    "Phạm Minh Quân":    { dob: "2000", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/Y74Cr5ss/quan.jpg" },
+    "Nguyễn Văn Thành":  { dob: "1999", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
+    "Nguyễn Đình Đạt":   { dob: "1997", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
+    "Trần Trung Hiếu":   { dob: "20/01/1997", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/zVqZ8XLZ/716930520-1626252805150868-5081195298887915256-n.jpg" },
+    "Nguyễn Tiến Trung": { dob: "01/07/1997", hometown: "Republic of Thanh Hóa", nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, racket: "—", achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
   },
   nu: {
-    "Nguyễn Đan Quyên":  { dob: "08/03/2005", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/bgprLybp/QUyen.jpg" },
-    "Lê Thanh Phương":   { dob: "19/12/1996", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8gF63ZPX/Phuong.jpg" },
-    "Vũ Ngọc Linh":      { dob: "20/02/1998", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/8LvcDmPR/718659419-1589001649328004-6981631338756931634-n.jpg" },
-    "Bùi Huyền Trang":   { dob: "1997", hometown: "Hòa Bình",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/hQ4qNqd/717185999-1725763642101341-7406834729885665162-n.jpg" },
-    "Đặng Thị Nhung":    { dob: "03/08/1999", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", achievements: "—", photo: "https://i.ibb.co/j91D1NDF/722908557-1661304405127994-631551005197498279-n.jpg" }
+    "Nguyễn Đan Quyên":  { dob: "08/03/2005", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/bgprLybp/QUyen.jpg" },
+    "Lê Thanh Phương":   { dob: "19/12/1996", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/8gF63ZPX/Phuong.jpg" },
+    "Vũ Ngọc Linh":      { dob: "20/02/1998", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/8LvcDmPR/718659419-1589001649328004-6981631338756931634-n.jpg" },
+    "Bùi Huyền Trang":   { dob: "1997", hometown: "Hòa Bình",    nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/hQ4qNqd/717185999-1725763642101341-7406834729885665162-n.jpg" },
+    "Đặng Thị Nhung":    { dob: "03/08/1999", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/j91D1NDF/722908557-1661304405127994-631551005197498279-n.jpg" }
   }
 };
 
@@ -4119,24 +4143,14 @@ function openPlayerPage(name){
       </div>
     </div>
 
-    <div class="card">
-      <h2>Profile</h2>
-      <div class="pm-rows">
-        <div class="pm-row"><span class="k">Date of Birth</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
-        <div class="pm-row"><span class="k">Hometown</span><span class="v">${escapeHtml(info.hometown || '—')}</span></div>
-        <div class="pm-row"><span class="k">Nation</span><span class="v">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span></div>
-        <div class="pm-row"><span class="k">Ranking Points</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
-      </div>
-    </div>
-
     <div class="pp-tabs" id="pp-tabs">
       <button type="button" class="pp-tab active" data-tab="profile">Profile</button>
       <button type="button" class="pp-tab" data-tab="confession">
         <span class="pp-tab-ico">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.5-.6L3 21l1.7-4.4A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"></path></svg>
-          <b class="pp-badge" id="cmt-badge" hidden>0</b>
         </span>
         Confession
+        <b class="pp-badge" id="cmt-badge" hidden>0</b>
       </button>
     </div>
 
@@ -4159,6 +4173,10 @@ function openPlayerPage(name){
           <div class="pp-stat">
             <span class="lbl">Nation</span>
             <span class="val">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span>
+          </div>
+          <div class="pp-stat pp-stat-wide">
+            <span class="lbl">Current Racket</span>
+            <span class="val">${escapeHtml(info.racket || '—')}</span>
           </div>
         </div>
       </div>
