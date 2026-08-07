@@ -2169,7 +2169,13 @@
     padding: 3px 10px;
   }
 
-  .cmt-list { display: flex; flex-direction: column; gap: 8px; }
+  /* Tách tiêu đề + ô đếm khỏi danh sách bên dưới */
+  .cmt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
   .cmt-item {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--card-border);
