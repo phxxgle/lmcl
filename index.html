@@ -2200,33 +2200,32 @@
     padding: 4px 10px;
   }
 
-  .rt-bars { display: flex; flex-direction: column; gap: 10px; }
-  .rt-bar-row {
+  /* Lưới điểm trung bình từng mục — tách riêng thay vì gộp một thanh */
+  .rt-avg-grid {
     display: grid;
-    grid-template-columns: 68px 1fr 30px;
-    align-items: center;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
-  .rt-bar-label { font-size: 11px; color: var(--chalk-dim); }
-  .rt-bar-track {
-    height: 7px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    overflow: hidden;
+  .rt-avg-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 12px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
   }
-  .rt-bar-fill {
-    display: block;
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--accent), var(--green-ok));
-    transition: width 0.5s cubic-bezier(0.3, 0.9, 0.4, 1);
+  .rt-avg-label {
+    font-size: 10px;
+    letter-spacing: 0.4px;
+    color: var(--chalk-dim);
+    text-transform: uppercase;
   }
-  .rt-bar-val {
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
+  .rt-avg-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    line-height: 1;
     color: var(--chalk);
-    text-align: right;
   }
 
   /* Form chấm điểm */
@@ -2247,36 +2246,37 @@
     text-align: right;
   }
 
-  .rt-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 6px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--menu-accent) 0%, var(--menu-accent) 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 100%);
-    outline: none;
-    cursor: pointer;
+  /* Ô số 1–10 để bấm chọn thay cho thanh kéo */
+  .rt-numrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
   }
-  .rt-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+  .rt-num {
+    flex: 1 1 0;
+    min-width: 26px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--chalk-dim);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .rt-num:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+  .rt-num:active { transform: scale(0.92); }
+  .rt-num.active {
     background: var(--menu-accent);
-    border: 3px solid var(--green-bg);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    cursor: pointer;
+    color: var(--on-menu-accent);
+    border-color: var(--menu-accent);
+    box-shadow: 0 2px 8px rgba(193, 255, 114, 0.35);
   }
-  .rt-slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--menu-accent);
-    border: 3px solid var(--green-bg);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    cursor: pointer;
-  }
-  .rt-slider::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); }
 
   .rt-done {
     display: flex;
@@ -2299,6 +2299,16 @@
     font-style: italic;
   }
   .rt-note svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; opacity: 0.7; }
+  /* Bản đặt ở đầu tab: có nền và viền để nổi bật hơn dòng ghi chú thường */
+  .rt-note-top {
+    margin: 16px 0 0;
+    padding: 9px 12px;
+    background: rgba(193, 255, 114, 0.06);
+    border: 1px solid rgba(193, 255, 114, 0.2);
+    border-radius: 10px;
+    font-style: normal;
+  }
+  .rt-note-top svg { color: var(--menu-accent); opacity: 1; }
 
   /* ── Lời nhắn cho vận động viên ── */
   .cmt-form { margin-bottom: 14px; }
@@ -4574,19 +4584,25 @@ function openPlayerPage(name){
     </div>
 
     <div class="pp-panel" id="pp-panel-rating">
+      <p class="rt-note rt-note-top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>Điểm đánh giá sẽ được làm mới vào đầu mỗi mùa giải mới.</span>
+      </p>
+
       <div class="card">
+        <h2>Rating Summary</h2>
         <div class="rt-summary">
           <div class="rt-overall">
             <span class="rt-overall-num" id="rt-overall-num">–</span>
-            <span class="rt-overall-lbl">/ 10 điểm trung bình</span>
+            <span class="rt-overall-lbl">/ 10 average</span>
           </div>
           <div class="rt-count" id="rt-count">Chưa có lượt đánh giá nào</div>
         </div>
-        <div class="rt-bars" id="rt-bars"></div>
+        <div class="rt-avg-grid" id="rt-bars"></div>
       </div>
 
       <div class="card" id="rt-form-card">
-        <h2>Đánh giá vận động viên</h2>
+        <h2>Rate This Player</h2>
         <div class="rt-fields" id="rt-fields"></div>
         <button type="button" class="cmt-send" id="rt-submit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -4602,10 +4618,6 @@ function openPlayerPage(name){
         </div>
       </div>
 
-      <p class="rt-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        <span>Điểm đánh giá sẽ được làm mới vào đầu mỗi mùa giải mới.</span>
-      </p>
     </div>
 
     <div class="pp-panel" id="pp-panel-confession">
@@ -4699,40 +4711,57 @@ function detachRatings(){
   }
 }
 
+// Điểm trung bình riêng của từng mục, trình bày dạng lưới thẻ tách biệt
+// thay vì gộp chung một thanh, để thấy rõ Trình độ khác Fair-play thế nào.
 function ratingBarsHtml(entries){
   const n = entries.length;
   const avg = key => n === 0 ? 0 : entries.reduce((s, e) => s + (Number(e[key]) || 0), 0) / n;
 
   return RATING_CRITERIA.map(c => {
     const v = avg(c.key);
-    const pct = Math.max(0, Math.min(100, v * 10));
-    return `<div class="rt-bar-row">
-      <span class="rt-bar-label">${escapeHtml(c.label)}</span>
-      <span class="rt-bar-track"><span class="rt-bar-fill" style="width:${pct}%"></span></span>
-      <span class="rt-bar-val">${n === 0 ? '–' : v.toFixed(1)}</span>
+    return `<div class="rt-avg-card">
+      <span class="rt-avg-label">${escapeHtml(c.label)}</span>
+      <span class="rt-avg-val">${n === 0 ? '–' : v.toFixed(1)}</span>
     </div>`;
   }).join('');
 }
 
+// Lựa chọn hiện tại của người dùng cho mỗi mục — reset mỗi khi mở hồ sơ mới
+let ratingSelections = {};
+
 function buildRatingFields(){
+  ratingSelections = {};
   const wrap = document.getElementById('rt-fields');
   if(!wrap) return;
+
   wrap.innerHTML = RATING_CRITERIA.map(c => `
     <div class="rt-field" data-key="${c.key}">
       <div class="rt-field-head">
         <span class="rt-field-label">${escapeHtml(c.label)}</span>
-        <span class="rt-field-val" id="rt-val-${c.key}">5</span>
+        <span class="rt-field-val" id="rt-val-${c.key}">–</span>
       </div>
-      <input type="range" min="1" max="10" step="1" value="5" class="rt-slider" id="rt-slider-${c.key}">
+      <div class="rt-numrow" id="rt-numrow-${c.key}">
+        ${Array.from({length: 10}, (_, i) => i + 1)
+          .map(n => `<button type="button" class="rt-num" data-val="${n}">${n}</button>`).join('')}
+      </div>
     </div>
   `).join('');
 
   RATING_CRITERIA.forEach(c => {
-    const slider = document.getElementById('rt-slider-' + c.key);
-    const val = document.getElementById('rt-val-' + c.key);
-    if(slider && val){
-      slider.addEventListener('input', () => { val.textContent = slider.value; });
-    }
+    const row = document.getElementById('rt-numrow-' + c.key);
+    const valEl = document.getElementById('rt-val-' + c.key);
+    if(!row) return;
+    row.querySelectorAll('.rt-num').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const v = Number(btn.getAttribute('data-val'));
+        ratingSelections[c.key] = v;
+        row.querySelectorAll('.rt-num').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if(valEl) valEl.textContent = v;
+        const errEl = document.getElementById('rt-error');
+        if(errEl) errEl.textContent = '';
+      });
+    });
   });
 }
 
@@ -4782,11 +4811,14 @@ function setupRatings(playerName){
 
   if(submitBtn){
     submitBtn.onclick = () => {
+      const missing = RATING_CRITERIA.filter(c => !(c.key in ratingSelections));
+      if(missing.length > 0){
+        if(errEl) errEl.textContent = 'Vui lòng chọn điểm cho: ' + missing.map(c => c.label).join(', ');
+        return;
+      }
+
       const payload = { ts: Date.now() };
-      RATING_CRITERIA.forEach(c => {
-        const slider = document.getElementById('rt-slider-' + c.key);
-        payload[c.key] = slider ? Number(slider.value) : 5;
-      });
+      RATING_CRITERIA.forEach(c => { payload[c.key] = ratingSelections[c.key]; });
 
       submitBtn.disabled = true;
       ref.child(deviceId).set(payload)
