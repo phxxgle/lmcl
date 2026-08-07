@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#062617">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>LMCL Rankings – August 2026</title>
+<title>LMCL ALLSTARS</title>
+<meta name="apple-mobile-web-app-title" content="LMCL">
+<meta name="application-name" content="LMCL">
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
@@ -2646,7 +2648,7 @@
 <div class="modal-overlay" id="pin-modal">
   <div class="modal-box">
     <h3>Xác nhận quyền BTC</h3>
-    <p>Nhập mã BTC để truy cập quyền chỉnh sửa</p>
+    <p>Nhập mã BTC để kích hoạt quyền cập nhật điểm số</p>
     <input type="password" id="pin-input" placeholder="Mã BTC" autocomplete="current-password">
     <div class="pin-error" id="pin-error">Mã BTC không chính xác!</div>
     <div class="modal-actions">
@@ -5007,12 +5009,16 @@ function renderTourSubmenu(){
    ========================================= */
 // Logo là nhận diện của đội và luôn cố định. Phần chữ bên cạnh logo là tên
 // của giải/mục đang xem, nên được đổi theo từng view.
+// Tên hiển thị trên tab trình duyệt — sửa một dòng này là đổi được toàn bộ
+const APP_NAME = 'LMCL ALLSTARS';
+
 function setHeader(lines, badge){
   const el = document.getElementById('header-title');
   if(!el) return;
   el.innerHTML = lines.map(l => escapeHtml(l)).join('<br>') +
     (badge ? '<br><span class="badge-date">' + escapeHtml(badge) + '</span>' : '');
-  document.title = lines.join(' ') + (badge ? ' – ' + badge : '');
+  // Tab luôn giữ một tên cố định, không đổi theo từng mục
+  document.title = APP_NAME;
 }
 
 let rankingsSelection = 'live';
