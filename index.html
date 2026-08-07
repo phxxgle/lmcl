@@ -1573,6 +1573,12 @@
     margin-bottom: 10px;
     line-height: 1.3;
   }
+  .flag-pair {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
   .pd-flag {
     width: 17px;
     height: 12px;
@@ -2125,6 +2131,9 @@
     color: var(--chalk-dim);
   }
   .cmt-send {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: var(--menu-accent);
     color: var(--on-menu-accent);
     border: none;
@@ -2136,6 +2145,7 @@
     cursor: pointer;
     transition: opacity 0.2s ease;
   }
+  .cmt-send svg { width: 14px; height: 14px; }
   .cmt-send:hover { opacity: 0.88; }
   .cmt-send:disabled { opacity: 0.5; cursor: default; }
 
@@ -2953,7 +2963,7 @@ const MEMBERS_DATA = {
     "Nguyễn Văn Thành":  { dob: "24/05/1999", nickname: "Máy đập Triều Khúc", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", racket: "Victor Thruster HMR Pro", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
     "Nguyễn Đình Đạt":   { dob: "1997", nickname: "Bu", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", racket: "Lining", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
     "Trần Trung Hiếu":   { dob: "20/01/1997", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", racket: "Victor Auraspeed", achievements: "—", photo: "https://i.ibb.co/zVqZ8XLZ/716930520-1626252805150868-5081195298887915256-n.jpg" },
-    "Nguyễn Tiến Trung": { dob: "01/07/1997", hometown: "Republic of Thanh Hóa", nation: "Republic of Thanh Hóa", flag: THANH_HOA_FLAG, racket: "Lining", achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
+    "Nguyễn Tiến Trung": { dob: "01/07/1997", hometown: "Republic of Thanh Hóa", nation: "Republic of Thanh Hóa", flags: [THANH_HOA_FLAG, "vn"], racket: "Lining", achievements: "—", photo: "https://i.ibb.co/1gskRFn/720099861-1008256104923798-5542720558816907950-n.jpg" }
   },
   nu: {
     "Nguyễn Đan Quyên":  { dob: "08/03/2005", nickname: "Chip", hometown: "Quảng Ninh",  nation: "Việt Nam", flag: "vn", racket: "—", achievements: "—", photo: "https://i.ibb.co/bgprLybp/QUyen.jpg" },
@@ -3807,11 +3817,19 @@ let memberSearch = '';
 // Cờ Việt Nam vẽ sẵn để không phụ thuộc ảnh ngoài; các cờ khác dùng URL trong dữ liệu.
 const VN_FLAG_SVG = `<svg class="pd-flag" viewBox="0 0 30 20" role="img" aria-label="Việt Nam"><rect width="30" height="20" fill="#DA251D"/><polygon fill="#FFFF00" points="15,4.2 16.72,9.5 22.3,9.5 17.79,12.78 19.51,18.08 15,14.8 10.49,18.08 12.21,12.78 7.7,9.5 13.28,9.5"/></svg>`;
 
-function flagHtml(info){
-  const f = info && info.flag;
+function oneFlagHtml(f, alt){
   if(!f) return '';
   if(f === 'vn') return VN_FLAG_SVG;
-  return `<img class="pd-flag" src="${escapeHtml(f)}" alt="${escapeHtml(info.nation || '')}">`;
+  return `<img class="pd-flag" src="${escapeHtml(f)}" alt="${escapeHtml(alt || '')}">`;
+}
+
+// Hỗ trợ nhiều lá cờ: dùng info.flags (mảng) hoặc info.flag (một lá)
+function flagHtml(info){
+  if(!info) return '';
+  const list = Array.isArray(info.flags) ? info.flags : (info.flag ? [info.flag] : []);
+  if(list.length === 0) return '';
+  const inner = list.map(f => oneFlagHtml(f, info.nation)).join('');
+  return list.length > 1 ? `<span class="flag-pair">${inner}</span>` : inner;
 }
 
 // Quê quán dùng cho bộ lọc; ai không có quê quán thì lấy tên quốc gia
@@ -4249,7 +4267,7 @@ function openPlayerPage(name){
 
     <div class="pp-panel" id="pp-panel-confession">
       <div class="card">
-        <h2>Viết lời nhắn</h2>
+        <h2>Write a Message</h2>
         <p class="cmt-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           <span>Ẩn danh hoàn toàn — Ai cũng có thể gửi và xem lời nhắn của VĐV này</span>
@@ -4259,7 +4277,10 @@ function openPlayerPage(name){
           <textarea id="cmt-text" class="cmt-input cmt-area" maxlength="300" rows="3" placeholder="Viết lời nhắn..."></textarea>
           <div class="cmt-actions">
             <span class="cmt-count" id="cmt-count">0/300</span>
-            <button type="button" class="cmt-send" id="cmt-send">Gửi lời nhắn (Ẩn danh)</button>
+            <button type="button" class="cmt-send" id="cmt-send">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              Gửi lời nhắn (Ẩn danh)
+            </button>
           </div>
           <p class="cmt-error" id="cmt-error"></p>
         </div>
@@ -4267,7 +4288,7 @@ function openPlayerPage(name){
 
       <div class="card">
         <div class="card-header">
-          <h2>Tất cả lời nhắn</h2>
+          <h2>All Messages</h2>
           <span class="cmt-total" id="cmt-total">0</span>
         </div>
         <div class="cmt-list" id="cmt-list"><p class="cmt-empty">Đang tải lời nhắn...</p></div>
