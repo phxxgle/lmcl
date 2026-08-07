@@ -823,6 +823,56 @@
   .btn-cancel:hover { background: rgba(255,255,255,0.1); }
   .btn-submit { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .pin-error { color: var(--red); font-size: 11px; margin-top: -6px; margin-bottom: 10px; display: none; }
+
+  /* ── Phản hồi khi bấm nút trong hộp thoại ── */
+  .modal-actions button:active { transform: scale(0.96); }
+  .modal-actions button:disabled { cursor: default; }
+
+  /* Nút xác nhận: trạng thái đang xử lý và thành công */
+  .btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    position: relative;
+    transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.12s ease;
+  }
+  .btn-submit.loading { opacity: 0.75; }
+  .btn-submit.ok {
+    background: var(--green-ok) !important;
+    border-color: var(--green-ok) !important;
+    color: #0a2e10 !important;
+  }
+  .btn-spinner {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: btnSpin 0.65s linear infinite;
+  }
+  @keyframes btnSpin { to { transform: rotate(360deg); } }
+
+  /* Hộp thoại rung nhẹ khi sai mã */
+  @keyframes modalShake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(3px); }
+    30%, 50%, 70% { transform: translateX(-5px); }
+    40%, 60% { transform: translateX(5px); }
+  }
+  .modal-box.shake { animation: modalShake 0.4s; }
+
+  .modal-box input.err {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.25);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-spinner { animation: none; }
+    .modal-box.shake { animation: none; }
+    .modal-actions button:active { transform: none; }
+  }
   
   /* =========================================
      CHẾ ĐỘ BTC: chỉ ra rõ nơi được nhập tỷ số
@@ -3773,9 +3823,12 @@ authToggleBtn.addEventListener('click', () => {
     firebaseAuth.signOut().catch(err => console.error('Đăng xuất lỗi:', err));
   } else {
     pinInput.value = '';
+    pinInput.classList.remove('err');
     pinError.style.display = 'none';
+    pinBusy = false;
+    setPinBtnState('idle');
     pinModal.classList.add('open');
-    pinInput.focus();
+    setTimeout(() => pinInput.focus(), 50);
   }
 });
 
@@ -3809,16 +3862,70 @@ infoModal.addEventListener('click', (e) => {
   if (e.target === infoModal) closeInfoModal();
 });
 
-function verifyPin() {
-  const pass = pinInput.value;
-  if(!pass){ showAuthError('Bạn chưa nhập mã BTC'); return; }
+// Trạng thái nút Xác nhận: bình thường → đang kiểm tra → thành công
+const PIN_BTN_LABEL = pinSubmitBtn.textContent.trim();
+function setPinBtnState(state){
+  pinSubmitBtn.classList.remove('loading', 'ok');
+  if(state === 'loading'){
+    pinSubmitBtn.disabled = true;
+    pinSubmitBtn.classList.add('loading');
+    pinSubmitBtn.innerHTML = '<span class="btn-spinner"></span>Đang kiểm tra...';
+  } else if(state === 'ok'){
+    pinSubmitBtn.disabled = true;
+    pinSubmitBtn.classList.add('ok');
+    pinSubmitBtn.innerHTML = '&#10003; Thành công';
+  } else {
+    pinSubmitBtn.disabled = false;
+    pinSubmitBtn.textContent = PIN_BTN_LABEL;
+  }
+}
 
-  pinSubmitBtn.disabled = true;
+function shakeModal(){
+  const box = pinModal.querySelector('.modal-box');
+  if(!box) return;
+  box.classList.remove('shake');
+  void box.offsetWidth;
+  box.classList.add('shake');
+  setTimeout(() => box.classList.remove('shake'), 500);
+}
+
+let pinBusy = false;
+
+function verifyPin() {
+  if(pinBusy) return;                       // chặn bấm liên tục
+  const pass = pinInput.value;
+  if(!pass){
+    showAuthError('Bạn chưa nhập mã BTC');
+    pinInput.classList.add('err');
+    shakeModal();
+    pinInput.focus();
+    return;
+  }
+
+  pinBusy = true;
+  pinInput.classList.remove('err');
+  pinError.style.display = 'none';
+  setPinBtnState('loading');
+
+  // Giữ trạng thái "đang kiểm tra" tối thiểu 350ms để người dùng kịp thấy phản hồi
+  const started = Date.now();
+  const holdThen = fn => {
+    const wait = Math.max(0, 350 - (Date.now() - started));
+    setTimeout(fn, wait);
+  };
+
   firebaseAuth.signInWithEmailAndPassword(BTC_EMAIL, pass)
     .then(() => {
-      pinModal.classList.remove('open');
-      pinInput.value = '';
-      pinError.style.display = 'none';
+      holdThen(() => {
+        setPinBtnState('ok');
+        setTimeout(() => {
+          pinModal.classList.remove('open');
+          pinInput.value = '';
+          pinError.style.display = 'none';
+          setPinBtnState('idle');
+          pinBusy = false;
+        }, 500);
+      });
     })
     .catch(err => {
       const map = {
@@ -3830,12 +3937,22 @@ function verifyPin() {
         'auth/network-request-failed':'Không có mạng, thử lại sau',
         'auth/operation-not-allowed': 'Chưa bật Email/Password trong Firebase'
       };
-      showAuthError(map[err.code] || ('Đăng nhập thất bại (' + err.code + ')'));
-      pinInput.value = '';
-      pinInput.focus();
-    })
-    .finally(() => { pinSubmitBtn.disabled = false; });
+      holdThen(() => {
+        setPinBtnState('idle');
+        showAuthError(map[err.code] || ('Đăng nhập thất bại (' + err.code + ')'));
+        pinInput.value = '';
+        pinInput.classList.add('err');
+        shakeModal();
+        pinInput.focus();
+        pinBusy = false;
+      });
+    });
 }
+
+pinInput.addEventListener('input', () => {
+  pinInput.classList.remove('err');
+  pinError.style.display = 'none';
+});
 
 pinSubmitBtn.addEventListener('click', verifyPin);
 pinInput.addEventListener('keypress', (e) => {
