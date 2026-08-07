@@ -4309,10 +4309,7 @@ function openPlayerPage(name){
       page.querySelectorAll('.pp-panel').forEach(pn => {
         pn.classList.toggle('active', pn.id === 'pp-panel-' + key);
       });
-      if(key === 'confession'){
-        const badge = document.getElementById('cmt-badge');
-        if(badge) badge.classList.remove('pulse');
-      }
+      if(key === 'confession') markCommentsSeen();
     });
   });
 
@@ -4333,12 +4330,45 @@ function playerKey(name){
 }
 
 let activeCommentRef = null;
+let currentPlayerKey = null;
+let latestCommentTs = 0;
+
+// Ghi nhớ trên máy người xem: mốc thời gian lời nhắn mới nhất họ đã đọc.
+// Nhờ vậy huy hiệu chỉ hiện số lời nhắn MỚI kể từ lần xem gần nhất.
+const seenMemory = {};
+function seenKey(key){ return 'lmcl_cmt_seen_' + key; }
+
+function getSeenTs(key){
+  try {
+    const v = localStorage.getItem(seenKey(key));
+    if(v !== null) return Number(v) || 0;
+  } catch(e){ /* trình duyệt chặn localStorage */ }
+  return seenMemory[key] || 0;
+}
+
+function setSeenTs(key, ts){
+  seenMemory[key] = ts;
+  try { localStorage.setItem(seenKey(key), String(ts)); } catch(e){}
+}
+
+// Đánh dấu đã đọc và tắt huy hiệu
+function markCommentsSeen(){
+  if(!currentPlayerKey) return;
+  setSeenTs(currentPlayerKey, latestCommentTs);
+  const badge = document.getElementById('cmt-badge');
+  if(badge){
+    badge.hidden = true;
+    badge.classList.remove('pulse');
+  }
+}
 
 function detachComments(){
   if(activeCommentRef){
     activeCommentRef.off();
     activeCommentRef = null;
   }
+  currentPlayerKey = null;
+  latestCommentTs = 0;
 }
 
 function formatCommentTime(ts){
@@ -4367,8 +4397,11 @@ function setupComments(playerName){
     countEl.textContent = textEl.value.length + '/300';
   });
 
-  const ref = commentsRef.child(playerKey(playerName));
+  const key = playerKey(playerName);
+  const ref = commentsRef.child(key);
   activeCommentRef = ref;
+  currentPlayerKey = key;
+  latestCommentTs = 0;
 
   ref.limitToLast(50).on('value', snap => {
     const val = snap.val() || {};
@@ -4379,14 +4412,24 @@ function setupComments(playerName){
     const totalEl = document.getElementById('cmt-total');
     if(totalEl) totalEl.textContent = items.length;
 
+    latestCommentTs = items.reduce((max, it) => Math.max(max, it.ts || 0), 0);
+    const seenTs = getSeenTs(key);
+    const unread = items.filter(it => (it.ts || 0) > seenTs).length;
+
+    const panel = document.getElementById('pp-panel-confession');
     const badge = document.getElementById('cmt-badge');
-    if(badge){
-      if(items.length > 0){
-        badge.textContent = items.length > 99 ? '99+' : items.length;
+
+    // Đang mở sẵn tab Confession thì coi như đã đọc luôn
+    if(panel && panel.classList.contains('active')){
+      markCommentsSeen();
+    } else if(badge){
+      if(unread > 0){
+        badge.textContent = unread > 99 ? '99+' : unread;
         badge.hidden = false;
         badge.classList.add('pulse');
       } else {
         badge.hidden = true;
+        badge.classList.remove('pulse');
       }
     }
 
