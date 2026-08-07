@@ -2068,6 +2068,7 @@
     background: var(--on-menu-accent);
     color: var(--menu-accent);
   }
+  .pp-badge[hidden] { display: none; }
   .pp-badge.pulse { animation: badgePop 1.6s ease-in-out infinite; }
   @keyframes badgePop {
     0%, 100% { transform: scale(1); }
@@ -2145,6 +2146,18 @@
     min-height: 0;
   }
   .cmt-error:empty { display: none; }
+
+  .cmt-total {
+    flex-shrink: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--chalk-dim);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
 
   .cmt-list { display: flex; flex-direction: column; gap: 8px; }
   .cmt-item {
@@ -4173,7 +4186,7 @@ function openPlayerPage(name){
       <div class="pp-id">
         ${nm.given ? `<span class="pp-given">${escapeHtml(nm.given)}</span>` : ''}
         <h2 class="pp-family">${escapeHtml(nm.family)}</h2>
-        ${info.nickname ? `<span class="pp-nick">“${escapeHtml(info.nickname)}”</span>` : ''}
+        ${info.nickname ? `<span class="pp-nick">(${escapeHtml(info.nickname)})</span>` : ''}
         <div class="pp-loc">${flagHtml(info)}<span>${escapeHtml(locationText(info))}</span></div>
         <div class="pp-chips">
           <span class="pp-chip${rankCls}">RANK ${rankTxt}</span>
@@ -4236,7 +4249,7 @@ function openPlayerPage(name){
 
     <div class="pp-panel" id="pp-panel-confession">
       <div class="card">
-        <h2>Confession</h2>
+        <h2>Viết lời nhắn</h2>
         <p class="cmt-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           <span>Ẩn danh hoàn toàn — Ai cũng có thể gửi và xem lời nhắn của VĐV này</span>
@@ -4249,6 +4262,13 @@ function openPlayerPage(name){
             <button type="button" class="cmt-send" id="cmt-send">Gửi lời nhắn (Ẩn danh)</button>
           </div>
           <p class="cmt-error" id="cmt-error"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Tất cả lời nhắn</h2>
+          <span class="cmt-total" id="cmt-total">0</span>
         </div>
         <div class="cmt-list" id="cmt-list"><p class="cmt-empty">Đang tải lời nhắn...</p></div>
       </div>
@@ -4328,6 +4348,9 @@ function setupComments(playerName){
     const items = Object.keys(val)
       .map(k => ({ id: k, ...val[k] }))
       .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+
+    const totalEl = document.getElementById('cmt-total');
+    if(totalEl) totalEl.textContent = items.length;
 
     const badge = document.getElementById('cmt-badge');
     if(badge){
