@@ -4753,11 +4753,6 @@ function switchToTournament(entry){
 function renderTournamentDetail(t, tabKey){ showTourDetailView(t, tabKey); }
 function hideTournamentDetail(){ showTourListView(); }
 
-function hideTournamentDetail(){
-  const card = document.getElementById('tour-detail');
-  if(card) card.style.display = 'none';
-}
-
 function buildSeasonSelect(){
   const sel = document.getElementById('tour-season-select');
   if(!sel) return;
