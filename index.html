@@ -15,7 +15,7 @@
 <!-- Ảnh + mô tả hiện ra khi dán link vào Zalo, Messenger, Facebook... -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="LMCL CLUB">
-<meta property="og:description" content="The all-in-one hub for LMCL Club">
+<meta property="og:description" content="The all-in-one hub for LMCL Club — schedules, rankings, and player profiles.">
 <meta property="og:image" content="https://lmcl.vercel.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -2173,6 +2173,133 @@
   }
   .cmt-note svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; }
 
+  /* ── Tab Rating: tổng hợp + form chấm điểm ── */
+  .rt-summary {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .rt-overall { display: flex; align-items: baseline; gap: 6px; }
+  .rt-overall-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--menu-accent);
+  }
+  .rt-overall-lbl { font-size: 11px; color: var(--chalk-dim); }
+  .rt-count {
+    flex-shrink: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--chalk-dim);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+
+  .rt-bars { display: flex; flex-direction: column; gap: 10px; }
+  .rt-bar-row {
+    display: grid;
+    grid-template-columns: 68px 1fr 30px;
+    align-items: center;
+    gap: 8px;
+  }
+  .rt-bar-label { font-size: 11px; color: var(--chalk-dim); }
+  .rt-bar-track {
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+  .rt-bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--green-ok));
+    transition: width 0.5s cubic-bezier(0.3, 0.9, 0.4, 1);
+  }
+  .rt-bar-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--chalk);
+    text-align: right;
+  }
+
+  /* Form chấm điểm */
+  .rt-fields { display: flex; flex-direction: column; gap: 16px; margin: 12px 0 16px; }
+  .rt-field-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .rt-field-label { font-size: 12.5px; font-weight: 600; color: var(--chalk); }
+  .rt-field-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--menu-accent);
+    min-width: 20px;
+    text-align: right;
+  }
+
+  .rt-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--menu-accent) 0%, var(--menu-accent) 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 100%);
+    outline: none;
+    cursor: pointer;
+  }
+  .rt-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--menu-accent);
+    border: 3px solid var(--green-bg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    cursor: pointer;
+  }
+  .rt-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--menu-accent);
+    border: 3px solid var(--green-bg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    cursor: pointer;
+  }
+  .rt-slider::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); }
+
+  .rt-done {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--green-ok);
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .rt-done svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .rt-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 12px 2px 0;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--chalk-dim);
+    font-style: italic;
+  }
+  .rt-note svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; opacity: 0.7; }
+
   /* ── Lời nhắn cho vận động viên ── */
   .cmt-form { margin-bottom: 14px; }
   .cmt-input {
@@ -3065,6 +3192,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const scoresRef = firebase.database().ref('scores');
 const commentsRef = firebase.database().ref('comments');
+const ratingsRef = firebase.database().ref('ratings');
 
 // Quyền BTC do Firebase Authentication cấp. Tài khoản dùng chung một email cố định
 // (email không phải bí mật), BTC chỉ cần nhập MẬT KHẨU — thao tác y như mã PIN cũ.
@@ -4392,6 +4520,10 @@ function openPlayerPage(name){
 
     <div class="pp-tabs" id="pp-tabs">
       <button type="button" class="pp-tab active" data-tab="profile">Profile</button>
+      <button type="button" class="pp-tab" data-tab="rating">
+        <svg class="pp-tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        Rating
+      </button>
       <button type="button" class="pp-tab" data-tab="confession">
         <svg class="pp-tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.5-.6L3 21l1.7-4.4A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"></path></svg>
         Confession
@@ -4441,6 +4573,41 @@ function openPlayerPage(name){
       </div>
     </div>
 
+    <div class="pp-panel" id="pp-panel-rating">
+      <div class="card">
+        <div class="rt-summary">
+          <div class="rt-overall">
+            <span class="rt-overall-num" id="rt-overall-num">–</span>
+            <span class="rt-overall-lbl">/ 10 điểm trung bình</span>
+          </div>
+          <div class="rt-count" id="rt-count">Chưa có lượt đánh giá nào</div>
+        </div>
+        <div class="rt-bars" id="rt-bars"></div>
+      </div>
+
+      <div class="card" id="rt-form-card">
+        <h2>Đánh giá vận động viên</h2>
+        <div class="rt-fields" id="rt-fields"></div>
+        <button type="button" class="cmt-send" id="rt-submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Gửi đánh giá
+        </button>
+        <p class="cmt-error" id="rt-error"></p>
+      </div>
+
+      <div class="card" id="rt-done-card" style="display:none;">
+        <div class="rt-done">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Bạn đã đánh giá vận động viên này trong mùa hiện tại</span>
+        </div>
+      </div>
+
+      <p class="rt-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>Điểm đánh giá sẽ được làm mới vào đầu mỗi mùa giải mới.</span>
+      </p>
+    </div>
+
     <div class="pp-panel" id="pp-panel-confession">
       <div class="card">
         <h2>Write a Message</h2>
@@ -4486,6 +4653,149 @@ function openPlayerPage(name){
   switchView('player');
   setHeader(['LMCL', 'PLAYER', 'PROFILE'], '');
   setupComments(row.name);
+  setupRatings(row.name);
+}
+
+/* ─── Đánh giá vận động viên (Rating) ──────────────────────────────────── */
+// Điểm gắn với mùa giải mới nhất (DEFAULT_TOUR_YEAR). Khi mùa mới bắt đầu và
+// TOUR_DATA có thêm năm mới, đường dẫn lưu trên Firebase tự đổi theo — nghĩa
+// là điểm cũ không mất nhưng không còn tính vào bảng hiện tại, và ai cũng
+// đánh giá lại được từ đầu, đúng như ghi chú "làm mới mỗi mùa giải".
+const RATING_SEASON = String(Object.keys(TOUR_DATA).sort((a, b) => b - a)[0]);
+
+const RATING_CRITERIA = [
+  { key: 'skill',     label: 'Trình độ' },
+  { key: 'attitude',  label: 'Thái độ' },
+  { key: 'fairplay',  label: 'Fair-play' },
+  { key: 'teamwork',  label: 'Đồng đội' }
+];
+
+// Mỗi máy có một mã riêng lưu trong localStorage, dùng làm khoá trên Firebase
+// để đảm bảo một máy chỉ gửi được một lượt đánh giá cho mỗi VĐV mỗi mùa.
+function getDeviceId(){
+  const STORE_KEY = 'lmcl_device_id';
+  try {
+    let id = localStorage.getItem(STORE_KEY);
+    if(!id){
+      id = 'd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem(STORE_KEY, id);
+    }
+    return id;
+  } catch(e){
+    // Trình duyệt chặn localStorage (chế độ riêng tư) → dùng mã tạm trong phiên
+    if(!window.__lmclDeviceIdFallback){
+      window.__lmclDeviceIdFallback = 'd_' + Math.random().toString(36).slice(2, 10);
+    }
+    return window.__lmclDeviceIdFallback;
+  }
+}
+
+let activeRatingRef = null;
+
+function detachRatings(){
+  if(activeRatingRef){
+    activeRatingRef.off();
+    activeRatingRef = null;
+  }
+}
+
+function ratingBarsHtml(entries){
+  const n = entries.length;
+  const avg = key => n === 0 ? 0 : entries.reduce((s, e) => s + (Number(e[key]) || 0), 0) / n;
+
+  return RATING_CRITERIA.map(c => {
+    const v = avg(c.key);
+    const pct = Math.max(0, Math.min(100, v * 10));
+    return `<div class="rt-bar-row">
+      <span class="rt-bar-label">${escapeHtml(c.label)}</span>
+      <span class="rt-bar-track"><span class="rt-bar-fill" style="width:${pct}%"></span></span>
+      <span class="rt-bar-val">${n === 0 ? '–' : v.toFixed(1)}</span>
+    </div>`;
+  }).join('');
+}
+
+function buildRatingFields(){
+  const wrap = document.getElementById('rt-fields');
+  if(!wrap) return;
+  wrap.innerHTML = RATING_CRITERIA.map(c => `
+    <div class="rt-field" data-key="${c.key}">
+      <div class="rt-field-head">
+        <span class="rt-field-label">${escapeHtml(c.label)}</span>
+        <span class="rt-field-val" id="rt-val-${c.key}">5</span>
+      </div>
+      <input type="range" min="1" max="10" step="1" value="5" class="rt-slider" id="rt-slider-${c.key}">
+    </div>
+  `).join('');
+
+  RATING_CRITERIA.forEach(c => {
+    const slider = document.getElementById('rt-slider-' + c.key);
+    const val = document.getElementById('rt-val-' + c.key);
+    if(slider && val){
+      slider.addEventListener('input', () => { val.textContent = slider.value; });
+    }
+  });
+}
+
+function setupRatings(playerName){
+  detachRatings();
+
+  const key = playerKey(playerName);
+  const deviceId = getDeviceId();
+  const ref = ratingsRef.child(RATING_SEASON).child(key);
+  activeRatingRef = ref;
+
+  const formCard = document.getElementById('rt-form-card');
+  const doneCard = document.getElementById('rt-done-card');
+  const errEl = document.getElementById('rt-error');
+  const submitBtn = document.getElementById('rt-submit');
+
+  buildRatingFields();
+  if(errEl) errEl.textContent = '';
+
+  ref.on('value', snap => {
+    const val = snap.val() || {};
+    const entries = Object.values(val);
+    const n = entries.length;
+
+    const countEl = document.getElementById('rt-count');
+    const overallEl = document.getElementById('rt-overall-num');
+    const barsEl = document.getElementById('rt-bars');
+    if(countEl) countEl.textContent = n === 0 ? 'Chưa có lượt đánh giá nào' : n + ' lượt đánh giá';
+    if(barsEl) barsEl.innerHTML = ratingBarsHtml(entries);
+    if(overallEl){
+      if(n === 0){
+        overallEl.textContent = '–';
+      } else {
+        const allAvg = RATING_CRITERIA.reduce((s, c) =>
+          s + entries.reduce((a, e) => a + (Number(e[c.key]) || 0), 0) / n, 0) / RATING_CRITERIA.length;
+        overallEl.textContent = allAvg.toFixed(1);
+      }
+    }
+
+    const already = Object.prototype.hasOwnProperty.call(val, deviceId);
+    if(formCard) formCard.style.display = already ? 'none' : '';
+    if(doneCard) doneCard.style.display = already ? '' : 'none';
+  }, error => {
+    const barsEl = document.getElementById('rt-bars');
+    if(barsEl) barsEl.innerHTML = '<p class="cmt-empty">Không tải được dữ liệu (' + escapeHtml(error.message) + ')</p>';
+  });
+
+  if(submitBtn){
+    submitBtn.onclick = () => {
+      const payload = { ts: Date.now() };
+      RATING_CRITERIA.forEach(c => {
+        const slider = document.getElementById('rt-slider-' + c.key);
+        payload[c.key] = slider ? Number(slider.value) : 5;
+      });
+
+      submitBtn.disabled = true;
+      ref.child(deviceId).set(payload)
+        .catch(err => {
+          if(errEl) errEl.textContent = 'Gửi thất bại: ' + err.message;
+        })
+        .finally(() => { submitBtn.disabled = false; });
+    };
+  }
 }
 
 /* ─── Lời nhắn công khai cho vận động viên ─────────────────────────────── */
@@ -5081,7 +5391,10 @@ function renderRankingsView(){
 
 function switchView(view){
   const cameFromOtherView = currentView !== view;
-  if(currentView === 'player' && view !== 'player' && typeof detachComments === 'function') detachComments();
+  if(currentView === 'player' && view !== 'player'){
+    if(typeof detachComments === 'function') detachComments();
+    if(typeof detachRatings === 'function') detachRatings();
+  }
   currentView = view;
   document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById('view-' + view);
