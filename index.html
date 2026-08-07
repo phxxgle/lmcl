@@ -1474,45 +1474,7 @@
   }
   /* Đuôi ruy băng hai bên để trông như huy hiệu */
 
-  /* Huy hiệu phát sáng theo nhịp + vệt sáng quét ngang cho bắt mắt */
-  .pd-mvp b {
-    overflow: hidden;
-    animation: mvpGlow 1.6s ease-in-out infinite;
-  }
-  .pd-mvp b:nth-child(2) { animation-delay: 0.8s; }
-  .pd-mvp b::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -60%;
-    width: 45%;
-    height: 100%;
-    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.85), transparent);
-    animation: mvpShine 2.6s ease-in-out infinite;
-    border: none;
-  }
-  .pd-mvp b:nth-child(2)::after { animation-delay: 1.3s; }
-
-  @keyframes mvpGlow {
-    0%, 100% {
-      filter: brightness(1);
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-    }
-    50% {
-      filter: brightness(1.28);
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 16px 3px currentColor,
-                  inset 0 1px 0 rgba(255, 255, 255, 0.65);
-    }
-  }
-  @keyframes mvpShine {
-    0%, 55% { left: -60%; }
-    85%, 100% { left: 130%; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .pd-mvp b, .pd-mvp b::after { animation: none; }
-    .pd-mvp b::after { display: none; }
-    .pp-badge.pulse { animation: none; }
-  }
+  .pd-mvp b { box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45); }
 
   .pd-mvp .mvp-team {
     background: linear-gradient(135deg, #FFE87C 0%, #FFC64D 45%, #FF9A3D 100%);
@@ -1841,7 +1803,7 @@
   .pp-hero {
     display: flex;
     gap: 14px;
-    align-items: flex-end;
+    align-items: flex-start;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 16px;
@@ -1869,7 +1831,7 @@
   }
   .pp-photo svg { width: 42px; height: 42px; color: var(--chalk-dim); opacity: 0.4; }
 
-  .pp-id { min-width: 0; padding-bottom: 2px; }
+  .pp-id { min-width: 0; padding-top: 2px; }
   .pp-given {
     display: block;
     font-family: 'Tomorrow', sans-serif;
@@ -1954,6 +1916,45 @@
   .rank-pts .rp.bronze { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; }
   .rank-pts b { color: var(--chalk); font-family: 'Space Mono', monospace; font-size: 12px; }
 
+  /* Ô thông tin dạng lưới cho dễ nhìn */
+  .pp-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .pp-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 11px;
+    padding: 10px 11px;
+    min-width: 0;
+  }
+  .pp-stat .lbl {
+    font-size: 9px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: var(--chalk-dim);
+  }
+  .pp-stat .val {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--chalk);
+    line-height: 1.3;
+    word-break: break-word;
+  }
+  .pp-stat .val.accent {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    color: var(--menu-accent);
+  }
+
   /* ── Tab trong trang hồ sơ ── */
   .pp-tabs {
     display: flex;
@@ -1963,6 +1964,7 @@
   .pp-tab {
     position: relative;
     flex: 1;
+    min-height: 40px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -4129,7 +4131,6 @@ function openPlayerPage(name){
 
     <div class="pp-tabs" id="pp-tabs">
       <button type="button" class="pp-tab active" data-tab="profile">Profile</button>
-      <button type="button" class="pp-tab" data-tab="results">Results</button>
       <button type="button" class="pp-tab" data-tab="confession">
         <span class="pp-tab-ico">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.5-.6L3 21l1.7-4.4A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"></path></svg>
@@ -4142,20 +4143,31 @@ function openPlayerPage(name){
     <div class="pp-panel active" id="pp-panel-profile">
       <div class="card">
         <h2>Profile</h2>
-        <div class="pm-rows">
-          <div class="pm-row"><span class="k">Date of Birth</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
-          <div class="pm-row"><span class="k">Hometown</span><span class="v">${escapeHtml(info.hometown || '—')}</span></div>
-          <div class="pm-row"><span class="k">Nation</span><span class="v">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span></div>
-          <div class="pm-row"><span class="k">Ranking Points</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
+        <div class="pp-stats">
+          <div class="pp-stat">
+            <span class="lbl">Date of Birth</span>
+            <span class="val">${escapeHtml(info.dob || '—')}</span>
+          </div>
+          <div class="pp-stat">
+            <span class="lbl">Ranking Points</span>
+            <span class="val accent">${row.points === undefined ? '—' : row.points}</span>
+          </div>
+          <div class="pp-stat">
+            <span class="lbl">Hometown</span>
+            <span class="val">${escapeHtml(info.hometown || '—')}</span>
+          </div>
+          <div class="pp-stat">
+            <span class="lbl">Nation</span>
+            <span class="val">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span>
+          </div>
         </div>
       </div>
+
       <div class="card">
         <h2>Achievements</h2>
         ${achievementsHtml(row.name)}
       </div>
-    </div>
 
-    <div class="pp-panel" id="pp-panel-results">
       <div class="card">
         <h2>Latest Results</h2>
         ${latestResultsHtml(row.name)}
