@@ -1473,37 +1473,45 @@
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
   /* Đuôi ruy băng hai bên để trông như huy hiệu */
-  .pd-mvp b::before,
+
+  /* Huy hiệu phát sáng theo nhịp + vệt sáng quét ngang cho bắt mắt */
+  .pd-mvp b {
+    overflow: hidden;
+    animation: mvpGlow 1.6s ease-in-out infinite;
+  }
+  .pd-mvp b:nth-child(2) { animation-delay: 0.8s; }
   .pd-mvp b::after {
     content: '';
     position: absolute;
-    top: 100%;
-    width: 0;
-    height: 0;
-    border-style: solid;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+    animation: mvpShine 2.6s ease-in-out infinite;
+    border: none;
   }
-  .pd-mvp b::before {
-    left: 0;
-    border-width: 5px 0 0 6px;
-    border-color: transparent transparent transparent currentColor;
-    opacity: 0.55;
-  }
-  .pd-mvp b::after {
-    right: 0;
-    border-width: 5px 6px 0 0;
-    border-color: transparent currentColor transparent transparent;
-    opacity: 0.55;
-  }
-  /* Nhấp nháy nhẹ để huy hiệu bắt mắt hơn */
-  .pd-mvp b { animation: mvpBlink 1.8s ease-in-out infinite; }
-  .pd-mvp b:nth-child(2) { animation-delay: 0.6s; }
+  .pd-mvp b:nth-child(2)::after { animation-delay: 1.3s; }
 
-  @keyframes mvpBlink {
-    0%, 100% { opacity: 1; filter: brightness(1); }
-    50%      { opacity: 0.62; filter: brightness(1.35); }
+  @keyframes mvpGlow {
+    0%, 100% {
+      filter: brightness(1);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+    50% {
+      filter: brightness(1.28);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 16px 3px currentColor,
+                  inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+  }
+  @keyframes mvpShine {
+    0%, 55% { left: -60%; }
+    85%, 100% { left: 130%; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .pd-mvp b { animation: none; }
+    .pd-mvp b, .pd-mvp b::after { animation: none; }
+    .pd-mvp b::after { display: none; }
+    .pp-badge.pulse { animation: none; }
   }
 
   .pd-mvp .mvp-team {
@@ -1945,6 +1953,82 @@
   .rank-pts .rp.silver { background: linear-gradient(135deg, #E2E8F0, #94A3B8); color: #0F172A; }
   .rank-pts .rp.bronze { background: linear-gradient(135deg, #F6AD55, #DD6B20); color: #3C1500; }
   .rank-pts b { color: var(--chalk); font-family: 'Space Mono', monospace; font-size: 12px; }
+
+  /* ── Tab trong trang hồ sơ ── */
+  .pp-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 14px 0 0;
+  }
+  .pp-tab {
+    position: relative;
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13.5px;
+    letter-spacing: 0.6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--chalk-dim);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 9px 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .pp-tab:hover { color: var(--chalk); border-color: var(--glass-border-light); }
+  .pp-tab.active {
+    background: var(--menu-accent);
+    color: var(--on-menu-accent);
+    border-color: var(--menu-accent);
+    font-weight: 700;
+  }
+  .pp-tab-ico { position: relative; display: inline-flex; }
+  .pp-tab-ico svg { width: 15px; height: 15px; }
+
+  /* Huy hiệu số lượng lời nhắn kiểu thông báo */
+  .pp-badge {
+    position: absolute;
+    top: -7px;
+    right: -9px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--red);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+    box-shadow: 0 0 0 2px var(--green-bg);
+  }
+  .pp-badge.pulse { animation: badgePop 1.6s ease-in-out infinite; }
+  @keyframes badgePop {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 2px var(--green-bg); }
+    50%      { transform: scale(1.18); box-shadow: 0 0 0 2px var(--green-bg), 0 0 10px 2px rgba(248, 113, 113, 0.75); }
+  }
+
+  .pp-panel { display: none; }
+  .pp-panel.active { display: block; }
+
+  /* Ghi chú nhỏ cạnh tiêu đề Confession */
+  .cmt-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--chalk-dim);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 4px 9px;
+  }
+  .cmt-note svg { width: 11px; height: 11px; }
 
   /* ── Lời nhắn cho vận động viên ── */
   .cmt-form { margin-bottom: 14px; }
@@ -3784,6 +3868,69 @@ function renderMembers(){
   });
 }
 
+// Thanh tìm kiếm + nút lọc của Player Directory
+function buildMemberFilterMenu(){
+  const menu = document.getElementById('pd-filter-menu');
+  if(!menu) return;
+  const provinces = allProvinces();
+  menu.innerHTML =
+    `<div class="pd-fm-label">Nội dung</div>
+     <button type="button" data-dim="group" data-value="all" class="active">Tất cả</button>
+     <button type="button" data-dim="group" data-value="nam">Nam</button>
+     <button type="button" data-dim="group" data-value="nu">Nữ</button>
+     <div class="pd-fm-divider"></div>
+     <div class="pd-fm-label">Quê quán</div>
+     <button type="button" data-dim="province" data-value="all" class="active">Tất cả</button>` +
+    provinces.map(p => `<button type="button" data-dim="province" data-value="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join('');
+}
+
+(() => {
+  const search = document.getElementById('pd-search');
+  if(search){
+    search.addEventListener('input', () => {
+      memberSearch = search.value;
+      renderMembers();
+    });
+  }
+
+  const btn = document.getElementById('pd-filter-btn');
+  const menu = document.getElementById('pd-filter-menu');
+  if(!btn || !menu) return;
+
+  buildMemberFilterMenu();
+
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = menu.classList.toggle('open');
+    btn.classList.toggle('active', isOpen);
+  });
+
+  menu.addEventListener('click', e => {
+    const b = e.target.closest('button[data-dim]');
+    if(!b) return;
+    e.stopPropagation();
+    const dim = b.getAttribute('data-dim');
+    const val = b.getAttribute('data-value');
+    if(dim === 'group') memberFilter = val;
+    else memberProvince = val;
+
+    menu.querySelectorAll(`button[data-dim="${dim}"]`).forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+
+    btn.classList.toggle('has-filter', memberFilter !== 'all' || memberProvince !== 'all');
+    menu.classList.remove('open');
+    btn.classList.remove('active');
+    renderMembers();
+  });
+
+  document.addEventListener('click', () => {
+    if(menu.classList.contains('open')){
+      menu.classList.remove('open');
+      btn.classList.remove('active');
+    }
+  });
+})();
+
 /* ─── Thành tích tự tổng hợp từ dữ liệu các giải ────────────────────────── */
 const EVENT_VI = { ms: 'Đơn Nam', ws: 'Đơn Nữ', md: 'Đôi Nam', wd: 'Đôi Nữ', xd: 'Đôi Nam Nữ' };
 const MEDAL_BY_RANK = { 1: 'gold', 2: 'silver', 3: 'bronze' };
@@ -3980,30 +4127,77 @@ function openPlayerPage(name){
       </div>
     </div>
 
-    <div class="card">
-      <h2>Achievements</h2>
-      ${achievementsHtml(row.name)}
+    <div class="pp-tabs" id="pp-tabs">
+      <button type="button" class="pp-tab active" data-tab="profile">Profile</button>
+      <button type="button" class="pp-tab" data-tab="results">Results</button>
+      <button type="button" class="pp-tab" data-tab="confession">
+        <span class="pp-tab-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.5-.6L3 21l1.7-4.4A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"></path></svg>
+          <b class="pp-badge" id="cmt-badge" hidden>0</b>
+        </span>
+        Confession
+      </button>
     </div>
 
-    <div class="card">
-      <h2>Latest Results</h2>
-      ${latestResultsHtml(row.name)}
-    </div>
-
-    <div class="card">
-      <h2>Lời nhắn</h2>
-      <p class="sub">Ai cũng có thể gửi và đọc lời nhắn cho vận động viên này.</p>
-      <div class="cmt-form">
-        <input type="text" id="cmt-name" class="cmt-input" maxlength="40" placeholder="Tên của bạn">
-        <textarea id="cmt-text" class="cmt-input cmt-area" maxlength="300" rows="3" placeholder="Viết lời nhắn..."></textarea>
-        <div class="cmt-actions">
-          <span class="cmt-count" id="cmt-count">0/300</span>
-          <button type="button" class="cmt-send" id="cmt-send">Gửi lời nhắn</button>
+    <div class="pp-panel active" id="pp-panel-profile">
+      <div class="card">
+        <h2>Profile</h2>
+        <div class="pm-rows">
+          <div class="pm-row"><span class="k">Date of Birth</span><span class="v">${escapeHtml(info.dob || '—')}</span></div>
+          <div class="pm-row"><span class="k">Hometown</span><span class="v">${escapeHtml(info.hometown || '—')}</span></div>
+          <div class="pm-row"><span class="k">Nation</span><span class="v">${flagHtml(info)}${escapeHtml(info.nation || '—')}</span></div>
+          <div class="pm-row"><span class="k">Ranking Points</span><span class="v">${row.points === undefined ? '—' : row.points + ' PTS'}</span></div>
         </div>
-        <p class="cmt-error" id="cmt-error"></p>
       </div>
-      <div class="cmt-list" id="cmt-list"><p class="cmt-empty">Đang tải lời nhắn...</p></div>
+      <div class="card">
+        <h2>Achievements</h2>
+        ${achievementsHtml(row.name)}
+      </div>
+    </div>
+
+    <div class="pp-panel" id="pp-panel-results">
+      <div class="card">
+        <h2>Latest Results</h2>
+        ${latestResultsHtml(row.name)}
+      </div>
+    </div>
+
+    <div class="pp-panel" id="pp-panel-confession">
+      <div class="card">
+        <div class="card-header">
+          <h2>Confession</h2>
+          <span class="cmt-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a4 4 0 0 0-4 4v5a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path></svg>
+            Lời nhắn ẩn danh
+          </span>
+        </div>
+        <div class="cmt-form">
+          <input type="text" id="cmt-name" class="cmt-input" maxlength="40" placeholder="Tên của bạn">
+          <textarea id="cmt-text" class="cmt-input cmt-area" maxlength="300" rows="3" placeholder="Viết lời nhắn..."></textarea>
+          <div class="cmt-actions">
+            <span class="cmt-count" id="cmt-count">0/300</span>
+            <button type="button" class="cmt-send" id="cmt-send">Gửi lời nhắn</button>
+          </div>
+          <p class="cmt-error" id="cmt-error"></p>
+        </div>
+        <div class="cmt-list" id="cmt-list"><p class="cmt-empty">Đang tải lời nhắn...</p></div>
+      </div>
     </div>`;
+
+  // Chuyển tab trong trang hồ sơ
+  page.querySelectorAll('.pp-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-tab');
+      page.querySelectorAll('.pp-tab').forEach(b => b.classList.toggle('active', b === btn));
+      page.querySelectorAll('.pp-panel').forEach(pn => {
+        pn.classList.toggle('active', pn.id === 'pp-panel-' + key);
+      });
+      if(key === 'confession'){
+        const badge = document.getElementById('cmt-badge');
+        if(badge) badge.classList.remove('pulse');
+      }
+    });
+  });
 
   switchView('player');
   setHeader(['LMCL', 'PLAYER', 'PROFILE'], '');
@@ -4064,6 +4258,17 @@ function setupComments(playerName){
     const items = Object.keys(val)
       .map(k => ({ id: k, ...val[k] }))
       .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+
+    const badge = document.getElementById('cmt-badge');
+    if(badge){
+      if(items.length > 0){
+        badge.textContent = items.length > 99 ? '99+' : items.length;
+        badge.hidden = false;
+        badge.classList.add('pulse');
+      } else {
+        badge.hidden = true;
+      }
+    }
 
     if(items.length === 0){
       listEl.innerHTML = '<p class="cmt-empty">Chưa có lời nhắn nào. Hãy là người đầu tiên!</p>';
