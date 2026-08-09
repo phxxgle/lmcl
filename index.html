@@ -3664,7 +3664,18 @@ function computeOverall(){
     return { ...r, medal, newTotal: r.oldPoints + medal };
   });
 
-  const ranked = [...withNew].sort((a, b) => b.newTotal - a.newTotal);
+  // Số huy chương cả sự nghiệp (mọi mùa/giải), dùng để phân định khi bằng điểm.
+  // Ai nhiều Vàng hơn xếp trên; bằng Vàng thì xét tới Bạc, rồi Đồng — kiểu Olympic.
+  const medalsByName = {};
+  withNew.forEach(r => { medalsByName[r.name] = playerAchievements(r.name).medals; });
+
+  const ranked = [...withNew].sort((a, b) => {
+    if(b.newTotal !== a.newTotal) return b.newTotal - a.newTotal;
+    const ma = medalsByName[a.name], mb = medalsByName[b.name];
+    if(mb.gold   !== ma.gold)   return mb.gold   - ma.gold;
+    if(mb.silver !== ma.silver) return mb.silver - ma.silver;
+    return mb.bronze - ma.bronze;
+  });
   ranked.forEach((r, i) => {
     r.newRank = i + 1;
     r.change = r.oldRank - r.newRank;
