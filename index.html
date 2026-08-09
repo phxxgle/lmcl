@@ -571,6 +571,24 @@
     background: var(--line);
     margin: 4px 2px;
   }
+  /* Nút xoá cả 3 mục lọc cùng lúc — cố tình tô màu khác hẳn các nút "Tất cả"
+     theo từng mục ở trên, để không bị nhầm là chỉ một trong số đó */
+  .filter-reset-all {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: rgba(248, 113, 113, 0.12);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    color: var(--red);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-reset-all:hover { background: rgba(248, 113, 113, 0.2); }
 
   .score-display {
     background: rgba(0, 0, 0, 0.2);
@@ -2555,6 +2573,8 @@
               <button type="button" data-filter="gender" data-value="all" class="active">Tất cả</button>
               <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
               <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
+              <div class="filter-divider"></div>
+              <button type="button" class="filter-reset-all" id="filter-reset-all">Xoá tất cả bộ lọc</button>
             </div>
           </div>
         </div>
@@ -3890,6 +3910,28 @@ function openStandingsTab(group){
         renderAllFixtures();
       });
     });
+
+    const resetAllBtn = document.getElementById('filter-reset-all');
+    if(resetAllBtn){
+      resetAllBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        uiState.all.day = 'all';
+        uiState.all.status = 'all';
+        uiState.all.gender = 'all';
+
+        // Đưa lại đúng nút "Tất cả" của cả 3 mục về trạng thái sáng
+        ['day', 'status', 'gender'].forEach(dim => {
+          filterMenuAll.querySelectorAll(`button[data-filter="${dim}"]`).forEach(b => {
+            b.classList.toggle('active', b.getAttribute('data-value') === 'all');
+          });
+        });
+
+        filterBtnAll.classList.remove('has-filter');
+        filterMenuAll.classList.remove('open');
+        filterBtnAll.classList.remove('active');
+        renderAllFixtures();
+      });
+    }
   }
 
   ['nam', 'nu'].forEach(group => {
