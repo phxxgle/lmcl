@@ -3316,6 +3316,78 @@ const uiStateView = {
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let activeGroupTab = 'all';
 let currentView = 'livematch';
+
+/* =========================================
+   ĐIỀU HƯỚNG THEO URL (hash routing)
+   ========================================= */
+// Mỗi mục có link riêng dạng #members, #rankings, #tour/2026,
+// #tour/2026/lmcl-jun-2026, #player/nguyen-dan-quyen — chia sẻ được,
+// nút Back/Forward hoạt động đúng, và tải lại trang giữ nguyên đúng trang đang xem.
+let applyingRoute = false;
+
+function setRoute(hash, opts){
+  if(applyingRoute) return; // đang áp route từ URL vào giao diện, không tự đẩy thêm lịch sử
+  opts = opts || {};
+  try {
+    history[opts.replace ? 'replaceState' : 'pushState'](null, '', '#' + hash);
+  } catch(e){ /* một số trình duyệt/khung nhúng chặn History API, bỏ qua cho an toàn */ }
+}
+
+// Đọc URL hiện tại (location.hash) rồi mở đúng trang tương ứng.
+// Gọi khi: tải trang lần đầu, bấm nút Back/Forward, hoặc dán link trực tiếp.
+function applyRouteFromHash(){
+  const raw = location.hash.replace(/^#\/?/, '');
+  const parts = raw.split('/').filter(Boolean);
+  const seg = parts[0];
+
+  applyingRoute = true;
+  try {
+    if(!seg || seg === 'livematch'){
+      switchView('livematch', false);
+      const grp = parts[1];
+      if(grp && ['all', 'nam', 'nu', 'overall'].includes(grp) && grp !== activeGroupTab){
+        const tabBtn = document.querySelector('.tab-btn[data-group="' + grp + '"]');
+        if(tabBtn) tabBtn.click();
+      }
+    } else if(seg === 'members'){
+      switchView('members', false);
+    } else if(seg === 'rankings'){
+      switchView('rankings', false);
+    } else if(seg === 'tour'){
+      // switchView chạy trước renderTourList: switchView('tour',...) tự gọi
+      // showTourListView() bên trong nó, nếu renderTourList chạy trước sẽ bị
+      // showTourListView() xoá mất bảng vừa tự mở (trường hợp mùa chỉ có 1 giải).
+      const year = (parts[1] && TOUR_DATA[parts[1]]) ? parts[1] : DEFAULT_TOUR_YEAR;
+      switchView('tour', false);
+      renderTourList(year);
+      const id = parts[2];
+      if(id){
+        const t = findTournament(id);
+        if(t) showTourDetailView(t);
+      }
+    } else if(seg === 'player'){
+      const key = parts[1];
+      const row = key ? directoryRows().find(r => playerKey(r.name) === key) : null;
+      if(row){
+        openPlayerPage(row.name);
+        const tab = parts[2];
+        if(tab){
+          const tabBtn = document.querySelector('.pp-tab[data-tab="' + tab + '"]');
+          if(tabBtn) tabBtn.click();
+        }
+      } else {
+        // Link hỏng hoặc VĐV không còn tồn tại — về trang mặc định thay vì màn hình trắng
+        switchView('livematch', false);
+      }
+    } else {
+      switchView('livematch', false);
+    }
+  } finally {
+    applyingRoute = false;
+  }
+}
+
+window.addEventListener('popstate', applyRouteFromHash);
 const paintedStandings = { nam: null, nu: null, overall: null, rankings: null };
 const ROW_ANIM_MS = 260;   
 const STAGGER_MS = 65;     
@@ -3397,6 +3469,8 @@ function isEditingScoreInput(){
   return !!(active && active.tagName === 'INPUT' && active.classList.contains('score-input'));
 }
 
+let initialRouteApplied = false;
+
 scoresRef.on('value', snapshot => {
   hideConnBanner();
   scores = snapshot.val() || {};
@@ -3405,9 +3479,21 @@ scoresRef.on('value', snapshot => {
   renderReadonlyGroup('nam');
   renderReadonlyGroup('nu');
   ['nam','nu','overall','rankings'].forEach(refreshStandings);
+
+  // Áp dụng đường link đang mở (ví dụ #player/...) sau khi có điểm số lần đầu,
+  // để trang hồ sơ VĐV hiện đúng hạng/điểm ngay từ đầu thay vì phải chờ tải lại.
+  if(!initialRouteApplied){
+    initialRouteApplied = true;
+    applyRouteFromHash();
+  }
 }, error => {
   showConnBanner('⚠️ Không kết nối được tới Firebase (' + error.message + ').');
   console.error('Firebase error:', error);
+  // Firebase không phản hồi được thì vẫn mở đúng trang theo URL, dùng dữ liệu hiện có
+  if(!initialRouteApplied){
+    initialRouteApplied = true;
+    applyRouteFromHash();
+  }
 });
 
 function escapeHtml(str){
@@ -4769,10 +4855,13 @@ function openPlayerPage(name){
         pn.classList.toggle('active', pn.id === 'pp-panel-' + key);
       });
       if(key === 'confession') markCommentsSeen();
+      // Đổi tab con không tạo thêm lịch sử Back riêng — chỉ cập nhật URL tại chỗ
+      setRoute('player/' + playerKey(row.name) + '/' + key, { replace: true });
     });
   });
 
-  switchView('player');
+  switchView('player', false);
+  setRoute('player/' + playerKey(row.name));
   setHeader(['LMCL', 'PLAYER', 'PROFILE'], '');
   setupComments(row.name);
   setupRatings(row.name);
@@ -5369,6 +5458,7 @@ function switchToTournament(entry){
   if(!entry) return;
   if(String(entry.year) !== String(currentTourYear)) renderTourList(entry.year);
   showTourDetailView(entry.t);
+  setRoute('tour/' + entry.year + '/' + entry.t.id);
 }
 
 // Keep old name for compatibility with other callers
@@ -5384,6 +5474,7 @@ function buildSeasonSelect(){
   sel.addEventListener('change', () => {
     renderTourList(sel.value);
     setHeader(['LMCL', 'TOURNAMENT'], 'Season ' + currentTourYear);
+    setRoute('tour/' + currentTourYear);
     // Đồng bộ trạng thái năm đang chọn ở menu bên trái
     document.querySelectorAll('#nav-tour-submenu .drawer-year-btn').forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-year') === String(currentTourYear));
@@ -5426,8 +5517,12 @@ function renderTourList(year){
         closeDrawer();
         return;
       }
-      const t = findTournament(card.getAttribute('data-tour-id'));
-      if(t) showTourDetailView(t);
+      const id = card.getAttribute('data-tour-id');
+      const t = findTournament(id);
+      if(t){
+        showTourDetailView(t);
+        setRoute('tour/' + currentTourYear + '/' + id);
+      }
     });
   });
 
@@ -5451,8 +5546,10 @@ function renderTourSubmenu(){
     btn.addEventListener('click', () => {
       submenu.querySelectorAll('.drawer-year-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderTourList(btn.getAttribute('data-year'));
-      switchView('tour');
+      const year = btn.getAttribute('data-year');
+      renderTourList(year);
+      switchView('tour', false);
+      setRoute('tour/' + year);
       closeDrawer();
     });
   });
@@ -5465,10 +5562,11 @@ function renderTourSubmenu(){
         hideTournamentDetail();
         switchView('livematch');
       } else {
-        switchView('tour');
+        switchView('tour', false);
         renderTourList(year);
         const t = (TOUR_DATA[year] || []).find(x => x.id === id);
         if(t) showTourDetailView(t);
+        setRoute('tour/' + year + '/' + id);
       }
       closeDrawer();
     });
@@ -5539,7 +5637,10 @@ function themeForGroup(grp){
   return 'allmatches';
 }
 
-function switchView(view){
+// routeHash: bỏ trống thì tự đẩy đúng tên view lên URL (đủ dùng cho livematch/
+// members/rankings). Truyền chuỗi riêng cho các view cần thêm định danh (tour
+// cần năm/giải, player cần tên VĐV). Truyền false để tự xử lý routing bên ngoài.
+function switchView(view, routeHash){
   const cameFromOtherView = currentView !== view;
   if(currentView === 'player' && view !== 'player'){
     if(typeof detachComments === 'function') detachComments();
@@ -5556,6 +5657,8 @@ function switchView(view){
   // Chỉ Current Season mới giữ màu theo tab con (MS xanh dương/WS hồng/Rankings vàng).
   // Mọi mục khác luôn về màu mặc định, tránh còn sót màu từ lần xem Current Season trước đó.
   document.body.setAttribute('data-theme', view === 'livematch' ? themeForGroup(activeGroupTab) : 'allmatches');
+
+  if(routeHash !== false) setRoute(routeHash || view);
 
   // Rời khỏi Tournament thì thu gọn ngay danh sách mùa, tránh menu bị giật khi đóng
   if(view !== 'tour'){
@@ -5670,7 +5773,7 @@ navTourToggle.addEventListener('click', () => {
   navTourToggle.classList.toggle('expanded', isOpen);
   // Bấm vào Tournament vừa mở danh sách năm, vừa chuyển sang trang Tournament
   // để mục này sáng lên như Current Season / Members. Drawer vẫn mở để chọn năm tiếp.
-  switchView('tour');
+  switchView('tour', 'tour/' + currentTourYear);
   // Đánh dấu ngay mùa đang xem để thấy rõ mình đang ở đâu
   navTourSubmenu.querySelectorAll('.drawer-year-btn').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-year') === String(currentTourYear));
