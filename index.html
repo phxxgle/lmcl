@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#062617">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>LMCL CLUB</title>
 <meta name="apple-mobile-web-app-title" content="LMCL">
 <meta name="application-name" content="LMCL">
@@ -102,7 +104,9 @@
 
   header {
     text-align: center;
-    padding: 24px 16px 8px;
+    /* Cộng thêm vùng an toàn của tai thỏ/status bar khi chạy như app standalone trên iOS
+       (env() trả về 0 ở trình duyệt thường, nên không ảnh hưởng gì khi xem trên web) */
+    padding: calc(24px + env(safe-area-inset-top, 0px)) 16px 8px;
     position: relative;
   }
 
@@ -177,7 +181,7 @@
   .admin-flag {
     display: none;
     position: absolute;
-    top: 12px;
+    top: calc(12px + env(safe-area-inset-top, 0px));
     right: 12px;
     z-index: 40;
     align-items: center;
@@ -1096,7 +1100,7 @@
      ========================================= */
   .hamburger-btn {
     position: absolute;
-    top: 18px;
+    top: calc(18px + env(safe-area-inset-top, 0px));
     left: 12px;
     width: 36px;
     height: 36px;
@@ -1887,7 +1891,8 @@
   /* Ẩn header logo/hamburger khi đang xem trang hồ sơ VĐV — nút quay lại
      đảm nhiệm vai trò điều hướng thay, đưa nội dung lên gần đầu trang hơn */
   body.hide-header header { display: none; }
-  body.hide-header .admin-flag { top: 12px; }
+  body.hide-header .wrap { padding-top: env(safe-area-inset-top, 0px); }
+  body.hide-header .admin-flag { top: calc(12px + env(safe-area-inset-top, 0px)); }
 
   .pp-back {
     display: inline-flex;
