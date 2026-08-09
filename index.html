@@ -420,22 +420,35 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.4);
   }
   .filter-menu.open { display: block; }
+  /* Nút lựa chọn: thụt vào và có vạch dọc bên trái — cùng ngôn ngữ thị giác
+     với các mục con trong hamburger menu, để thấy rõ đây là lựa chọn thuộc
+     về mục tiêu đề (Ngày/Trạng thái/Nội dung) phía trên, không ngang hàng với nó */
   .filter-menu button {
     display: block;
     width: 100%;
     text-align: left;
     background: none;
     border: none;
+    border-left: 2px solid transparent;
     color: var(--chalk-dim);
     font-family: 'Inter', sans-serif;
     font-size: 12.5px;
-    padding: 8px 10px;
-    border-radius: 6px;
+    padding: 7px 10px 7px 15px;
+    border-radius: 0 6px 6px 0;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .filter-menu button:hover { background: rgba(255,255,255,0.05); color: var(--chalk); }
-  .filter-menu button.active { color: var(--accent); font-weight: 600; background: rgba(255,255,255,0.08); }
+  .filter-menu button:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--chalk);
+    border-left-color: rgba(255,255,255,0.2);
+  }
+  .filter-menu button.active {
+    color: var(--accent);
+    font-weight: 700;
+    background: rgba(255,255,255,0.07);
+    border-left-color: var(--accent);
+  }
 
   .no-results {
     text-align: center;
@@ -559,17 +572,34 @@
     border-color: var(--pink) !important;
   }
 
+  /* Tiêu đề mục dùng font Bebas Neue — cùng vai trò "nhãn nhóm" như h2 thẻ
+     và nút tab trong site, để tách bạch hẳn với các nút lựa chọn font Inter
+     bên dưới. Chấm màu theo accent của tab (xanh MS/hồng WS/xanh chanh All). */
   .filter-section-label {
-    font-size: 9.5px;
-    color: var(--chalk-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.8px;
+    color: var(--chalk);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 6px 10px 2px;
+    padding: 4px 10px 5px 12px;
+  }
+  .filter-menu > .filter-section-label:first-child { margin-top: 0; }
+  .filter-section-label::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
   }
   .filter-divider {
     height: 1px;
     background: var(--line);
-    margin: 4px 2px;
+    margin: 2px 2px 0;
   }
   /* Nút xoá cả 3 mục lọc cùng lúc — cố tình tô màu khác hẳn các nút "Tất cả"
      theo từng mục ở trên, để không bị nhầm là chỉ một trong số đó */
