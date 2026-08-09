@@ -603,23 +603,36 @@
     margin: 2px 2px 0;
   }
   /* Nút xoá cả 3 mục lọc cùng lúc — cố tình tô màu khác hẳn các nút "Tất cả"
-     theo từng mục ở trên, để không bị nhầm là chỉ một trong số đó */
-  .filter-reset-all {
-    display: block;
+     theo từng mục ở trên, để không bị nhầm là chỉ một trong số đó.
+     Selector viết kèm cả class ".filter-menu button" để thắng chắc chắn quy tắc
+     chung của các nút lựa chọn (căn trái, thụt lề, vạch dọc) — nếu chỉ viết
+     ".filter-reset-all" một mình thì độ đặc hiệu thấp hơn và bị đè mất. */
+  .filter-menu button.filter-reset-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     width: 100%;
     text-align: center;
-    background: rgba(248, 113, 113, 0.12);
-    border: 1px solid rgba(248, 113, 113, 0.3);
+    background: rgba(248, 113, 113, 0.16);
+    border: 1px solid rgba(248, 113, 113, 0.45);
     color: var(--red);
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 8px 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 9px 10px;
+    margin-top: 2px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .filter-reset-all:hover { background: rgba(248, 113, 113, 0.2); }
+  .filter-menu button.filter-reset-all svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .filter-menu button.filter-reset-all:hover {
+    background: rgba(248, 113, 113, 0.26);
+    border-color: rgba(248, 113, 113, 0.6);
+    color: var(--red);
+  }
+  .filter-menu button.filter-reset-all:active { transform: scale(0.97); }
 
   .score-display {
     background: rgba(0, 0, 0, 0.2);
@@ -2605,7 +2618,10 @@
               <button type="button" data-filter="gender" data-value="nam">Đơn Nam</button>
               <button type="button" data-filter="gender" data-value="nu">Đơn Nữ</button>
               <div class="filter-divider"></div>
-              <button type="button" class="filter-reset-all" id="filter-reset-all">Xoá bộ lọc</button>
+              <button type="button" class="filter-reset-all" id="filter-reset-all">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                Xoá bộ lọc
+              </button>
             </div>
           </div>
         </div>
@@ -5515,6 +5531,14 @@ function renderRankingsView(){
   paintedStandings.rankings = null;
 }
 
+// Màu chủ đề theo tab con của Current Season (MS/WS/Rankings/All Matches)
+function themeForGroup(grp){
+  if(grp === 'nam') return 'men';
+  if(grp === 'nu') return 'women';
+  if(grp === 'overall') return 'rankings';
+  return 'allmatches';
+}
+
 function switchView(view){
   const cameFromOtherView = currentView !== view;
   if(currentView === 'player' && view !== 'player'){
@@ -5528,6 +5552,10 @@ function switchView(view){
 
   // Trang hồ sơ VĐV có nút quay lại riêng nên không cần header logo phía trên nữa
   document.body.classList.toggle('hide-header', view === 'player');
+
+  // Chỉ Current Season mới giữ màu theo tab con (MS xanh dương/WS hồng/Rankings vàng).
+  // Mọi mục khác luôn về màu mặc định, tránh còn sót màu từ lần xem Current Season trước đó.
+  document.body.setAttribute('data-theme', view === 'livematch' ? themeForGroup(activeGroupTab) : 'allmatches');
 
   // Rời khỏi Tournament thì thu gọn ngay danh sách mùa, tránh menu bị giật khi đóng
   if(view !== 'tour'){
@@ -5668,12 +5696,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('group-' + grp).classList.add('active');
     
-    let themeAttr = 'allmatches';
-    if(grp === 'nam') themeAttr = 'men';
-    else if(grp === 'nu') themeAttr = 'women';
-    else if(grp === 'overall') themeAttr = 'rankings';
-    
-    document.body.setAttribute('data-theme', themeAttr);
+    document.body.setAttribute('data-theme', themeForGroup(grp));
 
     activeGroupTab = grp;
 
