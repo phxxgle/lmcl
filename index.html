@@ -1464,30 +1464,87 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   }
   .pd-filter-menu.open { display: block; }
+  /* Đồng nhất với bảng lọc của All Matches: nút lựa chọn thụt vào + vạch dọc
+     bên trái, tiêu đề mục đậm kèm chấm màu accent để phân cấp rõ ràng */
   .pd-filter-menu button {
     display: block;
     width: 100%;
     text-align: left;
     background: none;
     border: none;
+    border-left: 2px solid transparent;
     color: var(--chalk-dim);
     font-family: 'Inter', sans-serif;
     font-size: 12.5px;
-    padding: 8px 10px;
-    border-radius: 7px;
+    padding: 7px 10px 7px 15px;
+    border-radius: 0 6px 6px 0;
     cursor: pointer;
+    transition: all 0.2s;
   }
-  .pd-filter-menu button:hover { background: rgba(255, 255, 255, 0.06); color: var(--chalk); }
-  .pd-filter-menu button.active { color: var(--menu-accent); font-weight: 600; }
+  .pd-filter-menu button:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--chalk);
+    border-left-color: rgba(255, 255, 255, 0.2);
+  }
+  .pd-filter-menu button.active {
+    color: var(--menu-accent);
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.07);
+    border-left-color: var(--menu-accent);
+  }
   .pd-filter-menu { max-height: 320px; overflow-y: auto; }
   .pd-fm-label {
-    font-size: 9.5px;
-    color: var(--chalk-dim);
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
     letter-spacing: 0.6px;
-    padding: 7px 10px 3px;
+    color: var(--chalk);
+    text-transform: uppercase;
+    padding: 5px 10px 4px 12px;
   }
-  .pd-fm-divider { height: 1px; background: var(--line); margin: 5px 4px; }
+  .pd-filter-menu > .pd-fm-label:first-child { margin-top: 0; }
+  .pd-fm-label::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--menu-accent);
+    flex-shrink: 0;
+  }
+  .pd-fm-divider { height: 1px; background: var(--line); margin: 2px 2px 0; }
+
+  /* Nút xoá cả 2 mục lọc cùng lúc — selector kèm ".pd-filter-menu button"
+     để thắng độ đặc hiệu của quy tắc chung phía trên (căn trái, thụt lề, vạch dọc) */
+  .pd-filter-menu button.pd-filter-reset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    text-align: center;
+    background: rgba(248, 113, 113, 0.16);
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    color: var(--red);
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 9px 10px;
+    margin-top: 2px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .pd-filter-menu button.pd-filter-reset svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .pd-filter-menu button.pd-filter-reset:hover {
+    background: rgba(248, 113, 113, 0.26);
+    border-color: rgba(248, 113, 113, 0.6);
+    color: var(--red);
+  }
+  .pd-filter-menu button.pd-filter-reset:active { transform: scale(0.97); }
 
   .pd-count {
     font-family: 'Space Mono', monospace;
@@ -4495,7 +4552,12 @@ function buildMemberFilterMenu(){
      <div class="pd-fm-divider"></div>
      <div class="pd-fm-label">Quê quán</div>
      <button type="button" data-dim="province" data-value="all" class="active">Tất cả</button>` +
-    provinces.map(p => `<button type="button" data-dim="province" data-value="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join('');
+    provinces.map(p => `<button type="button" data-dim="province" data-value="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join('') +
+    `<div class="pd-fm-divider"></div>
+     <button type="button" class="pd-filter-reset" id="pd-filter-reset">
+       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+       Xoá bộ lọc
+     </button>`;
 }
 
 (() => {
@@ -4520,6 +4582,23 @@ function buildMemberFilterMenu(){
   });
 
   menu.addEventListener('click', e => {
+    // Nút xoá bộ lọc: đặt lại cả 2 mục cùng lúc
+    if(e.target.closest('#pd-filter-reset')){
+      e.stopPropagation();
+      memberFilter = 'all';
+      memberProvince = 'all';
+      ['group', 'province'].forEach(dim => {
+        menu.querySelectorAll(`button[data-dim="${dim}"]`).forEach(x => {
+          x.classList.toggle('active', x.getAttribute('data-value') === 'all');
+        });
+      });
+      btn.classList.remove('has-filter');
+      menu.classList.remove('open');
+      btn.classList.remove('active');
+      renderMembers();
+      return;
+    }
+
     const b = e.target.closest('button[data-dim]');
     if(!b) return;
     e.stopPropagation();
