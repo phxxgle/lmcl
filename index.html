@@ -860,7 +860,8 @@
     z-index: 100;
     align-items: flex-start;
     justify-content: center;
-    padding: 16px;
+    /* Hộp thoại cũng là fixed nên tự cộng vùng an toàn trên/dưới của iPhone */
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -1215,7 +1216,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px;
+    /* Cộng vùng an toàn của tai thỏ/thanh giờ-pin khi chạy dạng app standalone */
+    padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 14px;
     border-bottom: 1px solid var(--line);
   }
   .drawer-logo {
@@ -1390,7 +1392,7 @@
   .drawer-divider { height: 1px; background: var(--line); margin: 8px 10px; }
 
   .drawer-foot {
-    padding: 14px 16px 18px;
+    padding: 14px 16px calc(18px + env(safe-area-inset-bottom, 0px));
     font-size: 10px;
     color: var(--chalk-dim);
     border-top: 1px solid var(--line);
