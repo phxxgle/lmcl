@@ -1403,6 +1403,64 @@
     border-top: 1px solid var(--line);
   }
 
+  /* ── Dải nhắc BTC khi giải đã đủ trận ── */
+  .done-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 12px 13px;
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    border-left: 3px solid var(--green-ok);
+    border-radius: 10px;
+  }
+  .done-ico {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--green-ok);
+  }
+  .done-text { flex: 1; min-width: 0; }
+  .done-text b {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--green-ok);
+    margin-bottom: 3px;
+  }
+  .done-text span {
+    display: block;
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--chalk-dim);
+  }
+  .done-text code {
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--chalk);
+  }
+  .done-close {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    color: var(--chalk-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .done-close svg { width: 13px; height: 13px; }
+  .done-close:hover { background: rgba(255, 255, 255, 0.08); color: var(--chalk); }
+
   /* ── Màn hình chờ giữa hai mùa giải ── */
   .idle-card {
     text-align: center;
@@ -2720,6 +2778,21 @@
   </div>
 
   <div id="season-live">
+
+  <!-- Nhắc BTC khi đã nhập đủ toàn bộ trận: chỉ hiện với người có quyền BTC -->
+  <div id="season-done-banner" style="display:none;">
+    <div class="done-banner">
+      <svg class="done-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      <div class="done-text">
+        <b>Giải đã hoàn thành — đủ <span id="done-count"></span> trận</b>
+        <span>Bạn có thể chốt sổ: lưu kết quả vào Tournament rồi đổi <code>SEASON_STATUS</code> sang <code>'idle'</code>.</span>
+      </div>
+      <button type="button" class="done-close" id="done-banner-close" aria-label="Ẩn thông báo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
+
   <!-- GLASSMORPHISM TABS -->
   <div class="tabs">
     <button class="tab-btn active" data-group="all">All Matches</button>
@@ -3724,11 +3797,26 @@ function renderAll(){
   renderAllFixtures();
 }
 
+// Dải nhắc chốt sổ: chỉ hiện khi ĐỦ trận VÀ đang ở quyền BTC.
+// Người xem thường không thấy, và BTC có thể tự tắt trong phiên nếu thấy vướng.
+let doneBannerDismissed = false;
+function updateSeasonDoneBanner(done, total){
+  const el = document.getElementById('season-done-banner');
+  if(!el) return;
+  const shouldShow = isAdmin && total > 0 && done >= total && !doneBannerDismissed;
+  el.style.display = shouldShow ? '' : 'none';
+  if(shouldShow){
+    const cnt = document.getElementById('done-count');
+    if(cnt) cnt.textContent = done + '/' + total;
+  }
+}
+
 function renderAllFixtures(){
   const container = document.getElementById('fixtures-all');
   if(!container) return;
   const playedCount = ALL_FIXTURES.filter(f => scores[f.id] && scores[f.id].played).length;
   setProgress('progress-all', playedCount, ALL_FIXTURES.length);
+  updateSeasonDoneBanner(playedCount, ALL_FIXTURES.length);
 
   const STATUS_LABEL = {
     finished: { text:'Đã đấu', cls:'done' },
@@ -6002,6 +6090,16 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // Áp dụng công tắc mùa giải: 'idle' thì ẩn bảng chấm điểm, hiện màn hình chờ.
 // Khi 'live' (mặc định) hàm này không đụng gì tới luồng hiện tại.
+// Nút tắt dải nhắc chốt sổ (chỉ tắt trong phiên hiện tại)
+(function(){
+  const btn = document.getElementById('done-banner-close');
+  if(btn) btn.addEventListener('click', () => {
+    doneBannerDismissed = true;
+    const el = document.getElementById('season-done-banner');
+    if(el) el.style.display = 'none';
+  });
+})();
+
 (function applySeasonStatus(){
   if(SEASON_STATUS !== 'idle') return;
 
