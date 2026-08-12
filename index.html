@@ -1403,6 +1403,70 @@
     border-top: 1px solid var(--line);
   }
 
+  /* ── Màn hình chờ giữa hai mùa giải ── */
+  .idle-card {
+    text-align: center;
+    padding: 36px 20px 32px;
+  }
+  .idle-logo {
+    height: 84px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.9;
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35));
+  }
+  .idle-title {
+    margin: 18px 0 8px;
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--chalk);
+    letter-spacing: 0.5px;
+  }
+  .idle-sub {
+    margin: 0 auto 18px;
+    max-width: 300px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--chalk-dim);
+  }
+  .idle-badge {
+    display: inline-block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--menu-accent);
+    background: rgba(193, 255, 114, 0.1);
+    border: 1px solid rgba(193, 255, 114, 0.35);
+    border-radius: 999px;
+    padding: 6px 16px;
+    animation: idlePulse 2.4s ease-in-out infinite;
+  }
+  @keyframes idlePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(193, 255, 114, 0); }
+    50%      { box-shadow: 0 0 16px 2px rgba(193, 255, 114, 0.25); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .idle-badge { animation: none; }
+  }
+  .idle-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 22px;
+    background: none;
+    border: none;
+    padding: 8px 4px 0;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--menu-accent);
+  }
+  .idle-cta svg { width: 14px; height: 14px; }
+  .idle-cta:hover { text-decoration: underline; }
+
   .app-view { display: none; }
   .app-view.active { display: block; }
 
@@ -2639,6 +2703,23 @@
   </header>
 
   <div id="view-livematch" class="app-view active">
+
+  <!-- Màn hình chờ giữa hai mùa giải: chỉ hiện khi SEASON_STATUS = 'idle'.
+       Toàn bộ phần chấm điểm bên dưới vẫn nằm nguyên, chỉ bị ẩn tạm. -->
+  <div id="season-idle" style="display:none;">
+    <div class="card idle-card">
+      <img src="https://lmcl.vercel.app/logo.png" alt="LMCL" class="idle-logo">
+      <h2 class="idle-title">Chưa có giải đấu nào</h2>
+      <p class="idle-sub">Mùa giải mới đang được chuẩn bị. Hẹn gặp lại các bạn trên sân!</p>
+      <span class="idle-badge">COMING SOON</span>
+      <button type="button" class="idle-cta" id="idle-to-tour">
+        Xem các giải đã diễn ra
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="season-live">
   <!-- GLASSMORPHISM TABS -->
   <div class="tabs">
     <button class="tab-btn active" data-group="all">All Matches</button>
@@ -2822,6 +2903,8 @@
       </div>
     </div>
   </div>
+
+  </div><!-- /season-live -->
 
   </div><!-- /view-livematch -->
 
@@ -3298,6 +3381,14 @@ const TOUR_DATA = {
 // Giải đang diễn ra — quyết định phần chữ hiển thị ở mục Live Match.
 const CURRENT_TOURNAMENT = TOUR_DATA[2026][0];
 
+// ═══════════════════════════════════════════════════════════════
+//  CÔNG TẮC MÙA GIẢI — đổi đúng dòng này khi chuyển mùa
+//    'live' = đang có giải, hiện bảng chấm điểm như bình thường
+//    'idle' = chưa có giải, hiện màn hình "Coming soon"
+//  Chuyển sang 'idle' KHÔNG xoá gì cả, code chấm điểm vẫn nằm nguyên.
+// ═══════════════════════════════════════════════════════════════
+const SEASON_STATUS = 'live';
+
 // Giải liền trước (June 2026) là điểm xuất phát của bảng xếp hạng hiện tại:
 // điểm và thứ hạng của nó được cộng thêm 3/2/1 cho top 3 mỗi nội dung khi giải mới kết thúc.
 const PREVIOUS_TOURNAMENT = TOUR_DATA[2026].find(t => t.id === "lmcl-jun-2026");
@@ -3314,7 +3405,7 @@ const THANH_HOA_FLAG = "https://i.ibb.co/B215T1x3/Untitled-1.png";
 const MEMBERS_DATA = {
   nam: {
     "Vương Mạnh Chuyền": { dob: "12/08/2003", hometown: "Tuyên Quang", nation: "Việt Nam", flag: "vn", racket: "Felet Woven 100 Pro", achievements: "—", photo: "https://i.ibb.co/FQxVx4N/Chuy-n.jpg" },
-    "Chu Văn Huynh":     { dob: "03/06/1997", nickname: "HuynhCV Killer - Một cú đánh, một điểm, một chiến thắng", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", racket: "Lining Halbertec 5000", achievements: "—", photo: "https://i.ibb.co/JjRtSg6W/Huynh.jpg" },
+    "Chu Văn Huynh":     { dob: "03/06/1997", nickname: "HuynhCv Killer - Một cú đánh, một điểm, một chiến thắng", hometown: "Hưng Yên",    nation: "Việt Nam", flag: "vn", racket: "Lining Halbertec 5000", achievements: "—", photo: "https://i.ibb.co/JjRtSg6W/Huynh.jpg" },
     "Phạm Minh Quân":    { dob: "29/08/2000", nickname: "Hip", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", racket: "Lining Calibar 300B", achievements: "—", photo: "https://i.ibb.co/Y74Cr5ss/quan.jpg" },
     "Nguyễn Văn Thành":  { dob: "24/05/1999", nickname: "Máy đập Triều Khúc", hometown: "Vĩnh Phúc",   nation: "Việt Nam", flag: "vn", racket: "Victor Thruster HMR Pro", achievements: "—", photo: "https://i.ibb.co/tpWWKfZ1/721994941-1543834223944576-8900834826304262725-n.jpg" },
     "Nguyễn Đình Đạt":   { dob: "07/12/1997", nickname: "Bu", hometown: "Hà Nội",      nation: "Việt Nam", flag: "vn", racket: "Lining", achievements: "—", photo: "https://i.ibb.co/Ng8bhcQz/720570623-1620423832370521-1957694868907008340-n.jpg" },
@@ -5908,6 +5999,27 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
   });
 });
+
+// Áp dụng công tắc mùa giải: 'idle' thì ẩn bảng chấm điểm, hiện màn hình chờ.
+// Khi 'live' (mặc định) hàm này không đụng gì tới luồng hiện tại.
+(function applySeasonStatus(){
+  if(SEASON_STATUS !== 'idle') return;
+
+  const live = document.getElementById('season-live');
+  const idle = document.getElementById('season-idle');
+  if(live) live.style.display = 'none';
+  if(idle) idle.style.display = '';
+
+  // Giữa hai mùa thì không còn giải nào để chấm điểm, ẩn luôn nút quyền BTC
+  const authBtn = document.getElementById('auth-toggle-btn');
+  if(authBtn) authBtn.style.display = 'none';
+
+  const cta = document.getElementById('idle-to-tour');
+  if(cta) cta.addEventListener('click', () => {
+    renderTourList(DEFAULT_TOUR_YEAR);
+    switchView('tour', 'tour/' + DEFAULT_TOUR_YEAR);
+  });
+})();
 
 setHeader(CURRENT_TOURNAMENT.titleLines, CURRENT_TOURNAMENT.badge);
 updateAuthUI();
