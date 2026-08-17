@@ -3250,12 +3250,89 @@ const ROSTERS = {
 const TOUR_DATA = {
   2026: [
     {
-      id: "lmcl-aug-2026",
-      name: "LMCL Allstars — August 2026",
-      titleLines: ["LMCL", "ALLSTARS", "RANKINGS"],
-      badge: "AUGUST 2026",
-      status: "live",
-      note: "Đang diễn ra"
+      id: 'lmcl-aug-2026',
+      name: 'LMCL Allstars — August 2026',
+      titleLines: ['LMCL', 'ALLSTARS', 'RANKINGS'],
+      badge: 'AUGUST 2026',
+      status: "finished",
+      note: "Đã kết thúc",
+      events: {
+        ms: {
+          label: 'MS',
+          title: 'Đơn Nam',
+          rowClass: 'row-nam',
+          teams: [
+            ['Vương Mạnh Chuyền'],
+            ['Chu Văn Huynh'],
+            ['Phạm Minh Quân'],
+            ['Nguyễn Văn Thành'],
+            ['Nguyễn Đình Đạt'],
+            ['Trần Trung Hiếu'],
+            ['Nguyễn Tiến Trung']
+          ],
+          matches: [
+            { a: 0, b: 1, sa: 15, sb: 2 },
+            { a: 0, b: 2, sa: 15, sb: 0 },
+            { a: 0, b: 3, sa: 15, sb: 10 },
+            { a: 0, b: 4, sa: 15, sb: 12 },
+            { a: 0, b: 5, sa: 15, sb: 11 },
+            { a: 0, b: 6, sa: 15, sb: 8 },
+            { a: 1, b: 2, sa: 15, sb: 0 },
+            { a: 1, b: 3, sa: 16, sb: 14 },
+            { a: 1, b: 4, sa: 15, sb: 8 },
+            { a: 1, b: 5, sa: 15, sb: 8 },
+            { a: 1, b: 6, sa: 19, sb: 17 },
+            { a: 2, b: 3, sa: 0, sb: 15 },
+            { a: 2, b: 4, sa: 0, sb: 15 },
+            { a: 2, b: 5, sa: 0, sb: 15 },
+            { a: 2, b: 6, sa: 0, sb: 15 },
+            { a: 3, b: 4, sa: 15, sb: 4 },
+            { a: 3, b: 5, sa: 15, sb: 10 },
+            { a: 3, b: 6, sa: 13, sb: 15 },
+            { a: 4, b: 5, sa: 6, sb: 15 },
+            { a: 4, b: 6, sa: 15, sb: 17 },
+            { a: 5, b: 6, sa: 15, sb: 11 }
+          ]
+        },
+        ws: {
+          label: 'WS',
+          title: 'Đơn Nữ',
+          rowClass: 'row-nu',
+          teams: [
+            ['Nguyễn Đan Quyên'],
+            ['Lê Thanh Phương'],
+            ['Vũ Ngọc Linh'],
+            ['Bùi Huyền Trang'],
+            ['Đặng Thị Nhung']
+          ],
+          matches: [
+            { a: 0, b: 1, sa: 0, sb: 15 },
+            { a: 0, b: 2, sa: 0, sb: 15 },
+            { a: 0, b: 3, sa: 0, sb: 15 },
+            { a: 0, b: 4, sa: 0, sb: 15 },
+            { a: 1, b: 2, sa: 16, sb: 14 },
+            { a: 1, b: 3, sa: 11, sb: 15 },
+            { a: 1, b: 4, sa: 15, sb: 9 },
+            { a: 2, b: 3, sa: 16, sb: 14 },
+            { a: 2, b: 4, sa: 15, sb: 13 },
+            { a: 3, b: 4, sa: 15, sb: 9 }
+          ]
+        }
+      },
+      standings: [
+        { name: 'Vương Mạnh Chuyền', points: 14, change: 1 },
+        { name: 'Lê Thanh Phương', points: 13, change: 1 },
+        { name: 'Nguyễn Đan Quyên', points: 12, change: -2 },
+        { name: 'Chu Văn Huynh', points: 12, change: 0 },
+        { name: 'Vũ Ngọc Linh', points: 10, change: 1 },
+        { name: 'Phạm Minh Quân', points: 9, change: -1 },
+        { name: 'Bùi Huyền Trang', points: 8, change: 2 },
+        { name: 'Nguyễn Văn Thành', points: 7, change: -1 },
+        { name: 'Nguyễn Đình Đạt', points: 5, change: -1 },
+        { name: 'Đặng Thị Nhung', points: 5, change: 0 },
+        { name: 'Trần Trung Hiếu', points: 4, change: 0 },
+        { name: 'Nguyễn Tiến Trung', points: 4, change: 0 }
+      ]
     },
     {
       id: "lmcl-jun-2026",
@@ -3536,11 +3613,11 @@ const CURRENT_TOURNAMENT = TOUR_DATA[2026][0];
 //    'idle' = chưa có giải, hiện màn hình "Coming soon"
 //  Chuyển sang 'idle' KHÔNG xoá gì cả, code chấm điểm vẫn nằm nguyên.
 // ═══════════════════════════════════════════════════════════════
-const SEASON_STATUS = 'live';
+const SEASON_STATUS = 'idle';
 
 // Giải liền trước (June 2026) là điểm xuất phát của bảng xếp hạng hiện tại:
 // điểm và thứ hạng của nó được cộng thêm 3/2/1 cho top 3 mỗi nội dung khi giải mới kết thúc.
-const PREVIOUS_TOURNAMENT = TOUR_DATA[2026].find(t => t.id === "lmcl-jun-2026");
+const PREVIOUS_TOURNAMENT = TOUR_DATA[2026].find(t => t.id === "lmcl-aug-2026");
 const OVERALL_DATA = PREVIOUS_TOURNAMENT.standings.map(r => ({ name: r.name, points: r.points }));
 
 // Dữ liệu hồ sơ vận động viên cho mục "Members". Chỉnh sửa các trường bên dưới
