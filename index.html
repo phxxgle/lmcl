@@ -1424,11 +1424,28 @@
   }
   .done-text { flex: 1; min-width: 0; }
   .done-text b {
-    display: block;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
     font-size: 12.5px;
     font-weight: 700;
     color: var(--green-ok);
-    margin-bottom: 3px;
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+  /* Gói số trận thành khối liền, không bị tách chữ khi màn hình hẹp */
+  .done-num {
+    flex-shrink: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green-ok);
+    background: rgba(74, 222, 128, 0.16);
+    border: 1px solid rgba(74, 222, 128, 0.35);
+    border-radius: 999px;
+    padding: 1px 8px;
+    white-space: nowrap;
   }
   .done-text span {
     display: block;
@@ -1444,6 +1461,43 @@
     border-radius: 4px;
     color: var(--chalk);
   }
+  .done-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 9px;
+    padding: 7px 13px;
+    background: rgba(74, 222, 128, 0.16);
+    border: 1px solid rgba(74, 222, 128, 0.45);
+    border-radius: 8px;
+    color: var(--green-ok);
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .done-export svg { width: 13px; height: 13px; }
+  .done-export:hover { background: rgba(74, 222, 128, 0.26); }
+  .done-export:active { transform: scale(0.97); }
+
+  .export-box {
+    width: 100%;
+    height: 260px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--chalk);
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    line-height: 1.5;
+    padding: 10px;
+    resize: vertical;
+    white-space: pre;
+    overflow: auto;
+  }
+  .export-box:focus { outline: none; border-color: var(--menu-accent); }
+
   .done-close {
     flex-shrink: 0;
     width: 24px;
@@ -2784,8 +2838,12 @@
     <div class="done-banner">
       <svg class="done-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
       <div class="done-text">
-        <b>Giải đã hoàn thành — đủ <span id="done-count"></span> trận</b>
-        <span>Bạn có thể chốt sổ: lưu kết quả vào Tournament rồi đổi <code>SEASON_STATUS</code> sang <code>'idle'</code>.</span>
+        <b>Giải đã hoàn thành <span class="done-num" id="done-count"></span></b>
+        <span>Chốt sổ: xuất dữ liệu rồi dán vào <code>TOUR_DATA</code>, sau đó đổi <code>SEASON_STATUS</code> sang <code>'idle'</code>.</span>
+        <button type="button" class="done-export" id="done-export-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Xuất dữ liệu chốt sổ
+        </button>
       </div>
       <button type="button" class="done-close" id="done-banner-close" aria-label="Ẩn thông báo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -3109,6 +3167,22 @@
     <div class="modal-actions">
       <button type="button" class="btn-cancel" id="pin-cancel-btn">Hủy</button>
       <button type="button" class="btn-submit" id="pin-submit-btn">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL XUẤT DỮ LIỆU CHỐT SỔ -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal-box" style="max-width:520px;text-align:left;">
+    <h3 style="text-align:center;">Dữ liệu chốt sổ</h3>
+    <p style="font-size:11.5px;color:var(--chalk-dim);line-height:1.6;margin-bottom:10px;">
+      Copy toàn bộ đoạn dưới, dán vào <code style="font-family:'Space Mono',monospace;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;">TOUR_DATA[2026]</code>
+      thay cho mục August 2026 hiện tại.
+    </p>
+    <textarea id="export-output" class="export-box" readonly></textarea>
+    <div class="modal-actions" style="margin-top:12px;">
+      <button type="button" class="btn-cancel" id="export-close">Đóng</button>
+      <button type="button" class="btn-submit" id="export-copy">Sao chép</button>
     </div>
   </div>
 </div>
@@ -6092,6 +6166,100 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // Áp dụng công tắc mùa giải: 'idle' thì ẩn bảng chấm điểm, hiện màn hình chờ.
 // Khi 'live' (mặc định) hàm này không đụng gì tới luồng hiện tại.
+/* ─── Xuất dữ liệu chốt sổ cuối mùa ────────────────────────────────────────
+   Sinh sẵn đoạn TOUR_DATA từ điểm số thật trên Firebase, gồm:
+   - events: kết quả từng hạng mục (MS/WS) kèm bảng vòng tròn
+   - standings: bảng xếp hạng tích luỹ mới = điểm cũ + huy chương giải này
+   - change: số bậc tăng/giảm so với bảng xếp hạng trước đó
+   Nhờ vậy không phải gõ tay 31 trận — nguồn gây sai sót lớn nhất khi chốt sổ. */
+function buildSeasonExport(){
+  const q = s => "'" + String(s).replace(/'/g, "\\'") + "'";
+  const EV = { nam: { key: 'ms', label: 'MS', title: 'Đơn Nam', row: 'row-nam' },
+               nu:  { key: 'ws', label: 'WS', title: 'Đơn Nữ',  row: 'row-nu'  } };
+
+  // 1) Kết quả từng hạng mục
+  const evLines = [];
+  ['nam', 'nu'].forEach(g => {
+    const meta = EV[g];
+    const roster = ROSTERS[g];
+    const matches = FIXTURES[g].filter(f => scores[f.id] && scores[f.id].played);
+    if(matches.length === 0) return;
+
+    const teams = roster.map(n => '            [' + q(n) + ']').join(',\n');
+    const ms = matches.map(f => {
+      const sc = scores[f.id];
+      return '            { a: ' + roster.indexOf(f.p1) + ', b: ' + roster.indexOf(f.p2) +
+             ', sa: ' + sc.s1 + ', sb: ' + sc.s2 + ' }';
+    }).join(',\n');
+
+    evLines.push(
+      '        ' + meta.key + ': {\n' +
+      '          label: ' + q(meta.label) + ',\n' +
+      '          title: ' + q(meta.title) + ',\n' +
+      '          rowClass: ' + q(meta.row) + ',\n' +
+      '          teams: [\n' + teams + '\n          ],\n' +
+      '          matches: [\n' + ms + '\n          ]\n' +
+      '        }');
+  });
+
+  // 2) Bảng xếp hạng mới — dùng đúng hàm computeOverall của trang
+  const ranked = computeOverall();
+  const stLines = ranked.map(r =>
+    '        { name: ' + q(r.name) + ', points: ' + r.newTotal + ', change: ' + r.change + ' }'
+  ).join(',\n');
+
+  const t = CURRENT_TOURNAMENT;
+  return (
+'    {\n' +
+'      id: ' + q(t.id) + ',\n' +
+'      name: ' + q(t.name) + ',\n' +
+'      titleLines: [' + (t.titleLines || []).map(q).join(', ') + '],\n' +
+'      badge: ' + q(t.badge || '') + ',\n' +
+'      status: "finished",\n' +
+'      note: "Đã kết thúc",\n' +
+'      events: {\n' + evLines.join(',\n') + '\n      },\n' +
+'      standings: [\n' + stLines + '\n      ]\n' +
+'    }'
+  );
+}
+
+(function(){
+  const btn = document.getElementById('done-export-btn');
+  const modal = document.getElementById('export-modal');
+  const box = document.getElementById('export-output');
+  const closeBtn = document.getElementById('export-close');
+  const copyBtn = document.getElementById('export-copy');
+  if(!btn || !modal) return;
+
+  btn.addEventListener('click', () => {
+    try {
+      box.value = buildSeasonExport();
+    } catch(e){
+      box.value = 'Không tạo được dữ liệu: ' + e.message;
+    }
+    modal.classList.add('open');
+  });
+
+  if(closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if(e.target === modal) modal.classList.remove('open'); });
+
+  if(copyBtn) copyBtn.addEventListener('click', () => {
+    box.select();
+    box.setSelectionRange(0, box.value.length);
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch(e){}
+    if(!ok && navigator.clipboard){
+      navigator.clipboard.writeText(box.value).then(() => {
+        copyBtn.textContent = 'Đã sao chép';
+        setTimeout(() => { copyBtn.textContent = 'Sao chép'; }, 1600);
+      });
+      return;
+    }
+    copyBtn.textContent = ok ? 'Đã sao chép' : 'Hãy tự bôi đen và copy';
+    setTimeout(() => { copyBtn.textContent = 'Sao chép'; }, 1600);
+  });
+})();
+
 // Nút tắt dải nhắc chốt sổ (chỉ tắt trong phiên hiện tại)
 (function(){
   const btn = document.getElementById('done-banner-close');
